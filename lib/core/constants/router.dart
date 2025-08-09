@@ -1,0 +1,1 @@
+//Đây là file khai báo tên của các page trong app, vd: "/detail","/login"

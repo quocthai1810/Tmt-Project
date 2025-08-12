@@ -17,7 +17,7 @@ class CustomButton extends StatelessWidget {
 
   final BorderRadiusGeometry borderRadius;
 
-  ///đây là lớp cuastom button, dùng nút này cho toàn app
+  
   const CustomButton({
     super.key,
     this.width = 150,

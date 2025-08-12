@@ -1,16 +1,25 @@
 import 'package:flutter/material.dart';
 
 class CustomButton extends StatelessWidget {
+  /// đây là độ rộng button
+  /// dùng chỉnh chiều ngang
   final double width;
+
   final double height;
+
   final double textSize;
+
   final String text;
+
   final VoidCallback onPress;
+
   final double elevation;
+
   final BorderRadiusGeometry borderRadius;
 
+  ///đây là lớp cuastom button, dùng nút này cho toàn app
   const CustomButton({
-    Key? key,
+    super.key,
     this.width = 150,
     this.height = 50,
     this.textSize = 16,
@@ -18,28 +27,22 @@ class CustomButton extends StatelessWidget {
     required this.onPress,
     this.elevation = 5,
     this.borderRadius = const BorderRadius.all(Radius.circular(12)),
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {
-    
-
     return SizedBox(
       width: width,
       height: height,
       child: ElevatedButton(
         style: ElevatedButton.styleFrom(
-          
           elevation: elevation,
           shadowColor: Colors.black,
           textStyle: TextStyle(fontSize: textSize),
           shape: RoundedRectangleBorder(borderRadius: borderRadius),
         ),
         onPressed: onPress,
-        child: Text(
-          text,
-         
-        ),
+        child: Text(text),
       ),
     );
   }

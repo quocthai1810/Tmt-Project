@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:tmt_project/core/widgets/minh/code_di.dart';
 import 'package:tmt_project/core/widgets/thai/CustomButton.dart';
 
 void main() {
@@ -21,53 +22,10 @@ class MyApp extends StatelessWidget {
         ),
       ),
       home: Scaffold(
-        appBar: AppBar(title: Text("Hello anh em Funny Team "),),
-        body: Center(
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              CustomButton(
-                text: 'Đây',
-                borderRadius: BorderRadius.circular(12),
-                onPress: () {
-                  print('Button Rounded 12');
-                },
-              ),
-              SizedBox(height: 16),
-              CustomButton(
-                text: 'Là',
-                width: 80,
-                height: 60,
-                borderRadius: BorderRadius.circular(10),
-                onPress: () {
-                  print('Button Circle');
-                },
-              ),
-              SizedBox(height: 16),
-              CustomButton(
-                text: 'Custom',
-                borderRadius: BorderRadius.zero,
-                onPress: () {
-                  print('Button Sharp corners');
-                },
-              ),
-              SizedBox(height: 16),
-              CustomButton(
-                text: 'Button',
-                borderRadius: BorderRadius.horizontal(
-                  left: Radius.circular(30),
-                  right: Radius.circular(30),
-                ),
-                width: 200,
-                height: 50,
-                onPress: () {
-                  print('Button Stadium shape');
-                },
-              ),
-            ],
-          ),
-        ),
+        appBar: AppBar(title: Text("Hello anh em Funny Team ")),
+        body: codeDiMinhoi(),
       ),
+      debugShowCheckedModeBanner: false,
     );
   }
 }

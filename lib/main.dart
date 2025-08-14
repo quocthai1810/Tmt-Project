@@ -1,13 +1,26 @@
 import 'package:flutter/material.dart';
-import 'package:tmt_project/core/widgets/thai/custom_button.dart';
+import 'package:tmt_project/core/widgets/thai/custom_BottomNavBar.dart';
+import 'package:tmt_project/core/widgets/thai/custom_appBar.dart';
+import 'package:tmt_project/core/widgets/thai/custom_listTile.dart';
+import 'package:tmt_project/core/widgets/thai/custom_radioBtn.dart';
+import 'package:tmt_project/core/widgets/thai/custom_tabBar.dart';
+import 'package:tmt_project/core/widgets/thai/toggle_Switch/custom_toggle_1.dart';
+import 'package:tmt_project/core/widgets/thai/toggle_Switch/custom_toggle_2.dart';
+import 'package:tmt_project/core/widgets/thai/toggle_Switch/custom_toggle_3.dart';
+import 'package:tmt_project/core/widgets/thai/toggle_Switch/custom_toggle_4.dart';
 
 void main() {
   runApp(const MyApp());
 }
 
-class MyApp extends StatelessWidget {
+class MyApp extends StatefulWidget {
   const MyApp({super.key});
 
+  @override
+  State<MyApp> createState() => _MyAppState();
+}
+
+class _MyAppState extends State<MyApp> {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
@@ -20,54 +33,7 @@ class MyApp extends StatelessWidget {
           backgroundColor: Color.fromARGB(255, 156, 82, 93),
         ),
       ),
-      home: Scaffold(
-        appBar: AppBar(title: Text("Hello anh em Funny Team "),),
-        body: Center(
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              CustomButton(
-                text: 'Đây',
-                borderRadius: BorderRadius.circular(12),
-                onPress: () {
-                  print('Button Rounded 12');
-                },
-              ),
-              SizedBox(height: 16),
-              CustomButton(
-                text: 'Là',
-                width: 80,
-                height: 60,
-                borderRadius: BorderRadius.circular(10),
-                onPress: () {
-                  print('Button Circle');
-                },
-              ),
-              SizedBox(height: 16),
-              CustomButton(
-                text: 'Custom',
-                borderRadius: BorderRadius.zero,
-                onPress: () {
-                  print('Button Sharp corners');
-                },
-              ),
-              SizedBox(height: 16),
-              CustomButton(
-                text: 'Button',
-                borderRadius: BorderRadius.horizontal(
-                  left: Radius.circular(30),
-                  right: Radius.circular(30),
-                ),
-                width: 200,
-                height: 50,
-                onPress: () {
-                  print('Button Stadium shape');
-                },
-              ),
-            ],
-          ),
-        ),
-      ),
+      home: Placeholder(),
     );
   }
 }

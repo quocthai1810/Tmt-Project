@@ -29,7 +29,6 @@ class _MyAppState extends State<MyApp> {
         useMaterial3: true,
         //Đây là màu Chủ đề cho app ( màu Hồng cho đời đẹp :)) )
         colorScheme: ColorScheme.fromSeed(seedColor: Colors.pink),
-        
       ),
       home: Placeholder(),
     );

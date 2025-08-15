@@ -127,7 +127,7 @@ class _CustomBottomnavbarState extends State<CustomBottomnavbar>
             animation: _iconController,
             builder: (_, __) {
               return CustomPaint(
-                size: Size(width, 80),
+                size: Size(width, 70),
                 painter: NavBarPainter(
                   widget.currentIndex,
                   widget.items.length,
@@ -142,7 +142,7 @@ class _CustomBottomnavbarState extends State<CustomBottomnavbar>
             animation: _moveController,
             builder: (_, __) {
               return Positioned(
-                bottom: 24,
+                bottom: 10,
                 left: _xAnim.value - 27.5, // giữ icon ở giữa notch
                 child: Container(
                   width: 55,
@@ -172,7 +172,7 @@ class _CustomBottomnavbarState extends State<CustomBottomnavbar>
                   behavior: HitTestBehavior.translucent,
                   child: AnimatedPadding(
                     duration: const Duration(milliseconds: 300),
-                    padding: EdgeInsets.only(bottom: isSelected ? 40 : 10),
+                    padding: EdgeInsets.only(bottom: 0),
                     child: Icon(
                       widget.items[index],
                       color:

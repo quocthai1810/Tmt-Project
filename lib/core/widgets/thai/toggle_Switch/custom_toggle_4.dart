@@ -44,7 +44,7 @@ class _CustomToggleSwitch4State extends State<CustomToggleSwitch4> {
 
   @override
   Widget build(BuildContext context) {
-    final activeColor = Theme.of(context).colorScheme.primary;
+    final activeColor = Theme.of(context).colorScheme.inversePrimary;
     final inactiveColor = Theme.of(context).colorScheme.primaryContainer;
 
     return GestureDetector(

@@ -37,7 +37,7 @@ class CustomRadioButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final selectedClr = selectedColor ?? Theme.of(context).colorScheme.primary;
+    final selectedClr = selectedColor ?? Theme.of(context).colorScheme.inversePrimary;
     final unselectedClr =
         unselectedColor ??
         Theme.of(context).colorScheme.onSurface.withOpacity(0.6);

@@ -17,6 +17,7 @@ class CustomTabBar extends StatefulWidget {
 
   /// Màu sắc cho tab chưa chọn
   final Color? unselectedColor;
+
   /// nếu muốn nhỏ lại thì định nghĩa kích thước(xét height, width), mặc định chiếm toàn bộ kích thước của cha
   const CustomTabBar({
     Key? key,
@@ -77,6 +78,7 @@ class _CustomTabBarState extends State<CustomTabBar>
     return Column(
       children: [
         TabBar(
+          labelPadding: EdgeInsets.all(10),
           controller: _tabController,
           tabs: widget.tabs,
           labelColor: selectedColor,

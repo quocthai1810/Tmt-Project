@@ -131,7 +131,7 @@ class _CustomBottomnavbarState extends State<CustomBottomnavbar>
                 painter: NavBarPainter(
                   widget.currentIndex,
                   widget.items.length,
-                  Theme.of(context).colorScheme.primary,
+                  Theme.of(context).colorScheme.inversePrimary,
                 ),
               );
             },
@@ -148,12 +148,12 @@ class _CustomBottomnavbarState extends State<CustomBottomnavbar>
                   width: 55,
                   height: 88,
                   decoration: BoxDecoration(
-                    color: Theme.of(context).colorScheme.primaryContainer,
+                    color: Theme.of(context).colorScheme.primary,
                     shape: BoxShape.circle,
                   ),
                   child: Icon(
                     widget.items[widget.currentIndex],
-                    color: Theme.of(context).colorScheme.primary,
+                    color: Theme.of(context).colorScheme.onPrimary,
                     size: 28,
                   ),
                 ),

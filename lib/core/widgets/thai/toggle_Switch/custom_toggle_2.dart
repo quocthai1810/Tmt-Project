@@ -47,7 +47,7 @@ class _CustomToggleSwitch2State extends State<CustomToggleSwitch2> {
   @override
   Widget build(BuildContext context) {
     final activeColor =
-        widget.activeColor ?? Theme.of(context).colorScheme.primary;
+        widget.activeColor ?? Theme.of(context).colorScheme.inversePrimary;
     ;
     final inactiveColor =
         widget.inactiveColor ?? Theme.of(context).colorScheme.primaryContainer;

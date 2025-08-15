@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:tmt_project/core/widgets/minh/customCarousel.dart';
 import 'package:tmt_project/core/widgets/minh/customCheckbox.dart'; // ScrollDirection
+import 'package:tmt_project/core/widgets/minh/customListItem.dart';
 import 'package:tmt_project/core/widgets/minh/customTextField.dart';
 import 'package:tmt_project/core/widgets/minh/customToast.dart';
 //bảng màu sắc
@@ -95,6 +96,29 @@ class _codeDiMinhoiState extends State<codeDiMinhoi> {
 
             // Ô nhập lại để kiểm tra khớp
             ConfirmPasswordTextField(originalPasswordController: _passwordCtrl),
+            const SizedBox(height: 20),
+            listItem_doc(
+              // gọi khứa này ra mà xài là thành cái item dọc
+              imageUrl:
+                  'https://picsum.photos/id/1035/800/500', // Thay thế bằng URL hình ảnh thực tế
+              title: 'Spider-Man No Way Home',
+              genre: 'Action',
+              rating: 4.5,
+            ),
+            const SizedBox(height: 20),
+            listItem_ngang(
+              // gọi khứa này ra mà xài là thành cái item ngang
+              imageUrl: 'https://picsum.photos/id/1035/800/500',
+              rating: 4.5,
+              title: 'Spider-Man No Way Home',
+              isPremium: true,
+              isSneakshow: true,
+              year: '2021',
+              duration: '148 Minutes',
+              ageLimit: 'PG-13',
+              genre: 'Action',
+              type: 'Movie',
+            ),
           ],
         ),
       ),

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 
+/// dùng hàm này để lấy checkbox nha chỉ cần gọi customCheckbox() là được
 class CustomCheckbox extends StatefulWidget {
   final bool initialValue;
   final ValueChanged<bool> onChanged;

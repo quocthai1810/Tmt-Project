@@ -33,10 +33,11 @@ class _codeDiMinhoiState extends State<codeDiMinhoi> {
             const SizedBox(height: 24),
             CustomCheckbox(
               initialValue: false,
+              label: "Đồng ý điều khoản",
               onChanged: (value) {
-                print("✅ Checked: $value");
-              }, // Hàm này sẽ được gọi khi checkbox được bấm
-            ), //nắm đầu tên class này ra mà xài
+                print("Checked: $value");
+              },
+            ), //nắm đầu tên class này ra mà xài,cách dùng như trên
             const SizedBox(height: 12),
 
             _buildButton(
@@ -97,27 +98,56 @@ class _codeDiMinhoiState extends State<codeDiMinhoi> {
             // Ô nhập lại để kiểm tra khớp
             ConfirmPasswordTextField(originalPasswordController: _passwordCtrl),
             const SizedBox(height: 20),
-            listItem_doc(
-              // gọi khứa này ra mà xài là thành cái item dọc
-              imageUrl:
-                  'https://picsum.photos/id/1035/800/500', // Thay thế bằng URL hình ảnh thực tế
-              title: 'Spider-Man No Way Home',
-              genre: 'Action',
-              rating: 4.5,
+            Row(
+              children: [
+                ListItemDoc(
+                  imageUrl: "https://picsum.photos/id/1043/800/600",
+                  title: "Cuộc Chiến Sao Băng",
+                  genre: "Hành động, Khoa học viễn tưởng",
+                  rating: 8.7,
+                ),
+                ListItemDoc(
+                  imageUrl: "https://picsum.photos/id/1043/800/600",
+                  title: "Cuộc Chiến Sao Băng",
+                  genre: "Hành động, Khoa học viễn tưởng",
+                  rating: 8.7,
+                ),
+              ],
             ),
             const SizedBox(height: 20),
-            listItem_ngang(
-              // gọi khứa này ra mà xài là thành cái item ngang
-              imageUrl: 'https://picsum.photos/id/1035/800/500',
-              rating: 4.5,
-              title: 'Spider-Man No Way Home',
+            ListItemNgang(
+              imageUrl: "https://picsum.photos/id/1027/600/900",
+              title: "Thành Phố Mất Tích",
+              year: 2025,
+              duration: 124,
+              ageRating: "PG-13",
+              genres: const ["Adventure", "Action"],
+              rating: 8.6,
               isPremium: true,
               isSneakshow: true,
-              year: '2021',
-              duration: '148 Minutes',
-              ageLimit: 'PG-13',
-              genre: 'Action',
-              type: 'Movie',
+
+              // ép kích thước nếu muốn, còn không cứ bỏ trống là auto responsive
+              maxWidth: 560, // chiều rộng tối đa
+              maxHeight: 180, // chiều cao tối đa
+              imageRatio: 0.3, // % bề rộng dành cho ảnh ( có thể tùy chỉnh)
+              imageAspect: 5 / 7, // poster dọc
+            ),
+            ListItemNgang(
+              imageUrl: "https://picsum.photos/id/1027/600/900",
+              title: "Thành Phố Mất Tích",
+              year: 2025,
+              duration: 124,
+              ageRating: "PG-13",
+              genres: const ["Adventure", "Action"],
+              rating: 8.6,
+              isPremium: true,
+              isSneakshow: true,
+
+              // ép kích thước nếu muốn, còn không cứ bỏ trống là auto responsive
+              maxWidth: 560, // chiều rộng tối đa
+              maxHeight: 180, // chiều cao tối đa
+              imageRatio: 0.3, // % bề rộng dành cho ảnh ( có thể tùy chỉnh)
+              imageAspect: 5 / 7, // poster dọc
             ),
           ],
         ),

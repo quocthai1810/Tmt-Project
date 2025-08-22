@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:tmt_project/routers/app_route.dart';
-import 'package:tmt_project/src/thai_src/pages/entry_point_page.dart';
 
 void main() {
   runApp(const MyApp());

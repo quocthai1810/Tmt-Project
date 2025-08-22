@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:tmt_project/core/widgets/minh/code_di.dart';
 import 'package:tmt_project/core/widgets/thai/CustomButton.dart';
 
 void main() {
@@ -68,6 +69,7 @@ class MyApp extends StatelessWidget {
           ),
         ),
       ),
+      debugShowCheckedModeBanner: false,
     );
   }
 }

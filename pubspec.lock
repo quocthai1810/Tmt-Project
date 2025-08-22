@@ -87,6 +87,7 @@ packages:
     dependency: transitive
     description:
       name: leak_tracker
+
       sha256: "8dcda04c3fc16c14f48a7bb586d4be1f0d1572731b6d81d51772ef47c02081e0"
       url: "https://pub.dev"
     source: hosted

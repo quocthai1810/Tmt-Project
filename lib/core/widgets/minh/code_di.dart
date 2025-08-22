@@ -20,6 +20,8 @@ class codeDiMinhoi extends StatefulWidget {
   State<codeDiMinhoi> createState() => _codeDiMinhoiState();
 }
 
+final nameCtrl = TextEditingController();
+
 class _codeDiMinhoiState extends State<codeDiMinhoi> {
   final TextEditingController _passwordCtrl = TextEditingController();
   @override
@@ -148,6 +150,21 @@ class _codeDiMinhoiState extends State<codeDiMinhoi> {
               maxHeight: 180, // chiều cao tối đa
               imageRatio: 0.3, // % bề rộng dành cho ảnh ( có thể tùy chỉnh)
               imageAspect: 5 / 7, // poster dọc
+            ),
+
+            const SizedBox(height: 20),
+            CustomTextField(
+              label: "Mô tả",
+              controller: TextEditingController(),
+              minLines: 3, // bắt đầu với 3 dòng
+              maxLines: 6, // tối đa 6 dòng
+            ),
+            const SizedBox(height: 20),
+            CustomTextField(
+              label: "Ghi chú",
+              controller: TextEditingController(),
+              height: 120, // ép chiều cao 120
+              maxLines: null, // cho nhập vô hạn dòng (scroll trong box)
             ),
           ],
         ),

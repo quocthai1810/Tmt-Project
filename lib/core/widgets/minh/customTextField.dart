@@ -1,19 +1,5 @@
 import 'package:flutter/material.dart';
 
-class Customtextfield extends StatefulWidget {
-  const Customtextfield({super.key});
-
-  @override
-  State<Customtextfield> createState() => _CustomtextfieldState();
-}
-
-class _CustomtextfieldState extends State<Customtextfield> {
-  @override
-  Widget build(BuildContext context) {
-    return const Placeholder();
-  }
-}
-
 /// class này dùng để tạo một TextField với viền hồng và bóng đổ
 /// nó sẽ có viền hồng và bóng đổ khi được focus
 class PinkShadowTextField extends StatelessWidget {
@@ -46,6 +32,142 @@ class PinkShadowTextField extends StatelessWidget {
       ),
       style: const TextStyle(fontSize: 16),
     );
+  }
+}
+
+/// TextField với viền bo + bóng hồng, cho phép:
+/// - Ép độ rộng cố định [width], hoặc
+/// - Dùng % màn hình [widthFraction], hoặc
+/// - Giới hạn [minWidth]/[maxWidth]
+/// - Ép chiều cao [height]
+/// - Hỗ trợ multiline với [minLines]/[maxLines]
+/// Tự scale font/radius/padding theo kích thước thiết bị.
+class CustomTextField extends StatelessWidget {
+  final String label;
+  final TextEditingController controller;
+
+  /// --- Tùy chỉnh kích thước ---
+  final double? width; // nếu set -> ưu tiên dùng luôn
+  final double? widthFraction; // 0..1, VD 0.9 = 90% màn hình
+  final double? minWidth;
+  final double? maxWidth;
+  final double? height; // chiều cao của TextField (nếu null -> auto)
+
+  /// --- Tùy chỉnh UI ---
+  final EdgeInsets? contentPadding;
+  final TextInputType? keyboardType;
+  final bool obscureText;
+
+  /// --- Multiline ---
+  final int? minLines; // số dòng tối thiểu (auto giãn)
+  final int? maxLines; // số dòng tối đa (null = vô hạn)
+
+  const CustomTextField({
+    super.key,
+    required this.label,
+    required this.controller,
+    this.width,
+    this.widthFraction,
+    this.minWidth,
+    this.maxWidth,
+    this.height,
+    this.contentPadding,
+    this.keyboardType,
+    this.obscureText = false,
+    this.minLines,
+    this.maxLines = 1,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    final screenW = MediaQuery.of(context).size.width;
+
+    // Breakpoints → scale cho font, radius, padding, shadow
+    final _Scale k = _Scale.forWidth(screenW);
+
+    // Tính chiều rộng hiệu lực
+    double effectiveWidth;
+    if (width != null) {
+      effectiveWidth = width!;
+    } else if (widthFraction != null) {
+      effectiveWidth = screenW * widthFraction!.clamp(0.0, 1.0);
+    } else {
+      // mặc định 92% màn hình
+      effectiveWidth = screenW * 0.92;
+    }
+
+    if (minWidth != null)
+      effectiveWidth = effectiveWidth < minWidth! ? minWidth! : effectiveWidth;
+    if (maxWidth != null)
+      effectiveWidth = effectiveWidth > maxWidth! ? maxWidth! : effectiveWidth;
+
+    return Center(
+      child: ConstrainedBox(
+        constraints: BoxConstraints(
+          minWidth: minWidth ?? 0,
+          maxWidth: maxWidth ?? double.infinity,
+          minHeight: height ?? 0,
+          maxHeight: height ?? double.infinity,
+        ),
+        child: SizedBox(
+          width: effectiveWidth,
+          height: height, // ép chiều cao nếu có
+          child: Container(
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(12 * k.scale),
+              boxShadow: [
+                BoxShadow(
+                  color: Colors.pinkAccent.withOpacity(0.25),
+                  blurRadius: 18 * k.scale,
+                  spreadRadius: 1 * k.scale,
+                  offset: Offset(0, 6 * k.scale),
+                ),
+              ],
+            ),
+            child: TextField(
+              controller: controller,
+              keyboardType: keyboardType,
+              obscureText: obscureText,
+              minLines: minLines,
+              maxLines: maxLines,
+              style: TextStyle(fontSize: 16 * k.scale),
+              decoration: InputDecoration(
+                labelText: label,
+                floatingLabelBehavior: FloatingLabelBehavior.auto,
+                filled: true,
+                fillColor: Colors.white,
+                contentPadding:
+                    contentPadding ??
+                    EdgeInsets.symmetric(
+                      horizontal: 14 * k.scale,
+                      vertical: 14 * k.scale,
+                    ),
+                enabledBorder: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(12 * k.scale),
+                  borderSide: const BorderSide(color: Colors.transparent),
+                ),
+                focusedBorder: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(12 * k.scale),
+                  borderSide: const BorderSide(color: Colors.transparent),
+                ),
+              ),
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+/// Helper scale đơn giản theo bề rộng màn
+class _Scale {
+  final double scale;
+  const _Scale(this.scale);
+
+  factory _Scale.forWidth(double w) {
+    if (w < 360) return const _Scale(0.9); // máy nhỏ
+    if (w < 768) return const _Scale(1.0); // phone lớn / tablet nhỏ
+    return const _Scale(1.1); // tablet / desktop
   }
 }
 

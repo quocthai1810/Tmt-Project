@@ -24,7 +24,7 @@ class CustomAppbar extends StatelessWidget implements PreferredSizeWidget {
   /// custom Appbar dùng cho toàn app
   const CustomAppbar({
     super.key,
-    this.textTitle = "Tmt",
+    this.textTitle = "Tmt Project",
     required this.listIcon,
     required this.showLeading,
   });
@@ -35,6 +35,7 @@ class CustomAppbar extends StatelessWidget implements PreferredSizeWidget {
   @override
   Widget build(BuildContext context) {
     return AppBar(
+      automaticallyImplyLeading: showLeading,
       backgroundColor: Theme.of(context).colorScheme.inversePrimary,
       title: Text(
         textTitle,
@@ -49,7 +50,7 @@ class CustomAppbar extends StatelessWidget implements PreferredSizeWidget {
               ? IconButton(
                 icon: Icon(
                   Icons.arrow_back_rounded,
-                  color: Theme.of(context).colorScheme.primaryContainer,
+                  color: Theme.of(context).colorScheme.primary,
                 ),
                 onPressed: () {
                   Navigator.pop(context);
@@ -62,7 +63,7 @@ class CustomAppbar extends StatelessWidget implements PreferredSizeWidget {
                 (icon) => IconButton(
                   onPressed: icon.onPressed,
                   icon: Icon(icon.iconData),
-                  color: Theme.of(context).colorScheme.primaryContainer,
+                  color: Theme.of(context).colorScheme.primary,
                 ),
               )
               .toList(),

@@ -178,7 +178,7 @@ class _CustomBottomnavbarState extends State<CustomBottomnavbar>
                       color:
                           isSelected
                               ? Colors.transparent
-                              : Theme.of(context).colorScheme.primaryContainer,
+                              : Theme.of(context).colorScheme.primary,
                       size: 28,
                     ),
                   ),

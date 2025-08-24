@@ -1,17 +1,20 @@
 import 'package:flutter/material.dart';
 import 'custom_button.dart';
 
+/// [isCancel] - Nếu `true` thì hiển thị cả nút "Huỷ" và "Xác nhận",
+///              nếu `false` chỉ hiển thị nút "Xác nhận".
 Future<void> showCustomDialog(
   BuildContext context, {
-  required String title,
-  required String content,
+  String title = "XÁC THỰC",
+  String content = "Bạn có muốn thực hiện hành động này ?",
   required VoidCallback onConfirm,
+
+  
+  required bool isCancel,
   VoidCallback? onCancel,
   String confirmText = 'Xác nhận',
   String cancelText = 'Hủy',
 }) {
-  final ColorScheme colorScheme = Theme.of(context).colorScheme;
-
   return showDialog(
     context: context,
     barrierDismissible: false,
@@ -51,15 +54,17 @@ Future<void> showCustomDialog(
                 // Buttons
                 Row(
                   children: [
-                    Expanded(
-                      child: CustomButton(
-                        text: cancelText,
-                        onPressed: () {
-                          Navigator.of(context).pop();
-                          if (onCancel != null) onCancel();
-                        },
-                      ),
-                    ),
+                    isCancel
+                        ? Expanded(
+                          child: CustomButton(
+                            text: cancelText,
+                            onPressed: () {
+                              Navigator.of(context).pop();
+                              if (onCancel != null) onCancel();
+                            },
+                          ),
+                        )
+                        : SizedBox.shrink(),
                     const SizedBox(width: 12),
                     Expanded(
                       child: CustomButton(

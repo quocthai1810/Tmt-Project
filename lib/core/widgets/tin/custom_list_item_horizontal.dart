@@ -1,452 +1,281 @@
 import 'package:flutter/material.dart';
 
-class CustomListItemHorizontal extends StatelessWidget {
-  final List<Widget> items;
-  final double spacing;
-  final EdgeInsetsGeometry padding;
-  final ScrollPhysics? physics;
-  final bool reverse;
-  final Axis scrollDirection;
-  final bool shrinkWrap;
+///listItem ngang
+////// class Color.fromARGB(255, 138, 108, 118) tạo một ListTile với viền hồng và bóng đổ
+////// nó sẽ có viền hồng và bóng đổ khi được focus
+/// Card ngang hiển thị phim, responsive theo kích thước thiết bị.
+/// Cho phép ép kích thước bằng các tham số:
+/// - [maxWidth]: bề rộng tối đa của card
+/// - [maxHeight]: chiều cao tối đa của card
+/// - [imageRatio]: % bề rộng card dành cho ảnh (0.18 -> 0.50)
+/// - [imageAspect]: tỉ lệ ảnh (width/height), mặc định 5/7 (poster dọc)
+class ListItemNgang extends StatelessWidget {
+  final String imageUrl;
+  final String title;
+  final int year;
+  final int duration; // minutes
+  final String ageRating; // e.g. PG-13
+  final List<String> genres;
+  final double rating;
+  final bool isPremium;
+  final bool isSneakshow;
 
-  const CustomListItemHorizontal({
+  // -------- Responsive overrides (optional) --------
+  final double? maxWidth; // ép bề rộng tối đa của card
+  final double? maxHeight; // ép chiều cao tối đa của card
+  final double? imageRatio; // tỉ lệ chiều rộng ảnh trong card
+  final double imageAspect; // width/height poster, default 5/7
+
+  const ListItemNgang({
     super.key,
-    required this.items,
-    this.spacing = 8.0,
-    this.padding = const EdgeInsets.all(8.0),
-    this.physics,
-    this.reverse = false,
-    this.scrollDirection = Axis.horizontal,
-    this.shrinkWrap = true,
+    required this.imageUrl,
+    required this.title,
+    required this.year,
+    required this.duration,
+    required this.ageRating,
+    required this.genres,
+    required this.rating,
+    this.isPremium = false,
+    this.isSneakshow = false,
+    this.maxWidth,
+    this.maxHeight,
+    this.imageRatio,
+    this.imageAspect = 5 / 7,
   });
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      padding: padding,
-      child: ListView.separated(
-        scrollDirection: scrollDirection,
-        reverse: reverse,
-        shrinkWrap: shrinkWrap,
-        physics: physics ?? const BouncingScrollPhysics(),
-        itemCount: items.length,
-        separatorBuilder:
-            (context, index) => SizedBox(
-              width: scrollDirection == Axis.horizontal ? spacing : 0,
-              height: scrollDirection == Axis.vertical ? spacing : 0,
-            ),
-        itemBuilder: (context, index) {
-          return items[index];
-        },
-      ),
-    );
-  }
+    return LayoutBuilder(
+      builder: (context, c) {
+        final screenW = MediaQuery.of(context).size.width;
 
-  // Static method để tạo Card Item
-  static Widget createCardItem({
-    required Widget child,
-    double? width,
-    double? height,
-    EdgeInsetsGeometry? margin,
-    EdgeInsetsGeometry? padding,
-    Color? color,
-    double elevation = 2.0,
-    BorderRadius? borderRadius,
-    VoidCallback? onTap,
-  }) {
-    return Container(
-      width: width,
-      height: height,
-      margin: margin ?? const EdgeInsets.symmetric(horizontal: 4.0),
-      child: Card(
-        elevation: elevation,
-        color: color,
-        shape: RoundedRectangleBorder(
-          borderRadius: borderRadius ?? BorderRadius.circular(8.0),
-        ),
-        child: InkWell(
-          onTap: onTap,
-          borderRadius: borderRadius ?? BorderRadius.circular(8.0),
-          child: Padding(
-            padding: padding ?? const EdgeInsets.all(12.0),
-            child: child,
+        // Lấy cấu hình scale theo breakpoint
+        final scale = ScaleConfig.forWidth(screenW);
+
+        // Card width thực tế (nếu không set maxWidth -> dùng c.maxWidth)
+        final double cardW =
+            maxWidth != null ? maxWidth!.clamp(260.0, screenW) : c.maxWidth;
+
+        // Tỉ lệ ảnh trong card
+        final double imgRatio = (imageRatio ?? scale.imageRatio).clamp(
+          0.18,
+          0.50,
+        );
+        final double imgW = cardW * imgRatio;
+        final double imgH = imgW / imageAspect;
+
+        return Container(
+          constraints: BoxConstraints(
+            maxWidth: cardW,
+            maxHeight: maxHeight ?? double.infinity,
           ),
-        ),
-      ),
-    );
-  }
-
-  // Static method để tạo Container Item
-  static Widget createContainerItem({
-    required Widget child,
-    double? width,
-    double? height,
-    EdgeInsetsGeometry? margin,
-    EdgeInsetsGeometry? padding,
-    Color? color,
-    Decoration? decoration,
-    VoidCallback? onTap,
-  }) {
-    return Container(
-      width: width,
-      height: height,
-      margin: margin ?? const EdgeInsets.symmetric(horizontal: 4.0),
-      padding: padding ?? const EdgeInsets.all(12.0),
-      decoration:
-          decoration ??
-          BoxDecoration(
-            color: color ?? Colors.grey[100],
-            borderRadius: BorderRadius.circular(8.0),
+          margin: EdgeInsets.symmetric(vertical: 6 * scale.k),
+          padding: EdgeInsets.all(12 * scale.k),
+          decoration: BoxDecoration(
+            color: Theme.of(context).colorScheme.primaryContainer,
+            borderRadius: BorderRadius.circular(12 * scale.k),
             boxShadow: [
               BoxShadow(
-                color: Colors.grey.withOpacity(0.2),
-                spreadRadius: 1,
-                blurRadius: 3,
-                offset: const Offset(0, 2),
+                color: Theme.of(
+                  context,
+                ).colorScheme.primaryContainer.withOpacity(0.1),
+                blurRadius: 12 * scale.k,
+                offset: Offset(4 * scale.k, 6 * scale.k),
               ),
             ],
           ),
-      child: InkWell(
-        onTap: onTap,
-        borderRadius: BorderRadius.circular(8.0),
-        child: child,
+          child: Row(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              // ---------- Poster ----------
+              ClipRRect(
+                borderRadius: BorderRadius.circular(12 * scale.k),
+                child: Image.network(
+                  imageUrl,
+                  width: imgW,
+                  height: imgH,
+                  fit: BoxFit.cover,
+                  errorBuilder:
+                      (_, __, ___) =>
+                          Icon(Icons.broken_image, size: 22 * scale.k),
+                ),
+              ),
+              SizedBox(width: 12 * scale.k),
+
+              // ---------- Details ----------
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    // Rating + Premium + Sneakshow
+                    Wrap(
+                      crossAxisAlignment: WrapCrossAlignment.center,
+                      spacing: 8 * scale.k,
+                      runSpacing: 6 * scale.k,
+                      children: [
+                        _ratingChip(rating, scale),
+                        if (isPremium)
+                          _pill('Premium', Colors.deepOrange, scale),
+                        if (isSneakshow) _pill('Sneakshow', Colors.pink, scale),
+                      ],
+                    ),
+                    SizedBox(height: 10 * scale.k),
+
+                    // Title
+                    Text(
+                      title,
+                      maxLines: 2,
+                      overflow: TextOverflow.ellipsis,
+                      style: TextStyle(
+                        fontSize: 16 * scale.k,
+                        color: Theme.of(context).colorScheme.primary,
+                        fontWeight: FontWeight.bold,
+                        height: 1.2,
+                      ),
+                    ),
+                    SizedBox(height: 6 * scale.k),
+
+                    // Year + Duration + Age
+                    Wrap(
+                      spacing: 10 * scale.k,
+                      runSpacing: 6 * scale.k,
+                      children: [
+                        _infoItem(
+                          context,
+                          Icons.calendar_today,
+                          year.toString(),
+                          scale,
+                        ),
+                        _infoItem(
+                          context,
+                          Icons.access_time,
+                          "$duration Minutes",
+                          scale,
+                        ),
+                        _ageBadge(ageRating, scale),
+                      ],
+                    ),
+                    SizedBox(height: 8 * scale.k),
+
+                    // Genres
+                    Text(
+                      genres.join(" | "),
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                      style: TextStyle(
+                        color: Theme.of(context).colorScheme.primary,
+                        fontSize: 12 * scale.k,
+                        height: 1.2,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ],
+          ),
+        );
+      },
+    );
+  }
+
+  // ---------- Sub widgets ----------
+  Widget _ratingChip(double rating, ScaleConfig s) {
+    return Container(
+      padding: EdgeInsets.symmetric(horizontal: 6 * s.k, vertical: 2.2 * s.k),
+      decoration: BoxDecoration(
+        color: Colors.orange,
+        borderRadius: BorderRadius.circular(12 * s.k),
+      ),
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Icon(Icons.star, color: Colors.white, size: 14 * s.k),
+          SizedBox(width: 3 * s.k),
+          Text(
+            rating.toStringAsFixed(rating == rating.roundToDouble() ? 0 : 1),
+            style: TextStyle(color: Colors.white, fontSize: 12 * s.k),
+          ),
+        ],
       ),
     );
   }
 
-  // Static method để tạo Movie Item giống poster phim
-  static Widget createMovieItem({
-    required String title,
-    required String genre,
-    required String rating,
-    required int reviewCount,
-    String ageRating = "13+",
-    Color ageRatingColor = Colors.orange,
-    double? width,
-    double? height,
-    VoidCallback? onTap,
-    String imageUrl = "",
-  }) {
+  Widget _pill(String text, Color color, ScaleConfig s) {
     return Container(
-      width: width ?? 180,
-      height: height ?? 280,
-      margin: const EdgeInsets.symmetric(horizontal: 8.0),
-      child: Card(
-        elevation: 8.0,
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(12.0),
-        ),
-        child: InkWell(
-          onTap: onTap,
-          borderRadius: BorderRadius.circular(12.0),
-          child: ClipRRect(
-            borderRadius: BorderRadius.circular(12.0),
-            child: Stack(
-              children: [
-                // Background image/placeholder
-                Container(
-                  width: double.infinity,
-                  height: double.infinity,
-                  decoration: BoxDecoration(
-                    gradient: LinearGradient(
-                      begin: Alignment.topCenter,
-                      end: Alignment.bottomCenter,
-                      colors: [Colors.grey[300]!, Colors.grey[600]!],
-                    ),
-                  ),
-                  child: const Icon(
-                    Icons.movie,
-                    size: 60,
-                    color: Colors.white70,
-                  ),
-                ),
+      padding: EdgeInsets.symmetric(horizontal: 8 * s.k, vertical: 2.2 * s.k),
+      decoration: BoxDecoration(
+        color: color,
+        borderRadius: BorderRadius.circular(12 * s.k),
+      ),
+      child: Text(
+        text,
+        style: TextStyle(color: Colors.white, fontSize: 12 * s.k),
+      ),
+    );
+  }
 
-                // Age rating badge
-                Positioned(
-                  top: 8,
-                  left: 8,
-                  child: Container(
-                    padding: const EdgeInsets.symmetric(
-                      horizontal: 8,
-                      vertical: 4,
-                    ),
-                    decoration: BoxDecoration(
-                      color: ageRatingColor,
-                      borderRadius: BorderRadius.circular(12),
-                    ),
-                    child: Text(
-                      ageRating,
-                      style: const TextStyle(
-                        color: Colors.white,
-                        fontWeight: FontWeight.bold,
-                        fontSize: 12,
-                      ),
-                    ),
-                  ),
-                ),
-
-                // Movie info overlay at bottom
-                Positioned(
-                  bottom: 0,
-                  left: 0,
-                  right: 0,
-                  child: Container(
-                    decoration: BoxDecoration(
-                      gradient: LinearGradient(
-                        begin: Alignment.topCenter,
-                        end: Alignment.bottomCenter,
-                        colors: [
-                          Colors.transparent,
-                          Colors.black.withOpacity(0.8),
-                        ],
-                      ),
-                    ),
-                    padding: const EdgeInsets.all(12.0),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        // Rating
-                        Row(
-                          children: [
-                            const Icon(
-                              Icons.star,
-                              color: Colors.orange,
-                              size: 16,
-                            ),
-                            const SizedBox(width: 4),
-                            Text(
-                              rating,
-                              style: const TextStyle(
-                                color: Colors.white,
-                                fontWeight: FontWeight.bold,
-                                fontSize: 14,
-                              ),
-                            ),
-                            const SizedBox(width: 4),
-                            Text(
-                              '($reviewCount đánh giá)',
-                              style: const TextStyle(
-                                color: Colors.white70,
-                                fontSize: 10,
-                              ),
-                            ),
-                          ],
-                        ),
-                        const SizedBox(height: 4),
-
-                        // Title
-                        Text(
-                          title,
-                          style: const TextStyle(
-                            color: Colors.white,
-                            fontWeight: FontWeight.bold,
-                            fontSize: 14,
-                          ),
-                          maxLines: 2,
-                          overflow: TextOverflow.ellipsis,
-                        ),
-
-                        // Genre
-                        Text(
-                          genre,
-                          style: const TextStyle(
-                            color: Colors.white70,
-                            fontSize: 12,
-                          ),
-                          maxLines: 1,
-                          overflow: TextOverflow.ellipsis,
-                        ),
-                      ],
-                    ),
-                  ),
-                ),
-              ],
-            ),
+  Widget _infoItem(
+    BuildContext context,
+    IconData icon,
+    String text,
+    ScaleConfig s,
+  ) {
+    return Row(
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        Icon(icon, size: 14 * s.k, color: const Color(0xFF666666)),
+        SizedBox(width: 4 * s.k),
+        Text(
+          text,
+          style: TextStyle(
+            color: Theme.of(context).colorScheme.primary,
+            fontSize: 12 * s.k,
           ),
+        ),
+      ],
+    );
+  }
+
+  Widget _ageBadge(String ageRating, ScaleConfig s) {
+    return Container(
+      padding: EdgeInsets.symmetric(horizontal: 6 * s.k, vertical: 2 * s.k),
+      decoration: BoxDecoration(
+        border: Border.all(color: Colors.redAccent),
+        borderRadius: BorderRadius.circular(4 * s.k),
+      ),
+      child: Text(
+        ageRating,
+        style: TextStyle(
+          color: Colors.redAccent,
+          fontSize: 12 * s.k,
+          fontWeight: FontWeight.bold,
         ),
       ),
     );
   }
 }
 
-// Example usage class
-class CustomListItemHorizontalExample extends StatelessWidget {
-  const CustomListItemHorizontalExample({Key? key}) : super(key: key);
+/// Helper scale config (public, không có dấu gạch dưới cho đỡ nhầm)
+class ScaleConfig {
+  /// Hệ số scale cho font/padding/radius/spacing…
+  final double k;
 
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(title: const Text('Custom List Item Horizontal')),
-      body: Column(
-        children: [
-          // Example with Card items
-          const Padding(
-            padding: EdgeInsets.all(16.0),
-            child: Text(
-              'Card Items Example:',
-              style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-            ),
-          ),
-          CustomListItemHorizontal(
-            items: [
-              CustomListItemHorizontal.createCardItem(
-                child: const Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Icon(Icons.home, size: 40, color: Colors.blue),
-                    SizedBox(height: 8),
-                    Text('Home'),
-                  ],
-                ),
-                width: 100,
-                height: 100,
-                onTap: () => print('Home tapped'),
-              ),
-              CustomListItemHorizontal.createCardItem(
-                child: const Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Icon(Icons.settings, size: 40, color: Colors.green),
-                    SizedBox(height: 8),
-                    Text('Settings'),
-                  ],
-                ),
-                width: 100,
-                height: 100,
-                onTap: () => print('Settings tapped'),
-              ),
-              CustomListItemHorizontal.createCardItem(
-                child: const Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Icon(Icons.person, size: 40, color: Colors.orange),
-                    SizedBox(height: 8),
-                    Text('Profile'),
-                  ],
-                ),
-                width: 100,
-                height: 100,
-                onTap: () => print('Profile tapped'),
-              ),
-              CustomListItemHorizontal.createCardItem(
-                child: const Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Icon(Icons.notifications, size: 40, color: Colors.red),
-                    SizedBox(height: 8),
-                    Text('Notifications'),
-                  ],
-                ),
-                width: 100,
-                height: 100,
-                onTap: () => print('Notifications tapped'),
-              ),
-            ],
-            spacing: 12.0,
-            padding: const EdgeInsets.symmetric(horizontal: 16.0),
-          ),
+  /// % bề rộng card dành cho ảnh (0.18 -> 0.50)
+  final double imageRatio;
 
-          const SizedBox(height: 32),
+  const ScaleConfig(this.k, this.imageRatio);
 
-          // Example with Container items
-          const Padding(
-            padding: EdgeInsets.all(16.0),
-            child: Text(
-              'Container Items Example:',
-              style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-            ),
-          ),
-          CustomListItemHorizontal(
-            items: [
-              CustomListItemHorizontal.createContainerItem(
-                child: const Text(
-                  'Item 1',
-                  style: TextStyle(fontWeight: FontWeight.bold),
-                ),
-                color: Colors.blue[100],
-                width: 80,
-                height: 60,
-                onTap: () => print('Container Item 1 tapped'),
-              ),
-              CustomListItemHorizontal.createContainerItem(
-                child: const Text(
-                  'Item 2',
-                  style: TextStyle(fontWeight: FontWeight.bold),
-                ),
-                color: Colors.green[100],
-                width: 80,
-                height: 60,
-                onTap: () => print('Container Item 2 tapped'),
-              ),
-              CustomListItemHorizontal.createContainerItem(
-                child: const Text(
-                  'Item 3',
-                  style: TextStyle(fontWeight: FontWeight.bold),
-                ),
-                color: Colors.orange[100],
-                width: 80,
-                height: 60,
-                onTap: () => print('Container Item 3 tapped'),
-              ),
-              CustomListItemHorizontal.createContainerItem(
-                child: const Text(
-                  'Item 4',
-                  style: TextStyle(fontWeight: FontWeight.bold),
-                ),
-                color: Colors.purple[100],
-                width: 80,
-                height: 60,
-                onTap: () => print('Container Item 4 tapped'),
-              ),
-              CustomListItemHorizontal.createContainerItem(
-                child: const Text(
-                  'Item 5',
-                  style: TextStyle(fontWeight: FontWeight.bold),
-                ),
-                color: Colors.red[100],
-                width: 80,
-                height: 60,
-                onTap: () => print('Container Item 5 tapped'),
-              ),
-            ],
-            spacing: 10.0,
-            padding: const EdgeInsets.symmetric(horizontal: 16.0),
-          ),
-
-          const SizedBox(height: 32),
-
-          // Example with reverse direction
-          const Padding(
-            padding: EdgeInsets.all(16.0),
-            child: Text(
-              'Reverse Direction Example:',
-              style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-            ),
-          ),
-          CustomListItemHorizontal(
-            reverse: true, // Hiển thị ngược từ phải sang trái
-            items: List.generate(
-              6,
-              (index) => CustomListItemHorizontal.createCardItem(
-                child: Text(
-                  '${index + 1}',
-                  style: const TextStyle(
-                    fontSize: 24,
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
-                width: 60,
-                height: 60,
-                color: Colors.primaries[index % Colors.primaries.length][100],
-                onTap: () => print('Reverse Item ${index + 1} tapped'),
-              ),
-            ),
-            spacing: 8.0,
-            padding: const EdgeInsets.symmetric(horizontal: 16.0),
-          ),
-        ],
-      ),
-    );
+  /// Tạo cấu hình theo độ rộng màn hình
+  factory ScaleConfig.forWidth(double w) {
+    if (w < 380) {
+      // Compact: mobile nhỏ
+      return const ScaleConfig(0.90, 0.32);
+    } else if (w < 768) {
+      // Medium: mobile lớn / tablet nhỏ
+      return const ScaleConfig(1.00, 0.28);
+    } else {
+      // Spacious: tablet / desktop
+      return const ScaleConfig(1.15, 0.22);
+    }
   }
 }

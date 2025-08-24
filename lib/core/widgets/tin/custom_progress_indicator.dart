@@ -200,7 +200,18 @@ class _OrbitVisual extends StatelessWidget {
           height: logo,
           child: ClipRRect(
             borderRadius: BorderRadius.circular(16),
-            child: Image.asset(imageAsset, fit: BoxFit.cover),
+            child:
+                imageAsset != null
+                    ? Image.asset(
+                      imageAsset!,
+                      errorBuilder:
+                          (context, error, stackTrace) => const Icon(
+                            Icons.movie,
+                            size: 64,
+                            color: Colors.white,
+                          ),
+                    )
+                    : const Icon(Icons.movie, size: 64, color: Colors.white),
           ),
         ),
 

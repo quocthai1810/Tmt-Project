@@ -1,28 +1,27 @@
 import 'dart:math' as math;
 import 'package:flutter/material.dart';
 
-/// OrbitLoadingLogo
-/// - Hai chấm đối diện (dualOpposite) quay đồng bộ
-/// - Trail mờ phía sau mỗi chấm
-/// - BẮT BUỘC truyền width/height (không còn 'size' vuông)
+/// OrbitLoadingLogo - phiên bản Overlay tự động
+/// - Gọi `OrbitLoadingLogo()` là hiện overlay phủ đen, khóa toàn bộ tương tác
+/// - Hai chấm đối diện nhau quay đồng bộ + trail mờ
+/// - Không cần truyền gì thêm; vẫn có option nếu muốn tùy chỉnh
 class OrbitLoadingLogo extends StatefulWidget {
   /// Ảnh (asset) hiển thị ở giữa
   final String imageAsset;
 
-  /// Kích thước tổng thể
-  final double width;
-  final double height;
+  /// Kích thước loader (vuông) ở giữa màn
+  final double size;
 
-  /// Bán kính quỹ đạo (từ tâm logo tới chấm). Nếu null -> auto theo cạnh ngắn.
+  /// Bán kính quỹ đạo (từ tâm logo tới chấm). Nếu null -> auto theo size
   final double? orbitRadius;
 
-  /// Kích thước logo ở giữa. Nếu null -> auto theo cạnh ngắn.
+  /// Kích thước logo ở giữa. Nếu null -> auto theo size
   final double? logoSize;
 
   /// Kích thước chấm quay
   final double dotSize;
 
-  /// Màu chấm quay (nếu null -> dùng Theme.of(context).colorScheme.primary)
+  /// Màu chấm quay (nếu null -> Theme.of(context).colorScheme.primary)
   final Color? dotColor;
 
   /// Thời gian hoàn thành 1 vòng
@@ -49,20 +48,25 @@ class OrbitLoadingLogo extends StatefulWidget {
   /// Vệt mờ sau cùng sẽ scale xuống còn bao nhiêu so với dotSize
   final double trailMinScale;
 
-  /// Bật chế độ 2 chấm đối diện nhau (0° & 180°) quay đồng bộ
+  /// Bật chế độ 2 chấm đối diện (0° & 180°) quay đồng bộ
   final bool dualOpposite;
+
+  /// Cấu hình overlay
+  final bool barrier; // có phủ đen & khóa tương tác không
+  final bool
+  barrierDismissible; // có cho chạm để tắt overlay không (mặc định: không)
+  final Color barrierColor;
 
   const OrbitLoadingLogo({
     super.key,
-    required this.imageAsset,
-    required this.width,
-    required this.height,
+    this.imageAsset = 'assets/img/logo.png',
+    this.size = 220,
     this.orbitRadius,
     this.logoSize,
     this.dotSize = 14,
     this.dotColor,
     this.period = const Duration(seconds: 2),
-    this.showOrbitRing = false, // tắt viền mặc định cho gọn
+    this.showOrbitRing = false,
     this.orbitStrokeWidth = 2.0,
     this.orbitColor = const Color(0x44FFFFFF),
     this.satelliteCount = 1,
@@ -70,7 +74,11 @@ class OrbitLoadingLogo extends StatefulWidget {
     this.trailGapDeg = 10,
     this.trailOpacityStart = 0.45,
     this.trailMinScale = 0.35,
-    this.dualOpposite = true, // mặc định 2 chấm đối diện
+    this.dualOpposite = true,
+    // overlay defaults
+    this.barrier = true,
+    this.barrierDismissible = false,
+    this.barrierColor = const Color(0x55000000),
   });
 
   @override
@@ -92,90 +100,156 @@ class _OrbitLoadingLogoState extends State<OrbitLoadingLogo>
 
   @override
   Widget build(BuildContext context) {
-    final w = widget.width;
-    final h = widget.height;
-    final shortest = math.min(w, h);
-
-    // Auto tính nếu không truyền
-    final radius = (widget.orbitRadius ?? shortest * 0.4).clamp(
-      0.0,
-      shortest / 2 - 2.0,
+    // loader visual
+    final visual = _OrbitVisual(
+      imageAsset: widget.imageAsset,
+      size: widget.size,
+      orbitRadius: widget.orbitRadius,
+      logoSize: widget.logoSize,
+      dotSize: widget.dotSize,
+      dotColor: widget.dotColor ?? Theme.of(context).colorScheme.primary,
+      period: widget.period,
+      showOrbitRing: widget.showOrbitRing,
+      orbitStrokeWidth: widget.orbitStrokeWidth,
+      orbitColor: widget.orbitColor,
+      satelliteCount: widget.satelliteCount,
+      trailCount: widget.trailCount,
+      trailGapDeg: widget.trailGapDeg,
+      trailOpacityStart: widget.trailOpacityStart,
+      trailMinScale: widget.trailMinScale,
+      dualOpposite: widget.dualOpposite,
+      controller: _ctrl,
     );
-    final logoSize = widget.logoSize ?? shortest * 0.64;
 
-    // Màu chấm lấy từ Theme nếu không override
-    final dotColor = widget.dotColor ?? Theme.of(context).colorScheme.primary;
-
-    return SizedBox(
-      width: w,
-      height: h,
-      child: Stack(
-        alignment: Alignment.center,
-        children: [
-          // Logo ở giữa
-          SizedBox(
-            width: logoSize,
-            height: logoSize,
-            child: ClipRRect(
-              borderRadius: BorderRadius.circular(16),
-              child: Image.asset(widget.imageAsset, fit: BoxFit.cover),
-            ),
+    // Overlay full-screen + khóa tương tác
+    return Stack(
+      fit: StackFit.expand,
+      children: [
+        if (widget.barrier)
+          ModalBarrier(
+            dismissible: widget.barrierDismissible,
+            color: widget.barrierColor,
           ),
-
-          // Vòng quỹ đạo mờ (tuỳ chọn)
-          if (widget.showOrbitRing)
-            CustomPaint(
-              size: Size(w, h),
-              painter: _OrbitRingPainter(
-                radius: radius.toDouble(),
-                strokeWidth: widget.orbitStrokeWidth,
-                color: widget.orbitColor,
-              ),
-            ),
-
-          // Vệ tinh + trail
-          AnimatedBuilder(
-            animation: _ctrl,
-            builder: (_, __) {
-              final baseAngle = _ctrl.value * 2 * math.pi; // 0 -> 2π
-
-              List<double> phases;
-              if (widget.dualOpposite) {
-                // Hai chấm đối diện nhau, cùng quay đồng bộ
-                phases = const [0, math.pi];
-              } else {
-                // Phân bố đều tuỳ theo satelliteCount
-                phases = List.generate(
-                  widget.satelliteCount,
-                  (i) => (2 * math.pi / widget.satelliteCount) * i,
-                );
-              }
-
-              return Stack(
-                alignment: Alignment.center,
-                children: [
-                  for (final p in phases)
-                    _OrbitDotWithTrail(
-                      angle: baseAngle + p,
-                      radius: radius.toDouble(),
-                      dotSize: widget.dotSize,
-                      color: dotColor,
-                      trailCount: widget.trailCount,
-                      trailGapRad: (widget.trailGapDeg * math.pi) / 180,
-                      trailOpacityStart: widget.trailOpacityStart,
-                      trailMinScale: widget.trailMinScale,
-                    ),
-                ],
-              );
-            },
+        Center(
+          child: SizedBox(
+            width: widget.size,
+            height: widget.size,
+            child: visual,
           ),
-        ],
-      ),
+        ),
+      ],
     );
   }
 }
 
-/// Vẽ vòng quỹ đạo (hình tròn)
+/// ============ Phần visual nguyên bản (không xử lý overlay) ============
+class _OrbitVisual extends StatelessWidget {
+  final String imageAsset;
+  final double size;
+  final double? orbitRadius;
+  final double? logoSize;
+  final double dotSize;
+  final Color dotColor;
+  final Duration period;
+  final bool showOrbitRing;
+  final double orbitStrokeWidth;
+  final Color orbitColor;
+  final int satelliteCount;
+  final int trailCount;
+  final double trailGapDeg;
+  final double trailOpacityStart;
+  final double trailMinScale;
+  final bool dualOpposite;
+  final AnimationController controller;
+
+  const _OrbitVisual({
+    required this.imageAsset,
+    required this.size,
+    required this.orbitRadius,
+    required this.logoSize,
+    required this.dotSize,
+    required this.dotColor,
+    required this.period,
+    required this.showOrbitRing,
+    required this.orbitStrokeWidth,
+    required this.orbitColor,
+    required this.satelliteCount,
+    required this.trailCount,
+    required this.trailGapDeg,
+    required this.trailOpacityStart,
+    required this.trailMinScale,
+    required this.dualOpposite,
+    required this.controller,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    final shortest = size;
+    final radius = (orbitRadius ?? shortest * 0.4).clamp(
+      0.0,
+      shortest / 2 - 2.0,
+    );
+    final logo = logoSize ?? shortest * 0.64;
+
+    return Stack(
+      alignment: Alignment.center,
+      children: [
+        // Logo giữa
+        SizedBox(
+          width: logo,
+          height: logo,
+          child: ClipRRect(
+            borderRadius: BorderRadius.circular(16),
+            child: Image.asset(imageAsset, fit: BoxFit.cover),
+          ),
+        ),
+
+        if (showOrbitRing)
+          CustomPaint(
+            size: Size(size, size),
+            painter: _OrbitRingPainter(
+              radius: radius.toDouble(),
+              strokeWidth: orbitStrokeWidth,
+              color: orbitColor,
+            ),
+          ),
+
+        AnimatedBuilder(
+          animation: controller,
+          builder: (_, __) {
+            final baseAngle = controller.value * 2 * math.pi;
+
+            final phases =
+                dualOpposite
+                    ? const [0.0, math.pi]
+                    : List<double>.generate(
+                      satelliteCount,
+                      (i) => (2 * math.pi / satelliteCount) * i,
+                    );
+
+            return Stack(
+              alignment: Alignment.center,
+              children: [
+                for (final p in phases)
+                  _OrbitDotWithTrail(
+                    angle: baseAngle + p,
+                    radius: radius.toDouble(),
+                    dotSize: dotSize,
+                    color: dotColor,
+                    trailCount: trailCount,
+                    trailGapRad: (trailGapDeg * math.pi) / 180,
+                    trailOpacityStart: trailOpacityStart,
+                    trailMinScale: trailMinScale,
+                  ),
+              ],
+            );
+          },
+        ),
+      ],
+    );
+  }
+}
+
 class _OrbitRingPainter extends CustomPainter {
   final double radius;
   final double strokeWidth;
@@ -205,16 +279,15 @@ class _OrbitRingPainter extends CustomPainter {
       old.color != color;
 }
 
-/// Một vệ tinh + chuỗi trail mờ phía sau
 class _OrbitDotWithTrail extends StatelessWidget {
-  final double angle; // góc hiện tại của vệ tinh
-  final double radius; // bán kính quỹ đạo
+  final double angle;
+  final double radius;
   final double dotSize;
   final Color color;
   final int trailCount;
-  final double trailGapRad; // khoảng cách góc giữa các vệt
-  final double trailOpacityStart; // alpha bắt đầu của vệt đầu tiên
-  final double trailMinScale; // scale nhỏ nhất của vệt cuối
+  final double trailGapRad;
+  final double trailOpacityStart;
+  final double trailMinScale;
 
   const _OrbitDotWithTrail({
     required this.angle,
@@ -229,16 +302,12 @@ class _OrbitDotWithTrail extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    // Khung bao quanh quỹ đạo để dễ đặt Align(topCenter)
     final orbitBox = Size(radius * 2, radius * 2);
 
-    // Tính các vệt trail lùi sau theo góc âm
     final trails = List.generate(trailCount, (i) {
       final t = (i + 1) / (trailCount + 1);
-      final opacity = trailOpacityStart * (1 - t); // giảm dần
-      final scale =
-          (1 - t) * (1 - trailMinScale) +
-          trailMinScale; // từ ~1 -> trailMinScale
+      final opacity = trailOpacityStart * (1 - t);
+      final scale = (1 - t) * (1 - trailMinScale) + trailMinScale;
       final trailAngle = angle - trailGapRad * (i + 1);
 
       return Transform.rotate(
@@ -264,7 +333,6 @@ class _OrbitDotWithTrail extends StatelessWidget {
       );
     });
 
-    // Chấm chính (đặt cuối để ở trên cùng)
     final mainDot = Transform.rotate(
       angle: angle,
       child: SizedBox(
@@ -291,7 +359,6 @@ class _OrbitDotWithTrail extends StatelessWidget {
   }
 }
 
-/// Chấm tròn có bóng mờ
 class _Dot extends StatelessWidget {
   final double size;
   final Color color;
@@ -305,69 +372,10 @@ class _Dot extends StatelessWidget {
       width: size,
       height: size,
       decoration: BoxDecoration(
-        color: color, // đã lấy theo theme ở trên nếu không override
+        color: color,
         shape: BoxShape.circle,
         boxShadow: shadow,
       ),
     );
   }
-}
-
-/// ===================================================================
-/// Helper: Gọi 1 phát là xong — show loader 3s rồi pushNamed sang route
-/// - Cấu hình cứng: ảnh, kích thước, tốc độ, dualOpposite, khóa tương tác
-/// - Log mỗi giây trong terminal
-/// ===================================================================
-Future<void> navigateWithOrbitLoaderNamed(
-  BuildContext context,
-  String routeName,
-) async {
-  final overlay = Overlay.of(context);
-  if (overlay == null) {
-    Navigator.of(context).pushNamed(routeName);
-    return;
-  }
-
-  final entry = OverlayEntry(
-    builder:
-        (ctx) => Stack(
-          children: [
-            const ModalBarrier(
-              dismissible: false, // khóa toàn bộ tương tác
-              color: Color(0x55000000), // nền mờ
-            ),
-            Center(
-              child: SizedBox(
-                width: 220,
-                height: 220,
-                child: OrbitLoadingLogo(
-                  imageAsset: 'assets/img/logo.png', // set cứng
-                  width: 220, // ✅ BẮT BUỘC
-                  height: 220, // ✅ BẮT BUỘC
-                  logoSize: 140,
-                  orbitRadius: 90,
-                  dotSize: 12,
-                  dualOpposite: true,
-                  trailCount: 10,
-                  trailGapDeg: 12,
-                  trailOpacityStart: 0.5,
-                  trailMinScale: 0.25,
-                  period: const Duration(seconds: 2),
-                  showOrbitRing: false, // khỏi thấy viền trắng
-                ),
-              ),
-            ),
-          ],
-        ),
-  );
-
-  overlay.insert(entry);
-
-  // Điều hướng NGAY, không đợi
-  Navigator.of(context).pushNamed(routeName);
-
-  // Gỡ overlay ở frame kế tiếp
-  WidgetsBinding.instance.addPostFrameCallback((_) {
-    entry.remove();
-  });
 }

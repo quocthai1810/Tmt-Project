@@ -13,62 +13,67 @@ class NewsPage extends StatefulWidget {
 }
 
 class _NewsPageState extends State<NewsPage> {
-  /// gọi hàm này để set time cho việc chặn đứng mọi hoạt động
-  /// khi sử dụng thì sẽ cho phép người dùng đó đợi ở thời gian được set: delay:
+  bool _loading = false;
+
+  Future<void> _pushWithLoader(String routeName) async {
+    if (_loading) return; // tránh double tap
+    setState(() => _loading = true);
+
+    try {
+      await Navigator.pushNamed(context, routeName);
+    } finally {
+      if (mounted) setState(() => _loading = false);
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
-    return Center(
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-        children: [
-          const Text("Đây là trang home"),
-          OrbitLoadingLogo(
-            // gọi khứa này theo form như này là xài như bth
-            imageAsset: 'assets/img/logo.png',
-            logoSize: 90,
-            dualOpposite: true,
-            orbitRadius: 70,
-            dotSize: 12,
-            trailCount: 10,
-            trailGapDeg: 12,
-            trailOpacityStart: 0.5,
-            trailMinScale: 0.25,
-            width: 100,
-            height: 120,
-            showOrbitRing: true,
+    return Stack(
+      children: [
+        Center(
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+            children: [
+              const Text("Đây là trang home"),
+
+              // Nếu muốn show demo loader nằm TRONG layout thì để dòng dưới.
+              // Còn overlay loader đã có ở cuối Stack nên không cần cái này.
+              // const OrbitLoadingLogo(),
+
+              // ✅ Nút điều hướng: bật overlay + push ngay
+              CustomButton(
+                text: "Nhấn để test Navigator sang trang test wid",
+                onPressed: () => _pushWithLoader(AppRouteNames.pageTestWid),
+                width: 300,
+              ),
+
+              CustomButton(
+                text: "Thử đi cưng",
+                onPressed: () => debugPrint("Anh vừa bấm đó nghen 😘"),
+                width: 150,
+                height: 25,
+              ),
+
+              CustomButton(
+                text: "Thử đi cưng",
+                onPressed: () {
+                  CustomToast.show(
+                    context,
+                    message: "nè bé",
+                    type: ToastType.success,
+                  );
+                  debugPrint("Anh vừa bấm đó nghen 😘");
+                },
+                width: 200,
+                height: 50,
+              ),
+            ],
           ),
-          // 🔥 nút này đã đổi onPressed sang _navigateWithLoader
-          CustomButton(
-            text: "Nhấn để test Navigator sang trang test wid",
-            onPressed:
-                () => navigateWithOrbitLoaderNamed(
-                  context,
-                  AppRouteNames.pageTestWid,
-                ),
-            width: 300,
-          ),
-          CustomButton(
-            text: "Thử đi cưng",
-            onPressed: () => debugPrint("Anh vừa bấm đó nghen 😘"),
-            width: 150,
-            height: 25,
-          ),
-          CustomButton(
-            text: "Thử đi cưng",
-            onPressed: () {
-              CustomToast.show(
-                context,
-                message: "nè bé",
-                type: ToastType.success,
-              );
-              debugPrint("Anh vừa bấm đó nghen 😘");
-            },
-            width: 200,
-            height: 50,
-          ),
-        ],
-      ),
+        ),
+
+        // 🛡️ Overlay loader: phủ đen + khóa mọi tương tác
+        if (_loading) const OrbitLoadingLogo(),
+      ],
     );
   }
 }

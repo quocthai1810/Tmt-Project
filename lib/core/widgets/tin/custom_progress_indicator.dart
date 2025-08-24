@@ -4,22 +4,26 @@ import 'package:flutter/material.dart';
 /// OrbitLoadingLogo
 /// - Hai chấm đối diện (dualOpposite) quay đồng bộ
 /// - Trail mờ phía sau mỗi chấm
-/// - Mặc định màu chấm = Theme.of(context).colorScheme.primary
+/// - BẮT BUỘC truyền width/height (không còn 'size' vuông)
 class OrbitLoadingLogo extends StatefulWidget {
   /// Ảnh (asset) hiển thị ở giữa
   final String imageAsset;
 
-  /// Kích thước tổng thể (vuông)
-  final double size;
+  /// Kích thước tổng thể
+  final double width;
+  final double height;
 
-  /// Bán kính quỹ đạo (từ tâm logo tới chấm)
-  final double orbitRadius;
+  /// Bán kính quỹ đạo (từ tâm logo tới chấm). Nếu null -> auto theo cạnh ngắn.
+  final double? orbitRadius;
 
-  /// Kích thước logo ở giữa
-  final double logoSize;
+  /// Kích thước logo ở giữa. Nếu null -> auto theo cạnh ngắn.
+  final double? logoSize;
 
   /// Kích thước chấm quay
   final double dotSize;
+
+  /// Màu chấm quay (nếu null -> dùng Theme.of(context).colorScheme.primary)
+  final Color? dotColor;
 
   /// Thời gian hoàn thành 1 vòng
   final Duration period;
@@ -51,10 +55,12 @@ class OrbitLoadingLogo extends StatefulWidget {
   const OrbitLoadingLogo({
     super.key,
     required this.imageAsset,
-    this.size = 220,
-    this.orbitRadius = 90,
-    this.logoSize = 140,
+    required this.width,
+    required this.height,
+    this.orbitRadius,
+    this.logoSize,
     this.dotSize = 14,
+    this.dotColor,
     this.period = const Duration(seconds: 2),
     this.showOrbitRing = false, // tắt viền mặc định cho gọn
     this.orbitStrokeWidth = 2.0,
@@ -86,20 +92,30 @@ class _OrbitLoadingLogoState extends State<OrbitLoadingLogo>
 
   @override
   Widget build(BuildContext context) {
-    final size = widget.size;
-    // Màu chấm lấy từ Theme
-    final dotColor = Theme.of(context).colorScheme.primary;
+    final w = widget.width;
+    final h = widget.height;
+    final shortest = math.min(w, h);
+
+    // Auto tính nếu không truyền
+    final radius = (widget.orbitRadius ?? shortest * 0.4).clamp(
+      0.0,
+      shortest / 2 - 2.0,
+    );
+    final logoSize = widget.logoSize ?? shortest * 0.64;
+
+    // Màu chấm lấy từ Theme nếu không override
+    final dotColor = widget.dotColor ?? Theme.of(context).colorScheme.primary;
 
     return SizedBox(
-      width: size,
-      height: size,
+      width: w,
+      height: h,
       child: Stack(
         alignment: Alignment.center,
         children: [
           // Logo ở giữa
           SizedBox(
-            width: widget.logoSize,
-            height: widget.logoSize,
+            width: logoSize,
+            height: logoSize,
             child: ClipRRect(
               borderRadius: BorderRadius.circular(16),
               child: Image.asset(widget.imageAsset, fit: BoxFit.cover),
@@ -109,9 +125,9 @@ class _OrbitLoadingLogoState extends State<OrbitLoadingLogo>
           // Vòng quỹ đạo mờ (tuỳ chọn)
           if (widget.showOrbitRing)
             CustomPaint(
-              size: Size(size, size),
+              size: Size(w, h),
               painter: _OrbitRingPainter(
-                radius: widget.orbitRadius,
+                radius: radius.toDouble(),
                 strokeWidth: widget.orbitStrokeWidth,
                 color: widget.orbitColor,
               ),
@@ -141,7 +157,7 @@ class _OrbitLoadingLogoState extends State<OrbitLoadingLogo>
                   for (final p in phases)
                     _OrbitDotWithTrail(
                       angle: baseAngle + p,
-                      radius: widget.orbitRadius,
+                      radius: radius.toDouble(),
                       dotSize: widget.dotSize,
                       color: dotColor,
                       trailCount: widget.trailCount,
@@ -159,7 +175,7 @@ class _OrbitLoadingLogoState extends State<OrbitLoadingLogo>
   }
 }
 
-/// Vẽ vòng quỹ đạo
+/// Vẽ vòng quỹ đạo (hình tròn)
 class _OrbitRingPainter extends CustomPainter {
   final double radius;
   final double strokeWidth;
@@ -289,7 +305,7 @@ class _Dot extends StatelessWidget {
       width: size,
       height: size,
       decoration: BoxDecoration(
-        color: color, // giữ đúng màu được truyền từ trên (đã lấy theo Theme)
+        color: color, // đã lấy theo theme ở trên nếu không override
         shape: BoxShape.circle,
         boxShadow: shadow,
       ),
@@ -297,39 +313,37 @@ class _Dot extends StatelessWidget {
   }
 }
 
-/// ===============================================================
-/// Helper: show OrbitLoadingLogo overlay trong [seconds] rồi pushNamed
-/// - Khóa toàn bộ tương tác bằng ModalBarrier
+/// ===================================================================
+/// Helper: Gọi 1 phát là xong — show loader 3s rồi pushNamed sang route
+/// - Cấu hình cứng: ảnh, kích thước, tốc độ, dualOpposite, khóa tương tác
 /// - Log mỗi giây trong terminal
-/// ===============================================================
+/// ===================================================================
 Future<void> navigateWithOrbitLoaderNamed(
-  BuildContext context, {
-  required String imageAsset,
-  required String routeName,
-  int seconds = 3,
-  bool dismissible = false,
-}) async {
+  BuildContext context,
+  String routeName,
+) async {
   final overlay = Overlay.of(context);
-  if (overlay == null) return;
+  if (overlay == null) {
+    Navigator.of(context).pushNamed(routeName);
+    return;
+  }
 
-  late OverlayEntry entry;
-  entry = OverlayEntry(
+  final entry = OverlayEntry(
     builder:
         (ctx) => Stack(
           children: [
-            // Barrier chặn mọi thao tác
-            ModalBarrier(
-              dismissible: dismissible,
-              color: const Color(0x88000000),
+            const ModalBarrier(
+              dismissible: false, // khóa toàn bộ tương tác
+              color: Color(0x55000000), // nền mờ
             ),
-            // Loader ở giữa
             Center(
               child: SizedBox(
                 width: 220,
                 height: 220,
                 child: OrbitLoadingLogo(
-                  imageAsset: imageAsset,
-                  size: 220,
+                  imageAsset: 'assets/img/logo.png', // set cứng
+                  width: 220, // ✅ BẮT BUỘC
+                  height: 220, // ✅ BẮT BUỘC
                   logoSize: 140,
                   orbitRadius: 90,
                   dotSize: 12,
@@ -349,18 +363,11 @@ Future<void> navigateWithOrbitLoaderNamed(
 
   overlay.insert(entry);
 
-  try {
-    for (int s = 1; s <= seconds; s++) {
-      await Future.delayed(const Duration(seconds: 1));
-      debugPrint('⏳ Đang đợi... ${s}s');
-    }
-  } finally {
-    entry.remove();
-  }
+  // Điều hướng NGAY, không đợi
+  Navigator.of(context).pushNamed(routeName);
 
-  final navigator = Navigator.of(context);
-  if (navigator.mounted) {
-    debugPrint('✅ Xong $seconds giây, điều hướng…');
-    navigator.pushNamed(routeName);
-  }
+  // Gỡ overlay ở frame kế tiếp
+  WidgetsBinding.instance.addPostFrameCallback((_) {
+    entry.remove();
+  });
 }

@@ -24,6 +24,7 @@ class _NewsPageState extends State<NewsPage> {
         children: [
           const Text("Đây là trang home"),
           OrbitLoadingLogo(
+            // gọi khứa này theo form như này là xài như bth
             imageAsset: 'assets/img/logo.png',
             logoSize: 90,
             dualOpposite: true,
@@ -33,7 +34,8 @@ class _NewsPageState extends State<NewsPage> {
             trailGapDeg: 12,
             trailOpacityStart: 0.5,
             trailMinScale: 0.25,
-            period: const Duration(seconds: 2),
+            width: 100,
+            height: 120,
             showOrbitRing: true,
           ),
           // 🔥 nút này đã đổi onPressed sang _navigateWithLoader
@@ -42,9 +44,7 @@ class _NewsPageState extends State<NewsPage> {
             onPressed:
                 () => navigateWithOrbitLoaderNamed(
                   context,
-                  imageAsset: 'assets/img/logo.png',
-                  routeName: AppRouteNames.pageTestWid,
-                  seconds: 3,
+                  AppRouteNames.pageTestWid,
                 ),
             width: 300,
           ),

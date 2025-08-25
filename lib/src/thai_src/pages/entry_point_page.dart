@@ -25,10 +25,6 @@ class _EntryPointPageState extends State<EntryPointPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: CustomAppbar(
-        listIcon: [CustomIcon(iconData: Icons.notifications, onPressed: () {})],
-        showLeading: false,
-      ),
       body: IndexedStack(index: initialIndex, children: listPages),
       bottomNavigationBar: CustomBottomnavbar(
         currentIndex: initialIndex,

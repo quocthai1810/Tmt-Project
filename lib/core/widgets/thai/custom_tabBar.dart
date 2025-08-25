@@ -78,8 +78,13 @@ class _CustomTabBarState extends State<CustomTabBar>
     return Column(
       children: [
         TabBar(
-          labelPadding: EdgeInsets.all(10),
           controller: _tabController,
+          isScrollable: widget.tabs.length > 4,
+          tabAlignment: widget.tabs.length > 4 ? TabAlignment.start : null,
+          labelPadding: const EdgeInsets.symmetric(
+            horizontal: 16,
+            vertical: 12,
+          ),
           tabs: widget.tabs,
           labelColor: selectedColor,
           unselectedLabelColor: unselectedColor,

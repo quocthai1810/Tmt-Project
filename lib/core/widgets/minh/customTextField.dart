@@ -44,7 +44,7 @@ class PinkShadowTextField extends StatelessWidget {
 /// Tự scale font/radius/padding theo kích thước thiết bị.
 class CustomTextField extends StatelessWidget {
   final String label;
-  final TextEditingController controller;
+  // final TextEditingController controller;
 
   /// --- Tùy chỉnh kích thước ---
   final double? width; // nếu set -> ưu tiên dùng luôn
@@ -65,7 +65,7 @@ class CustomTextField extends StatelessWidget {
   const CustomTextField({
     super.key,
     required this.label,
-    required this.controller,
+    // required this.controller,
     this.width,
     this.widthFraction,
     this.minWidth,
@@ -125,7 +125,7 @@ class CustomTextField extends StatelessWidget {
               ],
             ),
             child: TextField(
-              controller: controller,
+              // controller: controller,
               keyboardType: keyboardType,
               obscureText: obscureText,
               minLines: minLines,

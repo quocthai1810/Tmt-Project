@@ -8,10 +8,10 @@ class CustomRadioButton extends StatelessWidget {
     required this.options,
     required this.selectedValue,
     required this.onChanged,
-    this.selectedColor,
-    this.unselectedColor,
-    this.direction = Axis.horizontal,
+    this.images,
+    this.crossAxisCount = 2,
     this.spacing = 16,
+    this.onItemTap,
   });
 
   /// Danh sách lựa chọn: key là giá trị int gửi backend, value là label hiển thị(String)
@@ -20,73 +20,89 @@ class CustomRadioButton extends StatelessWidget {
   /// Giá trị đang chọn (int)
   final int selectedValue;
 
-  /// Callback khi chọn option mới (dùng setstate để thay đổi trạng thái hoặc state management)
+  /// Callback khi chọn option mới
   final OnRadioChanged onChanged;
 
-  /// Màu khi radio được chọn
-  final Color? selectedColor;
+  /// Background images cho mỗi option (key trùng với options)
+  final Map<int, String>? images;
 
-  /// Màu khi radio chưa được chọn
-  final Color? unselectedColor;
+  /// Grid columns
+  final int crossAxisCount;
 
-  /// Hướng hiển thị
-  final Axis direction;
-
-  /// Khoảng cách giữa các radio button
+  /// Khoảng cách giữa các item
   final double spacing;
+  /// chuyển trang khi nhấn vào bất kì thể loại nào!!
+    final void Function(int value)? onItemTap;
 
   @override
   Widget build(BuildContext context) {
-    final selectedClr = selectedColor ?? Theme.of(context).colorScheme.inversePrimary;
-    final unselectedClr =
-        unselectedColor ??
-        Theme.of(context).colorScheme.onSurface.withOpacity(0.6);
-
-    final children =
-        options.entries.map((entry) {
-          final isSelected = entry.key == selectedValue;
-
-          return InkWell(
-            onTap: () => onChanged(entry.key),
-            borderRadius: BorderRadius.circular(4),
-            child: Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-              child: Row(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  Radio<int>(
-                    value: entry.key,
+    
+    return GridView.builder(
+      shrinkWrap: true,
+      physics: const NeverScrollableScrollPhysics(),
+      itemCount: options.length,
+      gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+        crossAxisCount: crossAxisCount,
+        crossAxisSpacing: spacing,
+        mainAxisSpacing: spacing,
+        childAspectRatio: 2.0,
+      ),
+      itemBuilder: (context, index) {
+        final key = options.keys.elementAt(index);
+        final label = options[key]!;
+        final isSelected = key == selectedValue;
+        final image = images != null ? images![key] : null;
+        return GestureDetector(
+          onTap: () {
+            onChanged(key);
+            if (onItemTap != null) onItemTap!(key);
+          },
+          child: Container(
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(12),
+              image:
+                  image != null
+                      ? DecorationImage(
+                        image: NetworkImage(image),
+                        fit: BoxFit.cover,
+                        colorFilter: ColorFilter.mode(
+                          Colors.black.withOpacity(0.60),
+                          BlendMode.darken,
+                        ),
+                      )
+                      : null,
+            ),
+            child: Stack(
+              children: [
+                Positioned(
+                  left: 20,
+                  top: 22,
+                  child: Radio<int>(
+                    value: key,
                     groupValue: selectedValue,
+                    activeColor: Theme.of(context).colorScheme.primaryContainer,
                     onChanged: (val) => onChanged(val!),
-                    activeColor: selectedClr,
                   ),
-                  Text(
-                    entry.value,
+                ),
+                Center(
+                  child: Text(
+                    label,
                     style: TextStyle(
-                      color: isSelected ? selectedClr : unselectedClr,
+                      color:
+                          isSelected
+                              ? Theme.of(context).colorScheme.primaryContainer
+                              : Theme.of(context).colorScheme.inversePrimary,
                       fontWeight:
                           isSelected ? FontWeight.bold : FontWeight.normal,
+                      fontSize: isSelected ? 18 : 16,
                     ),
                   ),
-                ],
-              ),
+                ),
+              ],
             ),
-          );
-        }).toList();
-
-    return direction == Axis.horizontal
-        ? Wrap(spacing: spacing, children: children)
-        : Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children:
-              children
-                  .map(
-                    (child) => Padding(
-                      padding: EdgeInsets.only(bottom: spacing),
-                      child: child,
-                    ),
-                  )
-                  .toList(),
+          ),
         );
+      },
+    );
   }
 }

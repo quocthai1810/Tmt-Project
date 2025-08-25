@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:tmt_project/core/widgets/thai/custom_appBar.dart';
+import 'package:tmt_project/src/thai_src/widget/custom_profile.dart';
 
 class UserPage extends StatefulWidget {
   const UserPage({super.key});
@@ -10,6 +12,21 @@ class UserPage extends StatefulWidget {
 class _UserPageState extends State<UserPage> {
   @override
   Widget build(BuildContext context) {
-    return const Text("Đây là trang User");
+    return Scaffold(
+      appBar: CustomAppbar(
+        textTitle: "Thông tin cá nhân",
+        listIcon: [],
+        showLeading: false,
+      ),
+      body: Column(
+        children: [
+          CustomProfile(
+            username: "Nam Mỹ",
+            email: "nammy@gmail.com",
+            avatarUrl: "https://picsum.photos/id/1005/800/500",
+          ),
+        ],
+      ),
+    );
   }
 }

@@ -1,9 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:tmt_project/src/thai_src/pages/entry_point_page.dart';
+import 'package:tmt_project/src/thai_src/pages/filter_page.dart';
 import 'package:tmt_project/src/thai_src/pages/home_page.dart';
 import 'package:tmt_project/src/thai_src/pages/news_page.dart';
+import 'package:tmt_project/src/thai_src/pages/notification_icon.dart';
+import 'package:tmt_project/src/thai_src/pages/search_genre.dart';
+import 'package:tmt_project/src/thai_src/pages/showing_page.dart';
 import 'package:tmt_project/src/thai_src/pages/test_page.dart';
 import 'package:tmt_project/src/thai_src/pages/theater_page.dart';
+import 'package:tmt_project/src/thai_src/pages/upcoming_page.dart';
 import 'package:tmt_project/src/thai_src/pages/user_page.dart';
 
 class AppRouteNames {
@@ -13,6 +18,11 @@ class AppRouteNames {
   static const newsPage = '/news';
   static const userPage = '/user';
   static const testPage = '/test';
+  static const filterPage = '/filter';
+  static const searchGenrePage = '/searchGenre';
+  static const notificationPage = '/notification';
+  static const upcomingPage = '/upcoming';
+  static const showingPage = '/showing';
 }
 
 
@@ -24,4 +34,9 @@ final Map<String, WidgetBuilder> appRoutes = {
   AppRouteNames.newsPage: (context) => NewsPage(),
   AppRouteNames.userPage: (context) => UserPage(),
   AppRouteNames.testPage: (context) => TestPage(),
+  AppRouteNames.filterPage: (context) => FilterPage(),
+  AppRouteNames.searchGenrePage: (context) => SearchGenre(),
+  AppRouteNames.notificationPage: (context) => NotificationIcon(),
+  AppRouteNames.upcomingPage: (context) => UpcomingMoviesPage(),
+  AppRouteNames.showingPage: (context) => ShowingMoviesPage(),
 };

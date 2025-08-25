@@ -63,9 +63,9 @@ class _CustomToggleSwitchState extends State<CustomToggleSwitch>
   @override
   Widget build(BuildContext context) {
     final activeColor =
-        widget.activeColor ?? Theme.of(context).colorScheme.inversePrimary;
+        widget.activeColor ?? Theme.of(context).colorScheme.primary;
     final inactiveColor =
-        widget.inactiveColor ?? Theme.of(context).colorScheme.primaryContainer;
+        widget.inactiveColor ?? Theme.of(context).colorScheme.inversePrimary;
     final knobSize = widget.height - 6;
 
     return GestureDetector(

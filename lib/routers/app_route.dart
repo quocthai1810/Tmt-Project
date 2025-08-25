@@ -40,4 +40,4 @@ final Map<String, WidgetBuilder> appRoutes = {
   AppRouteNames.upcomingPage: (context) => UpcomingMoviesPage(),
   AppRouteNames.showingPage: (context) => ShowingMoviesPage(),
   AppRouteNames.pageTestWid: (context) => const PageTestWid(),
-};  
+};

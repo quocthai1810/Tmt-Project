@@ -127,12 +127,9 @@ class _HomePageState extends State<HomePage> {
                                               left: 8,
                                             ),
                                             child: CustomItemVertical(
-                                              idMovie: movie["ma_phim"] ?? 0,
-                                              imageUrl:
-                                                  movie["anh_poster"] ?? "",
-                                              title:
-                                                  movie["ten_phim"] ??
-                                                  "Không có tên",
+                                              idMovie: movie["ma_phim"],
+                                              imageUrl: movie["anh_poster"],
+                                              title: movie["ten_phim"],
                                               genre: movie["theloai"],
 
                                               ageLimit: movie["gioi_han_tuoi"],
@@ -140,12 +137,9 @@ class _HomePageState extends State<HomePage> {
                                                   movie["is_sneak_show"] ??
                                                   false,
                                               totalRating:
-                                                  (movie["tong_diem_danh_gia"] ??
-                                                          0)
-                                                      .toDouble(),
+                                                  (movie["tong_diem_danh_gia"]),
                                               reviews:
-                                                  movie["tong_so_danh_gia"] ??
-                                                  0,
+                                                  movie["tong_so_danh_gia"],
                                             ),
                                           );
                                         },
@@ -202,12 +196,9 @@ class _HomePageState extends State<HomePage> {
                                               left: 8,
                                             ),
                                             child: CustomItemVertical(
-                                              idMovie: movie["ma_phim"] ?? 0,
-                                              imageUrl:
-                                                  movie["anh_poster"] ?? "",
-                                              title:
-                                                  movie["ten_phim"] ??
-                                                  "Không có tên",
+                                              idMovie: movie["ma_phim"],
+                                              imageUrl: movie["anh_poster"],
+                                              title: movie["ten_phim"],
                                               genre: movie["theloai"],
 
                                               ageLimit: movie["gioi_han_tuoi"],
@@ -215,12 +206,10 @@ class _HomePageState extends State<HomePage> {
                                                   movie["is_sneak_show"] ??
                                                   false,
                                               totalRating:
-                                                  (movie["tong_diem_danh_gia"] ??
-                                                          0)
-                                                      .toDouble(),
+                                                  (movie["tong_diem_danh_gia"]),
+
                                               reviews:
-                                                  movie["tong_so_danh_gia"] ??
-                                                  0,
+                                                  movie["tong_so_danh_gia"],
                                             ),
                                           );
                                         },

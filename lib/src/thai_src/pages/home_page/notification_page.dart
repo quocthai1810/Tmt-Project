@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:tmt_project/core/widgets/thai/custom_appBar.dart';
 
-class NotificationIcon extends StatelessWidget {
-  const NotificationIcon({super.key});
+class NotificationPage extends StatelessWidget {
+  const NotificationPage({super.key});
 
   @override
   Widget build(BuildContext context) {

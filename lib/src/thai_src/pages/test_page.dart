@@ -1,14 +1,52 @@
 import 'package:flutter/material.dart';
 import 'package:tmt_project/core/widgets/thai/custom_appBar.dart';
+import 'package:tmt_project/core/widgets/tin/custom_loading.dart';
+import 'package:tmt_project/core/widgets/tin/overlay_loading.dart';
 
-class TestPage extends StatelessWidget {
+class TestPage extends StatefulWidget {
   const TestPage({super.key});
+
+  @override
+  State<TestPage> createState() => _TestPageState();
+}
+
+class _TestPageState extends State<TestPage> {
+  late bool isLoading;
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    isLoading = true;
+    Future.delayed(Duration(seconds: 4)).then(
+      (onValue) => setState(() {
+        isLoading = false;
+      }),
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: CustomAppbar(listIcon: [], showLeading: true),
-      body: Center(child: Text("Test thành công !!!"),)
+      // body: isLoading== true ? CustomLoading(width: 88, height: 88): Text("data"),
+      body: Column(
+        children: [
+          ElevatedButton(
+            onPressed: () {
+              OverlayLoading.show(context);
+              Future.delayed(Duration(seconds: 4));
+              OverlayLoading.hide();
+            },
+            child: Text("nhan vao"),
+          ),
+          ElevatedButton(
+            onPressed: () {
+              print("nhan vao di");
+            },
+            child: Text("print dang ki"),
+          ),
+        ],
+      ),
     );
   }
 }

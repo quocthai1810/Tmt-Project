@@ -1,14 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:tmt_project/src/thai_src/pages/entry_point_page.dart';
-import 'package:tmt_project/src/thai_src/pages/filter_page.dart';
-import 'package:tmt_project/src/thai_src/pages/home_page.dart';
+import 'package:tmt_project/src/thai_src/pages/home_page/filter_page.dart';
+import 'package:tmt_project/src/thai_src/pages/home_page/home_page.dart';
 import 'package:tmt_project/src/thai_src/pages/news_page.dart';
-import 'package:tmt_project/src/thai_src/pages/notification_icon.dart';
-import 'package:tmt_project/src/thai_src/pages/search_genre.dart';
-import 'package:tmt_project/src/thai_src/pages/showing_page.dart';
+import 'package:tmt_project/src/thai_src/pages/home_page/notification_page.dart';
+import 'package:tmt_project/src/thai_src/pages/home_page/search_genre.dart';
+import 'package:tmt_project/src/thai_src/pages/home_page/showing_page.dart';
 import 'package:tmt_project/src/thai_src/pages/test_page.dart';
 import 'package:tmt_project/src/thai_src/pages/theater_page.dart';
-import 'package:tmt_project/src/thai_src/pages/upcoming_page.dart';
+import 'package:tmt_project/src/thai_src/pages/home_page/upcoming_page.dart';
 import 'package:tmt_project/src/thai_src/pages/user_page.dart';
 import 'package:tmt_project/src/minh_src/page_test_wid.dart';
 
@@ -36,7 +36,7 @@ final Map<String, WidgetBuilder> appRoutes = {
   AppRouteNames.testPage: (context) => TestPage(),
   AppRouteNames.filterPage: (context) => FilterPage(),
   AppRouteNames.searchGenrePage: (context) => SearchGenre(),
-  AppRouteNames.notificationPage: (context) => NotificationIcon(),
+  AppRouteNames.notificationPage: (context) => NotificationPage(),
   AppRouteNames.upcomingPage: (context) => UpcomingMoviesPage(),
   AppRouteNames.showingPage: (context) => ShowingMoviesPage(),
   AppRouteNames.pageTestWid: (context) => const PageTestWid(),

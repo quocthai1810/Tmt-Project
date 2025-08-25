@@ -76,8 +76,22 @@ class CustomProfile extends StatelessWidget {
             "Notification",
             toggle_switch: CustomToggleSwitch(),
           ),
-          _buildMenuItem(context, Icons.lock, "Change Password"),
-          _buildMenuItem(context, Icons.confirmation_num, "My Ticket"),
+          _buildMenuItem(
+            context,
+            Icons.lock,
+            "Change Password",
+            onTap: () {
+              /// chuyển trang đổi pass
+            },
+          ),
+          _buildMenuItem(
+            context,
+            Icons.confirmation_num,
+            "My Ticket",
+            onTap: () {
+              /// chuyển trang đổi Ticket
+            },
+          ),
           const SizedBox(height: 20),
 
           /// More Section
@@ -86,8 +100,18 @@ class CustomProfile extends StatelessWidget {
             context,
             Icons.shield_moon_rounded,
             "Legal and Policies",
+            onTap: () {
+              /// chuyển trang đổi Legal
+            },
           ),
-          _buildMenuItem(context, Icons.info, "About Us"),
+          _buildMenuItem(
+            context,
+            Icons.info,
+            "About Us",
+            onTap: () {
+              /// chuyển trang đổi pass
+            },
+          ),
         ],
       ),
     );
@@ -114,34 +138,38 @@ class CustomProfile extends StatelessWidget {
     IconData icon,
     String title, {
     Widget? toggle_switch,
+    VoidCallback? onTap,
   }) {
-    return Container(
-      margin: EdgeInsets.symmetric(vertical: 8),
-      padding: EdgeInsets.symmetric(vertical: 12, horizontal: 12),
-      decoration: BoxDecoration(
-        color: Theme.of(context).colorScheme.primaryContainer,
-        borderRadius: BorderRadius.circular(12),
-      ),
-      child: Row(
-        children: [
-          Icon(icon, color: Theme.of(context).colorScheme.primary),
-          const SizedBox(width: 12),
-          Expanded(
-            child: Text(
-              title,
-              style: TextStyle(
-                fontSize: 14,
-                color: Theme.of(context).colorScheme.primary,
+    return GestureDetector(
+      onTap: onTap,
+      child: Container(
+        margin: EdgeInsets.symmetric(vertical: 8),
+        padding: EdgeInsets.symmetric(vertical: 12, horizontal: 12),
+        decoration: BoxDecoration(
+          color: Theme.of(context).colorScheme.primaryContainer,
+          borderRadius: BorderRadius.circular(12),
+        ),
+        child: Row(
+          children: [
+            Icon(icon, color: Theme.of(context).colorScheme.primary),
+            const SizedBox(width: 12),
+            Expanded(
+              child: Text(
+                title,
+                style: TextStyle(
+                  fontSize: 14,
+                  color: Theme.of(context).colorScheme.primary,
+                ),
               ),
             ),
-          ),
-          toggle_switch ??
-              Icon(
-                Icons.arrow_forward_ios,
-                color: Theme.of(context).colorScheme.primary,
-                size: 18,
-              ),
-        ],
+            toggle_switch ??
+                Icon(
+                  Icons.arrow_forward_ios,
+                  color: Theme.of(context).colorScheme.primary,
+                  size: 18,
+                ),
+          ],
+        ),
       ),
     );
   }

@@ -24,8 +24,8 @@ class _HomePageState extends State<HomePage> {
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback((_) {
       // Code này sẽ chạy sau khi build widget xong
-      Provider.of<MovieProvider>(context, listen: false).layPhimDangChieu();
-      Provider.of<MovieProvider>(context, listen: false).layPhimSapRaMat();
+      context.read<MovieProvider>().layPhimDangChieu();
+      context.read<MovieProvider>().layPhimSapRaMat();
     });
   }
 
@@ -86,7 +86,7 @@ class _HomePageState extends State<HomePage> {
 
                   /// Phim sắp ra mắt
                   Container(
-                    height: 360,
+                    height: 350,
                     color: Theme.of(context).colorScheme.inversePrimary,
                     child: Column(
                       children: [
@@ -161,7 +161,7 @@ class _HomePageState extends State<HomePage> {
                   ),
                   SizedBox(height: 32),
                   Container(
-                    height: 360,
+                    height: 350,
                     color: Theme.of(context).colorScheme.inversePrimary,
                     child: Column(
                       children: [

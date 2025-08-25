@@ -59,22 +59,45 @@ class _CustomItemVerticalState extends State<CustomItemVertical> {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               /// Poster phim
-              ClipRRect(
-                borderRadius: const BorderRadius.vertical(
-                  top: Radius.circular(12),
-                ),
-                child: Image.network(
-                  "https://image.tmdb.org/t/p/w500${widget.imageUrl}",
-                  height: 180,
-                  width: double.infinity,
-                  fit: BoxFit.cover,
-                  errorBuilder:
-                      (_, __, ___) => Container(
-                        height: 180,
-                        color: Colors.grey.shade300,
-                        child: const Icon(Icons.broken_image, size: 40),
+              Stack(
+                children: [
+                  ClipRRect(
+                    borderRadius: const BorderRadius.vertical(
+                      top: Radius.circular(12),
+                    ),
+                    child: Image.network(
+                      "https://image.tmdb.org/t/p/w500${widget.imageUrl}",
+                      height: 180,
+                      width: double.infinity,
+                      fit: BoxFit.cover,
+                      errorBuilder:
+                          (_, __, ___) => Container(
+                            height: 180,
+                            color: Colors.grey.shade300,
+                            child: const Icon(Icons.broken_image, size: 40),
+                          ),
+                    ),
+                  ),
+                  if (widget.isSneakShow) ...[
+                    Positioned(
+                      right: 0,
+                      child: Container(
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 6,
+                          vertical: 2,
+                        ),
+                        decoration: BoxDecoration(
+                          color: Colors.blue,
+                          borderRadius: BorderRadius.circular(6),
+                        ),
+                        child: const Text(
+                          "Sneak Show",
+                          style: TextStyle(color: Colors.white, fontSize: 14),
+                        ),
                       ),
-                ),
+                    ),
+                  ],
+                ],
               ),
 
               /// Nội dung
@@ -133,26 +156,6 @@ class _CustomItemVerticalState extends State<CustomItemVertical> {
                                 ),
                               ),
                             ),
-                            if (widget.isSneakShow) ...[
-                              const SizedBox(width: 6),
-                              Container(
-                                padding: const EdgeInsets.symmetric(
-                                  horizontal: 6,
-                                  vertical: 2,
-                                ),
-                                decoration: BoxDecoration(
-                                  color: Colors.orange,
-                                  borderRadius: BorderRadius.circular(6),
-                                ),
-                                child: const Text(
-                                  "Sneak Show",
-                                  style: TextStyle(
-                                    color: Colors.white,
-                                    fontSize: 11,
-                                  ),
-                                ),
-                              ),
-                            ],
                           ],
                         ),
 

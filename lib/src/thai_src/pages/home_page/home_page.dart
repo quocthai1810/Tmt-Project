@@ -35,8 +35,9 @@ class _HomePageState extends State<HomePage> {
   void initState() {
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      Provider.of<MovieProvider>(context, listen: false).layPhimDangChieu();
-      Provider.of<MovieProvider>(context, listen: false).layPhimSapRaMat();
+      // Code này sẽ chạy sau khi build widget xong
+      context.read<MovieProvider>().layPhimDangChieu();
+      context.read<MovieProvider>().layPhimSapRaMat();
     });
 
     _searchController.addListener(() {
@@ -256,14 +257,12 @@ class _HomePageState extends State<HomePage> {
               ),
             ],
           ),
-
-          /// nếu có chữ cái đầu tiên
+          /// Nếu có chữ cái đầu tiên khi nhập search
           if (showSearchResult)
             Container(
               color: Colors.white,
               child: Column(
                 children: [
-                  // giữ lại TextField cho nhập tiếp
                   SearchBarWidget(
                     controller: _searchController,
                     onFilterTap: () {
@@ -273,7 +272,6 @@ class _HomePageState extends State<HomePage> {
                       // xử lý search real-time
                     },
                   ),
-                  // TODO: hiển thị kết quả search thực tế
                   Expanded(
                     child: ListView(
                       padding: const EdgeInsets.all(16),
@@ -287,50 +285,44 @@ class _HomePageState extends State<HomePage> {
                           ),
                         ),
                         const SizedBox(height: 8),
+                        /// Actors horizontal list
                         SizedBox(
                           height: 90,
                           child: ListView.separated(
                             scrollDirection: Axis.horizontal,
-                            padding: const EdgeInsets.symmetric(
-                              horizontal: 16,
-                            ), // padding 2 bên
+                            padding:
+                                const EdgeInsets.symmetric(horizontal: 16),
                             itemCount: actors.length,
-                            separatorBuilder:
-                                (context, index) =>
-                                    const SizedBox(width: 16), // spacing ngang
                             itemBuilder: (context, index) {
                               final actor = actors[index];
-                              return _actorItem(
-                                actor["name"],
-                                actor["imageUrl"],
-                              );
+                              return _actorItem(actor["name"], actor["imageUrl"]);
                             },
+                            separatorBuilder: (context, index) =>
+                                const SizedBox(width: 16),
                           ),
                         ),
+
                         const SizedBox(height: 24),
+
                         Row(
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: [
+                          children: const [
                             Text(
-                              "Phim liên quan",
+                              "Movie Related",
                               style: TextStyle(
-                                color: Theme.of(context).colorScheme.primary,
-                                fontSize: 20,
+                                color: Colors.white,
+                                fontSize: 18,
                                 fontWeight: FontWeight.bold,
                               ),
                             ),
-                            OutlinedButton(
-                              onPressed: () {},
-                              child: Text(
-                                "Xem tất cả",
-                                style: TextStyle(
-                                  color: Theme.of(context).colorScheme.primary,
-                                ),
-                              ),
+                            Text(
+                              "See All",
+                              style: TextStyle(color: Colors.red),
                             ),
                           ],
                         ),
                         const SizedBox(height: 12),
+
                         _movieItem(
                           "Spider-Man No Way Home",
                           "2021",

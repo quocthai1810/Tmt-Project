@@ -2,13 +2,12 @@ import 'package:flutter/material.dart';
 
 enum ToastType { success, error, warning, confirm }
 
-/// sử dụng hàm này như sau:
+/// Cách dùng:
 /// CustomToast.show(
 ///   context,
 ///   message: "Lưu dữ liệu thành công!",
 ///   type: ToastType.success,
 /// );
-///
 class CustomToast {
   static void show(
     BuildContext context, {
@@ -27,11 +26,14 @@ class CustomToast {
     final overlay = Overlay.of(context);
     if (overlay == null) return;
 
-    final bgColor = backgroundColor ?? _getDefaultColor(type);
+    // ✅ Dùng ColorScheme từ Theme
+    final bgColor = backgroundColor ?? _getDefaultColor(context, type);
     final iconData = icon ?? _getDefaultIcon(type);
+
+    // Gợi ý: có thể dùng onPrimary/onSurface tuỳ bgColor, tạm để trắng cho rõ
     final defaultTextColor = textColor ?? Colors.white;
 
-    late OverlayEntry entry; // ⚠️ khai báo trước để gán callback
+    late OverlayEntry entry;
 
     entry = OverlayEntry(
       builder:
@@ -47,23 +49,25 @@ class CustomToast {
             boxShadow: boxShadow,
             duration: duration,
             animationDuration: animationDuration,
-            onRemove: () => entry.remove(), // 🆕 remove chuẩn
+            onRemove: () => entry.remove(),
           ),
     );
 
     overlay.insert(entry);
   }
 
-  static Color _getDefaultColor(ToastType type) {
+  // 🆕 Lấy màu mặc định theo Theme + loại toast
+  static Color _getDefaultColor(BuildContext context, ToastType type) {
+    final scheme = Theme.of(context).colorScheme;
     switch (type) {
       case ToastType.success:
-        return Colors.pink;
+        return scheme.primary; // yêu cầu của anh
       case ToastType.error:
-        return Colors.pink;
+        return scheme.error; // màu error theo theme
       case ToastType.warning:
-        return Colors.orange;
+        return scheme.tertiary; // tuỳ biến: cảnh báo
       case ToastType.confirm:
-        return Colors.blueAccent;
+        return scheme.primary; // xác nhận: màu chủ đạo
     }
   }
 
@@ -137,15 +141,18 @@ class _AnimatedToastOverlayState extends State<_AnimatedToastOverlay>
 
     Future.delayed(widget.duration, () async {
       await _controller.reverse();
-      if (mounted) widget.onRemove(); // ✅ remove đúng cách
+      if (mounted) widget.onRemove();
     });
   }
 
   @override
   Widget build(BuildContext context) {
+    final screen = MediaQuery.of(context).size;
+    final left = (screen.width - widget.width) / 2;
+
     return Positioned(
       bottom: 40,
-      left: MediaQuery.of(context).size.width / 2 - widget.width / 2,
+      left: left.clamp(8.0, screen.width - widget.width - 8.0), // an toàn mép
       child: Material(
         color: Colors.transparent,
         child: SlideTransition(
@@ -160,12 +167,12 @@ class _AnimatedToastOverlayState extends State<_AnimatedToastOverlay>
                 borderRadius: BorderRadius.circular(widget.borderRadius),
                 boxShadow:
                     widget.boxShadow ??
-                    [
-                      const BoxShadow(
+                    const [
+                      BoxShadow(
                         color: Colors.black38,
                         blurRadius: 10,
                         spreadRadius: 1,
-                        offset: Offset(4, 6), // 🔥 bóng nghiêng xuống phải
+                        offset: Offset(4, 6),
                       ),
                     ],
               ),
@@ -174,7 +181,9 @@ class _AnimatedToastOverlayState extends State<_AnimatedToastOverlay>
                 children: [
                   Icon(widget.icon, color: widget.textStyle.color),
                   const SizedBox(width: 12),
-                  Expanded(
+                  // Expanded để text dài không tràn
+                  ConstrainedBox(
+                    constraints: BoxConstraints(maxWidth: screen.width * 0.8),
                     child: Text(widget.message, style: widget.textStyle),
                   ),
                 ],

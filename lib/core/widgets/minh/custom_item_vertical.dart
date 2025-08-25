@@ -3,13 +3,13 @@ import 'package:flutter/material.dart';
 /// listItem dọc
 /// class này dùng để tạo một ListTile với viền hồng và bóng đổ
 /// nó sẽ có viền hồng và bóng đổ khi được focus
-class ListItemDoc extends StatefulWidget {
+class CustomItemVertical extends StatefulWidget {
   final String imageUrl;
   final String title;
   final String genre;
   final double rating;
 
-  const ListItemDoc({
+  const CustomItemVertical({
     super.key,
     required this.imageUrl,
     required this.title,
@@ -18,10 +18,10 @@ class ListItemDoc extends StatefulWidget {
   });
 
   @override
-  State<ListItemDoc> createState() => _ListItemDocState();
+  State<CustomItemVertical> createState() => _CustomItemVerticalState();
 }
 
-class _ListItemDocState extends State<ListItemDoc> {
+class _CustomItemVerticalState extends State<CustomItemVertical> {
   double _scale = 1.0;
 
   void _onTapDown(TapDownDetails details) {

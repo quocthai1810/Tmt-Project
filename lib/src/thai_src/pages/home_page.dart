@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:tmt_project/core/widgets/minh/customCarousel.dart';
-import 'package:tmt_project/core/widgets/minh/customListItem.dart';
+import 'package:tmt_project/core/widgets/minh/custom_item_vertical.dart';
 import 'package:tmt_project/core/widgets/thai/custom_appBar.dart';
 import 'package:tmt_project/routers/app_route.dart';
 import 'package:tmt_project/src/thai_src/widget/custom_search.dart';
@@ -125,7 +125,7 @@ class _HomePageState extends State<HomePage> {
                               final movie = upcomingMovies[index];
                               return Padding(
                                 padding: const EdgeInsets.only(left: 8),
-                                child: ListItemDoc(
+                                child: CustomItemVertical(
                                   imageUrl: movie["imageUrl"],
                                   title: movie["title"],
                                   genre: movie["genre"],
@@ -164,7 +164,7 @@ class _HomePageState extends State<HomePage> {
                               final movie = upcomingMovies[index];
                               return Padding(
                                 padding: const EdgeInsets.only(left: 8),
-                                child: ListItemDoc(
+                                child: CustomItemVertical(
                                   imageUrl: movie["imageUrl"],
                                   title: movie["title"],
                                   genre: movie["genre"],

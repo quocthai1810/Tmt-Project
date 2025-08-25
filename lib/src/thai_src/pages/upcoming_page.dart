@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:tmt_project/core/widgets/minh/customListItem.dart';
+import 'package:tmt_project/core/widgets/minh/custom_item_vertical.dart';
 import 'package:tmt_project/core/widgets/thai/custom_appBar.dart';
 import 'package:tmt_project/src/thai_src/widget/custom_search.dart';
 
@@ -61,7 +61,7 @@ class _UpcomingMoviesPageState extends State<UpcomingMoviesPage> {
               itemCount: movies.length,
               itemBuilder: (context, index) {
                 final movie = movies[index];
-                return ListItemDoc(
+                return CustomItemVertical(
                   imageUrl: movie["imageUrl"],
                   title: movie["title"],
                   genre: movie["genre"],

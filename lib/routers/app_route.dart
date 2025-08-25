@@ -10,6 +10,7 @@ import 'package:tmt_project/src/thai_src/pages/test_page.dart';
 import 'package:tmt_project/src/thai_src/pages/theater_page.dart';
 import 'package:tmt_project/src/thai_src/pages/upcoming_page.dart';
 import 'package:tmt_project/src/thai_src/pages/user_page.dart';
+import 'package:tmt_project/src/minh_src/page_test_wid.dart';
 
 class AppRouteNames {
   static const entryPointPage = '/entry';
@@ -23,9 +24,8 @@ class AppRouteNames {
   static const notificationPage = '/notification';
   static const upcomingPage = '/upcoming';
   static const showingPage = '/showing';
+  static const pageTestWid = '/pageTestWid';
 }
-
-
 
 final Map<String, WidgetBuilder> appRoutes = {
   AppRouteNames.entryPointPage: (context) => EntryPointPage(),
@@ -39,4 +39,5 @@ final Map<String, WidgetBuilder> appRoutes = {
   AppRouteNames.notificationPage: (context) => NotificationIcon(),
   AppRouteNames.upcomingPage: (context) => UpcomingMoviesPage(),
   AppRouteNames.showingPage: (context) => ShowingMoviesPage(),
-};
+  AppRouteNames.pageTestWid: (context) => const PageTestWid(),
+};  

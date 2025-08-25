@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:tmt_project/core/widgets/minh/customListItem.dart';
 import 'package:tmt_project/core/widgets/thai/custom_appBar.dart';
 import 'package:tmt_project/core/widgets/thai/custom_tabBar.dart';
+import 'package:tmt_project/core/widgets/tin/custom_item_horizontal.dart';
 import 'package:tmt_project/src/thai_src/widget/custom_search.dart';
 
 class SearchGenre extends StatefulWidget {
@@ -61,7 +61,7 @@ class _SearchGenreState extends State<SearchGenre> {
       itemBuilder: (context, index) {
         return Padding(
           padding: const EdgeInsets.only(left: 16, right: 16, top: 16),
-          child: ListItemNgang(
+          child: CustomItemHorizontal(
             imageUrl: "https://picsum.photos/id/1005/800/500",
             title: "Spider man",
             year: 2000,

@@ -1,11 +1,11 @@
 import 'dart:math' as math;
 import 'package:flutter/material.dart';
 
-/// OrbitLoadingLogo
+/// CustomLoading
 /// - Hai chấm đối diện (dualOpposite) quay đồng bộ
 /// - Trail mờ phía sau mỗi chấm
 /// - BẮT BUỘC truyền width/height (không còn 'size' vuông)
-class OrbitLoadingLogo extends StatefulWidget {
+class CustomLoading extends StatefulWidget {
   /// Ảnh (asset) hiển thị ở giữa
   final String imageAsset;
 
@@ -52,9 +52,9 @@ class OrbitLoadingLogo extends StatefulWidget {
   /// Bật chế độ 2 chấm đối diện nhau (0° & 180°) quay đồng bộ
   final bool dualOpposite;
 
-  const OrbitLoadingLogo({
+  const CustomLoading({
     super.key,
-    required this.imageAsset,
+    this.imageAsset = "assets/img/logo.png",
     required this.width,
     required this.height,
     this.orbitRadius,
@@ -74,10 +74,10 @@ class OrbitLoadingLogo extends StatefulWidget {
   });
 
   @override
-  State<OrbitLoadingLogo> createState() => _OrbitLoadingLogoState();
+  State<CustomLoading> createState() => _CustomLoadingState();
 }
 
-class _OrbitLoadingLogoState extends State<OrbitLoadingLogo>
+class _CustomLoadingState extends State<CustomLoading>
     with SingleTickerProviderStateMixin {
   late final AnimationController _ctrl = AnimationController(
     vsync: this,

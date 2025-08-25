@@ -20,8 +20,9 @@ class _HomePageState extends State<HomePage> {
           Text("Đây là trang home"),
           CustomButton(
             text: "Nhấn để test Navigator sang trang TestPage",
-            onPressed:
-                () => Navigator.pushNamed(context, AppRouteNames.testPage),
+            onPressed: () {
+              Navigator.pushNamed(context, AppRouteNames.testPage);
+            },
             width: 300,
           ),
         ],

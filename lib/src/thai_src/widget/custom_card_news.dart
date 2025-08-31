@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class CustomCardNews extends StatelessWidget {
   final String title;
@@ -13,15 +14,8 @@ class CustomCardNews extends StatelessWidget {
   final List<String> images;
 
   /// Danh sách ảnh (1 hoặc nhiều ảnh)
-  final int likes;
-
-  /// Lượt thích
-  final int comments;
-
-  /// Lượt bình luận
-  final int shares;
-
-  /// Lượt chia sẻ
+  final String description;
+  final String urlDetail;
 
   const CustomCardNews({
     super.key,
@@ -29,59 +23,80 @@ class CustomCardNews extends StatelessWidget {
     required this.channel,
     required this.timeAgo,
     required this.images,
-    this.likes = 0,
-    this.comments = 0,
-    this.shares = 0,
+    required this.description,
+    required this.urlDetail,
   });
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      margin: const EdgeInsets.symmetric(vertical: 12, horizontal: 16),
-      padding: const EdgeInsets.all(12),
-      decoration: BoxDecoration(
-        color: Theme.of(context).colorScheme.inversePrimary,
-        borderRadius: BorderRadius.circular(16),
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          /// Title & Info
-          Text(
-            title,
-            style: TextStyle(
-              fontSize: 20,
-              color: Theme.of(context).colorScheme.primary,
-              fontWeight: FontWeight.bold,
+    return InkWell(
+      onTap: () async {
+        final uri = Uri.parse(urlDetail);
+        try {
+          await launchUrl(uri);
+        } catch (e) {
+          print(e);
+        }
+      },
+      child: Container(
+        margin: const EdgeInsets.symmetric(vertical: 12, horizontal: 16),
+        padding: const EdgeInsets.all(12),
+        decoration: BoxDecoration(
+          color: Theme.of(context).colorScheme.primaryContainer,
+          borderRadius: BorderRadius.circular(16),
+        ),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            /// Title & Info
+            Text(
+              title,
+              maxLines: 2,
+              overflow: TextOverflow.ellipsis,
+              style: TextStyle(
+                fontSize: 22,
+                color: Theme.of(context).colorScheme.primary,
+                fontWeight: FontWeight.bold,
+              ),
             ),
-          ),
-          const SizedBox(height: 4),
-          Row(
-            children: [
-              Text(
-                channel,
-                style: TextStyle(
-                  fontSize: 14,
-                  color: Theme.of(context).colorScheme.primary,
-                  fontWeight: FontWeight.bold,
+            const SizedBox(height: 4),
+            Row(
+              children: [
+                Text(
+                  channel,
+                  style: TextStyle(
+                    fontSize: 14,
+                    color: Theme.of(context).colorScheme.primary,
+                    fontWeight: FontWeight.bold,
+                  ),
                 ),
-              ),
-              const SizedBox(width: 8),
-              Text(
-                timeAgo,
-                style: TextStyle(
-                  fontSize: 12,
-                  color: Theme.of(context).colorScheme.primary,
+                const SizedBox(width: 8),
+                Text(
+                  timeAgo,
+                  style: TextStyle(
+                    fontSize: 12,
+                    color: Theme.of(context).colorScheme.primary,
+                  ),
                 ),
+              ],
+            ),
+            const SizedBox(height: 10),
+            Text(
+              description,
+              maxLines: 3,
+              overflow: TextOverflow.ellipsis,
+              style: TextStyle(
+                fontSize: 14,
+                color: Theme.of(context).colorScheme.primary,
               ),
-            ],
-          ),
-          const SizedBox(height: 12),
+            ),
+            const SizedBox(height: 10),
 
-          /// Images layout
-          if (images.isNotEmpty) _buildImagesLayout(),
-          const SizedBox(height: 12),
-        ],
+            /// Images layout
+            if (images.isNotEmpty) _buildImagesLayout(),
+            const SizedBox(height: 12),
+          ],
+        ),
       ),
     );
   }

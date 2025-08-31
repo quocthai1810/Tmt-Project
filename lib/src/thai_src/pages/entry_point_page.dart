@@ -1,8 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import 'package:tmt_project/core/widgets/thai/custom_BottomNavBar.dart';
 import 'package:tmt_project/src/thai_src/pages/home_page/home_page.dart';
-import 'package:tmt_project/src/thai_src/pages/news_page.dart';
-import 'package:tmt_project/src/thai_src/pages/theater_page.dart';
+import 'package:tmt_project/src/thai_src/pages/new_page/news_page.dart';
+import 'package:tmt_project/src/thai_src/pages/theater_page/location.dart';
+import 'package:tmt_project/src/thai_src/pages/theater_page/theater_page.dart';
+import 'package:tmt_project/src/thai_src/pages/theater_page/theater_provider.dart';
 import 'package:tmt_project/src/thai_src/pages/user_page.dart';
 
 class EntryPointPage extends StatefulWidget {
@@ -20,6 +23,19 @@ class _EntryPointPageState extends State<EntryPointPage> {
     Icons.newspaper,
     Icons.person,
   ];
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) async {
+      // Code này sẽ chạy sau khi build widget xong
+      final location = await context.read<TheaterProvider>().getCurrentLocation();
+      Provider.of<TheaterProvider>(context, listen: false).viDo = location[0];
+      Provider.of<TheaterProvider>(context, listen: false).kinhDo = location[1];
+      context.read<TheaterProvider>().layRapGan();
+    });
+  }
+
   final listPages = [HomePage(), TheaterPage(), NewsPage(), UserPage()];
   @override
   Widget build(BuildContext context) {

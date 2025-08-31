@@ -1,13 +1,13 @@
 import 'package:flutter/material.dart';
 
-class SearchBarWidget extends StatelessWidget {
+class HomeSearchWidget extends StatelessWidget {
   final TextEditingController controller;
   final String hintText;
   final VoidCallback? onFilterTap;
   final VoidCallback? onChanged;
   final bool showFilter;
 
-  const SearchBarWidget({
+  const HomeSearchWidget({
     super.key,
     required this.controller,
     this.hintText = "Bạn muốn tìm phim nào?",
@@ -35,15 +35,20 @@ class SearchBarWidget extends StatelessWidget {
             ),
             const SizedBox(width: 8),
             Expanded(
-              child: TextField(
-                controller: controller,
-                style: TextStyle(color: Theme.of(context).colorScheme.primary),
-                decoration: InputDecoration(
-                  hintText: hintText,
-                  hintStyle: TextStyle(
-                    color: Theme.of(context).colorScheme.primary,
+              child: GestureDetector(
+                onTap: onChanged,
+                child: AbsorbPointer(
+                  child: TextField(
+                    controller: controller,
+                    style: TextStyle(color: Theme.of(context).colorScheme.primary),
+                    decoration: InputDecoration(
+                      hintText: hintText,
+                      hintStyle: TextStyle(
+                        color: Theme.of(context).colorScheme.primary,
+                      ),
+                      border: InputBorder.none,
+                    ),
                   ),
-                  border: InputBorder.none,
                 ),
               ),
             ),

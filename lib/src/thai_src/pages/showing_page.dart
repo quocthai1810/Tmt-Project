@@ -1,5 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import 'package:tmt_project/core/widgets/minh/custom_item_vertical.dart';
 import 'package:tmt_project/core/widgets/thai/custom_appBar.dart';
+import 'package:tmt_project/core/widgets/tin/custom_loading.dart';
+import 'package:tmt_project/src/thai_src/pages/home_page/home_page_provider.dart';
 import 'package:tmt_project/src/thai_src/widget/custom_search.dart';
 
 class ShowingMoviesPage extends StatefulWidget {
@@ -11,32 +15,22 @@ class ShowingMoviesPage extends StatefulWidget {
 
 class _ShowingMoviesPageState extends State<ShowingMoviesPage> {
   final TextEditingController _searchController = TextEditingController();
-  final List<Map<String, dynamic>> movies = [
-    {
-      "imageUrl": "https://picsum.photos/id/1027/800/500",
-      "title": "Spider Man",
-      "genre": ["Hành động"],
-      "rating": 4.5,
-    },
-    {
-      "imageUrl": "https://picsum.photos/id/1035/800/500",
-      "title": "Avengers",
-      "genre": ["Viễn tưởng"],
-      "rating": 4.8,
-    },
-    {
-      "imageUrl": "https://picsum.photos/id/1042/800/500",
-      "title": "Batman",
-      "genre": ["Tội phạm"],
-      "rating": 4.6,
-    },
-    {
-      "imageUrl": "https://picsum.photos/id/1051/800/500",
-      "title": "Iron Man",
-      "genre": ["Siêu anh hùng"],
-      "rating": 4.7,
-    },
-  ];
+  final List<Map<String, dynamic>> movies = [];
+  String showSearchResult = "";
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      // Code này sẽ chạy sau khi build widget xong
+      context.read<MovieProvider>().layPhimDangChieu();
+    });
+    _searchController.addListener(() {
+      setState(() {
+        showSearchResult = _searchController.text.trim().toLowerCase();
+      });
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -48,27 +42,82 @@ class _ShowingMoviesPageState extends State<ShowingMoviesPage> {
       body: Column(
         children: [
           SearchBarWidget(controller: _searchController, showFilter: false),
-          // Expanded(
-          //   child: GridView.builder(
-          //     padding: const EdgeInsets.all(12),
-          //     gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-          //       crossAxisCount: 2,
-          //       crossAxisSpacing: 12,
-          //       mainAxisSpacing: 12,
-          //       childAspectRatio: 0.67,
-          //     ),
-          //     itemCount: movies.length,
-          //     itemBuilder: (context, index) {
-          //       final movie = movies[index];
-          //       return CustomItemVertical(
-          //         imageUrl: movie["imageUrl"],
-          //         title: movie["title"],
-          //         genre: movie["genre"],
-          //         rating: movie["rating"],
-          //       );
-          //     },
-          //   ),
-          // ),
+          Expanded(
+            child: Consumer<MovieProvider>(
+              builder: (context, value, child) {
+                if (value.error != null) {
+                  return Center(child: Text(value.error ?? ""));
+                }
+
+                if (value.isLoading!) {
+                  return const CustomLoading(width: 88, height: 88);
+                }
+                // Danh sách phim gốc
+                final movies = value.moviesDangChieu;
+                // Nếu không có searchResult => hiển thị toàn bộ phim
+                List filteredMovies =
+                    showSearchResult.isEmpty
+                        ? movies
+                        : movies.where((movie) {
+                          final title =
+                              (movie["ten_phim"] ?? "")
+                                  .toString()
+                                  .toLowerCase();
+                          return title.contains(showSearchResult);
+                        }).toList();
+                if (filteredMovies.isEmpty) {
+                  return Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Image.asset("assets/img/searchResult.png"),
+                      SizedBox(height: 24),
+                      Text(
+                        "Rất tiếc, chúng tôi không tìm thấy phim :(",
+                        style: TextStyle(
+                          fontSize: 16,
+                          fontWeight: FontWeight.bold,
+                          color: Theme.of(context).colorScheme.primary,
+                        ),
+                      ),
+                      SizedBox(height: 8),
+                      Text(
+                        "Tìm phim theo Loại, Thể loại, Năm, v.v.",
+                        style: TextStyle(
+                          fontSize: 14,
+                          color: Theme.of(context).colorScheme.primary,
+                        ),
+                      ),
+                    ],
+                  );
+                }
+
+                return GridView.builder(
+                  padding: const EdgeInsets.all(12),
+                  gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                    crossAxisCount: 2,
+                    crossAxisSpacing: 12,
+                    mainAxisSpacing: 12,
+                    childAspectRatio: 0.67,
+                  ),
+                  itemCount: filteredMovies.length,
+                  itemBuilder: (context, index) {
+                    final movie = filteredMovies[index];
+                    return CustomItemVertical(
+                      idMovie: movie["ma_phim"] ?? 0,
+                      imageUrl: movie["anh_poster"] ?? "",
+                      title: movie["ten_phim"] ?? "Không có tên",
+                      genre: movie["theloai"],
+                      ageLimit: movie["gioi_han_tuoi"],
+                      isSneakShow: movie["is_sneak_show"] ?? false,
+                      totalRating:
+                          (movie["tong_diem_danh_gia"] ?? 0).toDouble(),
+                      reviews: movie["tong_so_danh_gia"] ?? 0,
+                    );
+                  },
+                );
+              },
+            ),
+          ),
         ],
       ),
     );

@@ -10,11 +10,14 @@ class CustomCardTheater extends StatelessWidget {
 
   const CustomCardTheater({
     super.key,
+
     /// tên rạp
     required this.title,
+
     /// địa chỉ rạp
     required this.address,
     required this.ward,
+
     /// logo hoặc ảnh rạp
     this.image,
     this.onTap, // nhấn vào card
@@ -67,6 +70,7 @@ class CustomCardTheater extends StatelessWidget {
                           style: TextStyle(
                             color: Theme.of(context).colorScheme.primary,
                             fontWeight: FontWeight.bold,
+                            fontSize: 18,
                           ),
                         ),
                         const SizedBox(height: 4),
@@ -75,6 +79,7 @@ class CustomCardTheater extends StatelessWidget {
                           maxLines: 1,
                           style: TextStyle(
                             color: Theme.of(context).colorScheme.primary,
+                            fontSize: 14,
                           ),
                         ),
                       ],
@@ -89,6 +94,7 @@ class CustomCardTheater extends StatelessWidget {
                         "Tìm đường",
                         style: TextStyle(
                           color: Theme.of(context).colorScheme.primary,
+                          fontWeight: FontWeight.bold,
                         ),
                       ),
                     ),
@@ -99,6 +105,7 @@ class CustomCardTheater extends StatelessWidget {
               Text(
                 address,
                 maxLines: 1,
+                overflow: TextOverflow.ellipsis,
                 style: TextStyle(color: Theme.of(context).colorScheme.primary),
               ),
             ],

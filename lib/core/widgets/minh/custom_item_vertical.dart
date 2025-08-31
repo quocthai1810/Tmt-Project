@@ -33,7 +33,7 @@ class _CustomItemVerticalState extends State<CustomItemVertical> {
   @override
   Widget build(BuildContext context) {
     final String genreText = widget.genre
-        .map((g) => g["ten_the_loai"] as String)
+        .map((g) => g["theLoai"]["ten_the_loai"] as String)
         .join(", ");
 
     final String ageLimitText = widget.ageLimit["ky_hieu"] ?? "P";

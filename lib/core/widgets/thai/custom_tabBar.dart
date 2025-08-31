@@ -19,6 +19,7 @@ class CustomTabBar extends StatefulWidget {
   final Color? unselectedColor;
 
   /// nếu muốn nhỏ lại thì định nghĩa kích thước(xét height, width), mặc định chiếm toàn bộ kích thước của cha
+  final int initialIndex;
   const CustomTabBar({
     Key? key,
     required this.tabs,
@@ -26,6 +27,7 @@ class CustomTabBar extends StatefulWidget {
     this.onTabChanged,
     this.selectedColor,
     this.unselectedColor,
+    this.initialIndex = 0,
   }) : assert(
          tabs.length == tabViews.length,
          "Tabs và TabViews phải bằng nhau thêm tab phải nhớ thêm tabViews",
@@ -44,10 +46,10 @@ class _CustomTabBarState extends State<CustomTabBar>
   void initState() {
     super.initState();
 
-    _tabController = TabController(length: widget.tabs.length, vsync: this);
-
+    _tabController = TabController(length: widget.tabs.length, vsync: this,initialIndex: widget.initialIndex,);
     _tabController.addListener(() {
       if (_tabController.indexIsChanging) {
+        print(_tabController.index);
         widget.onTabChanged?.call(_tabController.index);
       }
     });
@@ -58,8 +60,11 @@ class _CustomTabBarState extends State<CustomTabBar>
     super.didUpdateWidget(oldWidget);
     if (widget.tabs.length != oldWidget.tabs.length) {
       _tabController.dispose();
-      _tabController = TabController(length: widget.tabs.length, vsync: this);
+      _tabController = TabController(length: widget.tabs.length, vsync: this, initialIndex: widget.initialIndex,);
     }
+    if (widget.initialIndex != oldWidget.initialIndex) {
+    _tabController.animateTo(widget.initialIndex);
+  }
   }
 
   @override
@@ -86,6 +91,7 @@ class _CustomTabBarState extends State<CustomTabBar>
             vertical: 12,
           ),
           tabs: widget.tabs,
+          
           labelColor: selectedColor,
           unselectedLabelColor: unselectedColor,
           indicatorColor: selectedColor,

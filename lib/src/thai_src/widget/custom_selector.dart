@@ -3,9 +3,10 @@ import 'package:flutter/material.dart';
 class CustomSelector extends StatelessWidget {
   /// tên rạp
   final String names;
+
   /// hình ảnh
   final String images;
-  final isSelected;
+  final bool isSelected;
   final VoidCallback? onTap;
 
   const CustomSelector({
@@ -13,7 +14,7 @@ class CustomSelector extends StatelessWidget {
     required this.names,
     required this.images,
     this.isSelected = false,
-    this.onTap
+    this.onTap,
   });
 
   @override
@@ -46,7 +47,17 @@ class CustomSelector extends StatelessWidget {
                   clipBehavior: Clip.hardEdge,
                   child: ClipRRect(
                     borderRadius: BorderRadius.circular(4),
-                    child: Image.network(images, fit: BoxFit.cover),
+                    child: Image.network(
+                      images,
+                      fit: BoxFit.cover,
+                      errorBuilder: (context, error, stackTrace) {
+                        return const Icon(
+                          Icons.broken_image,
+                          size: 50,
+                          color: Colors.grey,
+                        );
+                      },
+                    ),
                   ),
                 ),
               ),

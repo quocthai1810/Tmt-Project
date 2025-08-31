@@ -1,11 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
 import 'package:tmt_project/core/widgets/thai/custom_BottomNavBar.dart';
 import 'package:tmt_project/src/thai_src/pages/home_page/home_page.dart';
 import 'package:tmt_project/src/thai_src/pages/new_page/news_page.dart';
-import 'package:tmt_project/src/thai_src/pages/theater_page/location.dart';
 import 'package:tmt_project/src/thai_src/pages/theater_page/theater_page.dart';
-import 'package:tmt_project/src/thai_src/pages/theater_page/theater_provider.dart';
 import 'package:tmt_project/src/thai_src/pages/user_page.dart';
 
 class EntryPointPage extends StatefulWidget {

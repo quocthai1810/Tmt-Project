@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:tmt_project/core/widgets/tin/overlay_loading.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 class CustomCardNews extends StatelessWidget {
@@ -29,11 +30,13 @@ class CustomCardNews extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return InkWell(
+    return GestureDetector(
       onTap: () async {
         final uri = Uri.parse(urlDetail);
         try {
+          OverlayLoading.show(context);
           await launchUrl(uri);
+          OverlayLoading.hide();
         } catch (e) {
           print(e);
         }

@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:tmt_project/core/widgets/tin/custom_item_horizontal.dart';
@@ -14,6 +16,8 @@ class SearchPage extends StatefulWidget {
 
 class _SearchPageState extends State<SearchPage> {
   final TextEditingController _searchController = TextEditingController();
+  Timer? _debounce; // ✅ thêm biến debounce
+
   String trangThaiToPhim(int? state) {
     switch (state) {
       case 1:
@@ -30,11 +34,11 @@ class _SearchPageState extends State<SearchPage> {
   Color trangThaiToColor(int? state) {
     switch (state) {
       case 1:
-        return Colors.orange; // Đang chiếu
+        return Colors.orange;
       case 2:
-        return Colors.green; // Sắp chiếu
+        return Colors.green;
       case 3:
-        return Colors.grey; // Ngưng chiếu
+        return Colors.grey;
       default:
         return Colors.blueGrey;
     }
@@ -44,17 +48,22 @@ class _SearchPageState extends State<SearchPage> {
   void initState() {
     super.initState();
 
-    // Khi user nhập -> cập nhật vào Provider
     _searchController.addListener(() {
-      context.read<SearchProvider>().updateSearch(_searchController.text);
+      // Hủy timer cũ nếu còn
+      if (_debounce?.isActive ?? false) _debounce!.cancel();
+
+      // Set lại timer mới
+      _debounce = Timer(const Duration(seconds: 1), () {
+        context.read<SearchProvider>().updateSearch(_searchController.text);
+      });
     });
   }
 
   @override
   void dispose() {
-    // TODO: implement dispose
-    super.dispose();
     _searchController.dispose();
+    _debounce?.cancel(); // hủy khi dispose
+    super.dispose();
   }
 
   @override

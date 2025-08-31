@@ -89,7 +89,7 @@ class _NewsPageState extends State<NewsPage> {
                       ),
                     ],
                   );
-                } 
+                }
 
                 /// tìm tin tức
                 final filterNews =
@@ -132,7 +132,7 @@ class _NewsPageState extends State<NewsPage> {
                         urlDetail: news["url_chi_tiet"],
                         channel:
                             (news["tac_gia"] ?? "").isEmpty
-                                ? "Ngày đăng tin"
+                                ? "Tin tức"
                                 : news["tac_gia"],
                         timeAgo: news["ngay_tao"] ?? "",
                         images: [news["hinh_anh"] ?? ""],

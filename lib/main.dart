@@ -1,13 +1,23 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:tmt_project/routers/app_route.dart';
+import 'package:tmt_project/src/thai_src/pages/filter_page/filter_provider.dart';
 import 'package:tmt_project/src/thai_src/pages/home_page/home_page_provider.dart';
+import 'package:tmt_project/src/thai_src/pages/new_page/new_provider.dart';
+import 'package:tmt_project/src/thai_src/pages/search_page/search_provider.dart';
+import 'package:tmt_project/src/thai_src/pages/theater_page/theater_provider.dart';
 
 void main() {
   runApp(
     MultiProvider(
       providers: [
         ChangeNotifierProvider<MovieProvider>(create: (_) => MovieProvider()),
+        ChangeNotifierProvider<NewsProvider>(create: (_) => NewsProvider()),
+        ChangeNotifierProvider<SearchProvider>(create: (_) => SearchProvider()),
+        ChangeNotifierProvider<FilterProvider>(create: (_) => FilterProvider()),
+        ChangeNotifierProvider<TheaterProvider>(
+          create: (_) => TheaterProvider(),
+        ),
       ],
       child: const MyApp(),
     ),

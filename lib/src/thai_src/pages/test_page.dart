@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:tmt_project/core/widgets/thai/custom_appBar.dart';
+import 'package:tmt_project/core/widgets/tin/custom_item_horizontal.dart';
 import 'package:tmt_project/core/widgets/tin/custom_loading.dart';
 import 'package:tmt_project/core/widgets/tin/overlay_loading.dart';
 
@@ -31,20 +32,29 @@ class _TestPageState extends State<TestPage> {
       // body: isLoading== true ? CustomLoading(width: 88, height: 88): Text("data"),
       body: Column(
         children: [
-          ElevatedButton(
-            onPressed: () {
-              OverlayLoading.show(context);
-              Future.delayed(Duration(seconds: 4));
-              OverlayLoading.hide();
-            },
-            child: Text("nhan vao"),
-          ),
-          ElevatedButton(
-            onPressed: () {
-              print("nhan vao di");
-            },
-            child: Text("print dang ki"),
-          ),
+          // ElevatedButton(
+          //   onPressed: () {
+          //     OverlayLoading.show(context);
+          //     Future.delayed(Duration(seconds: 4));
+          //     OverlayLoading.hide();
+          //   },
+          //   child: Text("nhan vao"),
+          // ),
+          // ElevatedButton(
+          //   onPressed: () {
+          //     print("nhan vao di");
+          //   },
+          //   child: Text("print dang ki"),
+          // ),
+          // CustomItemHorizontal(
+          //   imageUrl: "https://picsum.photos/id/1005/800/500",
+          //   title: "Spider-Man No Way Home",
+          //   stateMovies: "Đang chiếu",
+          //   duration: 148,
+          //   ageRating: "13+",
+          //   genres: ["Action", "Movie"],
+          //   rating: 4.5,
+          // ),
         ],
       ),
     );

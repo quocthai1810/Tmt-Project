@@ -22,8 +22,8 @@ class _UserPageState extends State<UserPage> {
       body: Column(
         children: [
           CustomProfile(
-            username: "Nam Mỹ",
-            email: "nammy@gmail.com",
+            username: "Quốc Thái",
+            email: "thai@gmail.com",
             avatarUrl: "https://picsum.photos/id/1005/800/500",
           ),
           CustomButton(text: "Logout", onPressed: () {}),

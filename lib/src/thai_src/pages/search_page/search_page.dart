@@ -51,6 +51,13 @@ class _SearchPageState extends State<SearchPage> {
   }
 
   @override
+  void dispose() {
+    // TODO: implement dispose
+    super.dispose();
+    _searchController.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
     return Scaffold(
       body: Column(
@@ -71,6 +78,7 @@ class _SearchPageState extends State<SearchPage> {
                 ),
                 TextButton(
                   onPressed: () {
+                    context.read<SearchProvider>().searchMovies = [];
                     Navigator.pop(context);
                   },
                   child: const Text("Cancel"),
@@ -128,20 +136,24 @@ class _SearchPageState extends State<SearchPage> {
                     return CustomItemHorizontal(
                       imageUrl: movie["anh_poster"] ?? "đang cập nhập",
                       title: movie["ten_phim"] ?? "chưa cập nhập",
-                      year: DateTime.parse(movie["ngay_phat_hanh"]).year.toString(),
+                      year:
+                          DateTime.parse(
+                            movie["ngay_phat_hanh"],
+                          ).year.toString(),
                       stateMovies: trangThaiToPhim(
                         movie["trang_thai_toan_cuc"],
                       ),
                       stateColor: trangThaiToColor(
                         movie["trang_thai_toan_cuc"],
                       ),
-                      duration: movie["thoi_luong"] ?? 0,
+                      duration: movie["thoi_luong_phut"] ?? 0,
                       ageRating: movie["gioi_han_tuoi"]["ky_hieu"].toString(),
                       genres:
                           movie["theloai"] != null
                               ? List<String>.from(
                                 movie["theloai"].map(
-                                  (tl) => tl["theLoai"]["ten_the_loai"].toString(),
+                                  (tl) =>
+                                      tl["theLoai"]["ten_the_loai"].toString(),
                                 ),
                               )
                               : [],

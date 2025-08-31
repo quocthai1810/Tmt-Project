@@ -30,7 +30,7 @@ class FilterProvider extends ChangeNotifier {
             item["ma_the_loai"] as int: item["ten_the_loai"] as String,
         };
       } else {
-        error = layDuLieu["message"];
+        error = "Không thể lấy dữ liệu";
       }
     } catch (e) {
       error = "Lỗi mạng !";
@@ -53,7 +53,7 @@ class FilterProvider extends ChangeNotifier {
         // lưu danh sách phim theo categoryId
         moviesByCategory[query] = data;
       } else {
-        error2 = layDuLieu["message"];
+        error2 = "Không thể lấy dữ liệu";
       }
     } catch (e) {
       error2 = "Lỗi mạng !";

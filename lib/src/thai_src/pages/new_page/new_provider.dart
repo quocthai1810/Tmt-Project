@@ -50,7 +50,7 @@ class NewsProvider extends ChangeNotifier {
         _hasMore = false;
       }
     } catch (e) {
-      _error = "Không thể tải dữ liệu: $e";
+      _error = "Không thể tải dữ liệu";
     } finally {
       _setLoading(false);
     }

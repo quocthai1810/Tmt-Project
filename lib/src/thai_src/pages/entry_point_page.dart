@@ -27,13 +27,6 @@ class _EntryPointPageState extends State<EntryPointPage> {
   void initState() {
     // TODO: implement initState
     super.initState();
-    WidgetsBinding.instance.addPostFrameCallback((_) async {
-      // Code này sẽ chạy sau khi build widget xong
-      final location = await context.read<TheaterProvider>().getCurrentLocation();
-      Provider.of<TheaterProvider>(context, listen: false).viDo = location[0];
-      Provider.of<TheaterProvider>(context, listen: false).kinhDo = location[1];
-      context.read<TheaterProvider>().layRapGan();
-    });
   }
 
   final listPages = [HomePage(), TheaterPage(), NewsPage(), UserPage()];

@@ -4,6 +4,9 @@ import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:tmt_project/core/constants/env.dart';
 import 'package:geolocator/geolocator.dart';
+import 'package:tmt_project/core/widgets/tin/custom_dialog.dart';
+import 'package:tmt_project/core/widgets/tin/overlay_loading.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class TheaterProvider extends ChangeNotifier {
   /// lấy dữ liệu tìm rạp phim
@@ -35,7 +38,7 @@ class TheaterProvider extends ChangeNotifier {
         final data = layDuLieu["data"];
         theaterMovies = data;
       } else {
-        error = layDuLieu["message"];
+        error = "Không thể lấy dữ liệu";
       }
     } catch (e) {
       error = "Lỗi mạng !";
@@ -55,7 +58,7 @@ class TheaterProvider extends ChangeNotifier {
         final data = layDuLieu["data"];
         theaterTakeAll = data;
       } else {
-        errorTakeAll = layDuLieu["message"];
+        errorTakeAll = "Không thể lấy dữ liệu";
       }
     } catch (e) {
       errorTakeAll = "Lỗi mạng !";
@@ -65,11 +68,60 @@ class TheaterProvider extends ChangeNotifier {
     notifyListeners();
   }
 
+  dynamic getCurrentLocation() async {
+    bool serviceEnabled;
+    LocationPermission permission;
+
+    // Check GPS
+    serviceEnabled = await Geolocator.isLocationServiceEnabled();
+    if (!serviceEnabled) {
+      errorNear = "Vui lòng bật GPS để tiếp tục";
+      notifyListeners();
+      return [null, null];
+    }
+
+    // Check permission
+    permission = await Geolocator.checkPermission();
+    if (permission == LocationPermission.denied) {
+      permission = await Geolocator.requestPermission();
+      if (permission == LocationPermission.denied) {
+        errorNear = "Ứng dụng cần quyền vị trí để hoạt động.";
+        notifyListeners();
+        return [null, null];
+      }
+    }
+
+    if (permission == LocationPermission.deniedForever) {
+      errorNear = "Bạn đã từ chối quyền vĩnh viễn. Hãy mở Cài đặt để bật lại.";
+      notifyListeners();
+      return [null, null];
+    }
+
+    // Bật loading
+    isLoadingNear = true;
+    errorNear = null;
+    notifyListeners();
+
+    try {
+      // Lấy vị trí với timeout
+      Position position = await Geolocator.getCurrentPosition(
+        desiredAccuracy: LocationAccuracy.high,
+      ).timeout(const Duration(seconds: 5));
+
+      return [position.latitude, position.longitude];
+    } catch (e) {
+      errorNear = "Không lấy được vị trí (timeout)";
+      isLoadingNear = false;
+      notifyListeners();
+      return [null, null];
+    }
+  }
+
   dynamic layRapGan() async {
     try {
-      isLoadingNear = true;
-      errorNear = null;
+      isLoadingNear = true; // 🔥 thêm dòng này để chắc chắn
       notifyListeners();
+
       final response = await http
           .post(
             Uri.parse("$apiTMT/RapPhim/LayRapPhimGanNhat"),
@@ -77,58 +129,84 @@ class TheaterProvider extends ChangeNotifier {
             body: jsonEncode({"vi_do": viDo, "kinh_do": kinhDo}),
           )
           .timeout(const Duration(seconds: 5));
+
       final layDuLieu = jsonDecode(response.body);
-      print(layDuLieu);
+
       if (response.statusCode == 200) {
-        final data = layDuLieu["data"];
-        print(data);
-        theaterNear = data;
+        theaterNear = layDuLieu["data"];
+        errorNear = null;
       } else {
-        errorNear = "Bạn cần cấp quyền vị trí";
-        print(errorNear);
+        errorNear = "Không thể lấy dữ liệu";
       }
     } catch (e) {
       errorNear = "Lỗi mạng !";
       print(e);
     }
+
     isLoadingNear = false;
     notifyListeners();
   }
 
-  dynamic getCurrentLocation() async {
+  Future<void> moBanDoChiDuong(
+    BuildContext context,
+    double rapViDo,
+    double rapKinhDo,
+  ) async {
     bool serviceEnabled;
     LocationPermission permission;
 
-    // Kiểm tra dịch vụ GPS đã bật chưa
+    // Kiểm tra GPS bật chưa
     serviceEnabled = await Geolocator.isLocationServiceEnabled();
     if (!serviceEnabled) {
-      print("Dịch vụ định vị chưa được bật!");
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(SnackBar(content: Text("Vui lòng bật GPS để tiếp tục")));
       return;
     }
 
-    // Xin quyền
+    // Kiểm tra quyền
     permission = await Geolocator.checkPermission();
     if (permission == LocationPermission.denied) {
       permission = await Geolocator.requestPermission();
       if (permission == LocationPermission.denied) {
-        print("Người dùng từ chối quyền vị trí");
-        return [null, null];
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text("Ứng dụng cần quyền vị trí để hoạt động.")),
+        );
+        return;
       }
     }
 
     if (permission == LocationPermission.deniedForever) {
-      print("Người dùng từ chối vĩnh viễn quyền vị trí");
-      return [null, null];
+      // Từ chối vĩnh viễn -> mở cài đặt
+      showCustomDialog(
+        context,
+        title: "Cần quyền vị trí",
+        content:
+            "Bạn đã từ chối quyền vĩnh viễn. Vui lòng mở cài đặt để cấp lại quyền.",
+        confirmText: "Mở Cài đặt",
+        cancelText: "Đóng",
+        isCancel: true,
+        onConfirm: () {
+          Geolocator.openAppSettings();
+        },
+      );
+      return;
     }
-    isLoadingNear = true;
-    errorNear = null;
-    notifyListeners();
-    // Lấy tọa độ hiện tại
+    OverlayLoading.show(context);
+    // Nếu đã có quyền thì lấy vị trí hiện tại
     Position position = await Geolocator.getCurrentPosition(
       desiredAccuracy: LocationAccuracy.high,
     );
 
-    return [position.latitude, position.longitude];
-    // print("Latitude: ${position.latitude}, Longitude: ${position.longitude}");
+    final double myLat = position.latitude;
+    final double myLng = position.longitude;
+
+    // Link Google Maps chỉ đường
+    final Uri googleMapsUrl = Uri.parse(
+      "https://www.google.com/maps/dir/?api=1&origin=$myLat,$myLng&destination=$rapViDo,$rapKinhDo&travelmode=driving",
+    );
+
+    await launchUrl(googleMapsUrl, mode: LaunchMode.externalApplication);
+    OverlayLoading.hide();
   }
 }

@@ -136,30 +136,7 @@ class CustomItemHorizontal extends StatelessWidget {
                         fontSize: 14,
                       ),
                     ),
-                  ],
-                ),
-
-                const SizedBox(height: 4),
-
-                // Duration + Age
-                Row(
-                  children: [
-                    Icon(
-                      Icons.access_time,
-                      size: 16,
-                      color: Theme.of(context).colorScheme.primary,
-                    ),
-                    const SizedBox(width: 8),
-                    Text(
-                      "$duration Phút",
-                      maxLines: 1,
-                      overflow: TextOverflow.ellipsis,
-                      style: TextStyle(
-                        color: Theme.of(context).colorScheme.primary,
-                        fontSize: 14,
-                      ),
-                    ),
-                    const SizedBox(width: 8),
+                    SizedBox(width: 8),
                     Container(
                       padding: const EdgeInsets.symmetric(
                         horizontal: 8,
@@ -178,6 +155,31 @@ class CustomItemHorizontal extends StatelessWidget {
                         ),
                       ),
                     ),
+                  ],
+                ),
+
+                const SizedBox(height: 4),
+
+                // Duration + Age
+                Row(
+                  children: [
+                    Icon(
+                      Icons.access_time,
+                      size: 16,
+                      color: Theme.of(context).colorScheme.primary,
+                    ),
+                    const SizedBox(width: 8),
+                    Text(
+                      duration!=0 ? "$duration Phút":"Chưa cập nhập",
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                      style: TextStyle(
+                        color: Theme.of(context).colorScheme.primary,
+                        fontSize: 14,
+                      ),
+                    ),
+                    
+                    
                   ],
                 ),
                 const SizedBox(height: 4),

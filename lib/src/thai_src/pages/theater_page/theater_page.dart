@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:geolocator/geolocator.dart';
 import 'package:provider/provider.dart';
 import 'package:tmt_project/core/widgets/thai/custom_appBar.dart';
 import 'package:tmt_project/core/widgets/tin/custom_loading.dart';
@@ -117,39 +118,69 @@ class _TheaterPageState extends State<TheaterPage> {
                             height: 100,
                             child: Row(
                               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                              children:
-                                  provider.theaterMovies.asMap().entries.map((
-                                    entry,
-                                  ) {
-                                    final index = entry.key;
-                                    final theater = entry.value;
-                                    final theaterName = theater["ten_he_thong"];
-                                    final theaterId = theater["ma_he_thong"];
-                                    return GestureDetector(
-                                      onTap: () {
-                                        setState(() {
-                                          selectedBrand = index;
-                                          selectedCinema = theaterName ?? "";
-                                        });
-                                        final theaterId =
-                                            theater["ma_he_thong"];
-                                        if (theaterId != null) {
-                                          context
-                                              .read<TheaterProvider>()
-                                              .layTatCaRapPhim(theaterId);
-                                        } else {
-                                          debugPrint(
-                                            "Không tìm thấy id trong rap phim",
-                                          );
-                                        }
-                                      },
-                                      child: CustomSelector(
-                                        names: theaterName,
-                                        images: brandLogos[theaterId] ?? "",
-                                        isSelected: selectedBrand == index,
-                                      ),
-                                    );
-                                  }).toList(),
+                              children: [
+                                // 👉 Thêm "Rạp gần bạn" ở cuối
+                                GestureDetector(
+                                  onTap: () async {
+                                    if (provider.isLoadingNear)
+                                      return; // đang chạy thì bỏ
+
+                                    setState(() {
+                                      selectedBrand = -1;
+                                      selectedCinema = "Rạp gần bạn";
+                                    });
+
+                                    final location =
+                                        await context
+                                            .read<TheaterProvider>()
+                                            .getCurrentLocation();
+                                    if (location[0] != null &&
+                                        location[1] != null) {
+                                      provider.viDo = location[0];
+                                      provider.kinhDo = location[1];
+                                      await provider.layRapGan();
+                                    }
+                                  },
+                                  child: CustomSelector(
+                                    names: "Gần bạn",
+                                    images:
+                                        "https://cdn-icons-png.flaticon.com/512/854/854894.png", // icon location
+                                    isSelected: selectedBrand == -1,
+                                  ),
+                                ),
+                                // Các hệ thống rạp từ provider
+                                ...provider.theaterMovies.asMap().entries.map((
+                                  entry,
+                                ) {
+                                  final index = entry.key;
+                                  final theater = entry.value;
+                                  final theaterName = theater["ten_he_thong"];
+                                  final theaterId = theater["ma_he_thong"];
+                                  return GestureDetector(
+                                    onTap: () {
+                                      setState(() {
+                                        selectedBrand = index;
+                                        selectedCinema = theaterName ?? "";
+                                      });
+                                      final theaterId = theater["ma_he_thong"];
+                                      if (theaterId != null) {
+                                        context
+                                            .read<TheaterProvider>()
+                                            .layTatCaRapPhim(theaterId);
+                                      } else {
+                                        debugPrint(
+                                          "Không tìm thấy id trong rap phim",
+                                        );
+                                      }
+                                    },
+                                    child: CustomSelector(
+                                      names: theaterName,
+                                      images: brandLogos[theaterId] ?? "",
+                                      isSelected: selectedBrand == index,
+                                    ),
+                                  );
+                                }),
+                              ],
                             ),
                           )
                       : const CustomLoading(width: 88, height: 88);
@@ -159,17 +190,89 @@ class _TheaterPageState extends State<TheaterPage> {
           ),
           SliverToBoxAdapter(child: SizedBox(height: 24)),
           // Danh sách rạp phim
+          // Danh sách rạp phim (theo brand hoặc gần bạn)
           SliverToBoxAdapter(
             child: Container(
               color: Theme.of(context).colorScheme.inversePrimary,
               child: Column(
                 children: [
                   CustomSectionHeader(
-                    title: "Rạp phim: $selectedCinema",
+                    title:
+                        selectedBrand == -1
+                            ? "Rạp chiếu gần bạn"
+                            : "Rạp phim: $selectedCinema",
                     isTap: false,
                   ),
                   Consumer<TheaterProvider>(
                     builder: (context, provider, child) {
+                      // Nếu chọn "Gần bạn"
+                      if (selectedBrand == -1) {
+                        if (provider.errorNear != null) {
+                          return Column(
+                            children: [
+                              Text(provider.errorNear!),
+                              const SizedBox(height: 8),
+                              if (provider.errorNear!.contains("Cài đặt"))
+                                OutlinedButton(
+                                  onPressed: () {
+                                    Geolocator.openAppSettings();
+                                  },
+                                  child: const Text("Mở Cài đặt"),
+                                )
+                              else
+                                OutlinedButton(
+                                  onPressed: () async {
+                                    final location =
+                                        await context
+                                            .read<TheaterProvider>()
+                                            .getCurrentLocation();
+                                    if (location[0] != null &&
+                                        location[1] != null) {
+                                      provider.viDo = location[0];
+                                      provider.kinhDo = location[1];
+                                      provider.layRapGan();
+                                    }
+                                  },
+                                  child: const Text("Cấp quyền"),
+                                ),
+                            ],
+                          );
+                        }
+
+                        if (provider.isLoadingNear == true) {
+                          return const CustomLoading(width: 88, height: 88);
+                        }
+
+                        if (provider.theaterNear.isEmpty) {
+                          return const Text("Không có rạp phim nào!!");
+                        }
+
+                        return Column(
+                          children:
+                              provider.theaterNear.map((theater) {
+                                final theaterId = theater["ma_he_thong"];
+                                return CustomCardTheater(
+                                  title: theater["ten_rap"] ?? "",
+                                  address: theater["dia_chi"] ?? "",
+                                  ward: getDistrict(theater["dia_chi"] ?? ""),
+                                  image: brandLogos[theaterId] ?? "",
+                                  onTap: () {},
+                                  onDirectionTap: () {
+                                    // chỉ đường
+                                    context
+                                        .read<TheaterProvider>()
+                                        .moBanDoChiDuong(
+                                          context,
+                                          theater["vi_do"],
+                                          theater["kinh_do"],
+                                        );
+                                  },
+                                );
+                              }).toList(),
+                        );
+                      }
+
+                      // Nếu chọn thương hiệu cụ thể
                       if (provider.errorTakeAll != null) {
                         return Center(child: Text(provider.errorTakeAll!));
                       }
@@ -179,6 +282,7 @@ class _TheaterPageState extends State<TheaterPage> {
                       if (provider.theaterTakeAll.isEmpty) {
                         return const Text("Không có rạp phim nào!!");
                       }
+
                       return Column(
                         children:
                             provider.theaterTakeAll.map((theater) {
@@ -191,70 +295,14 @@ class _TheaterPageState extends State<TheaterPage> {
                                 onTap: () {},
                                 onDirectionTap: () {
                                   // chỉ đường
-                                },
-                              );
-                            }).toList(),
-                      );
-                    },
-                  ),
-                ],
-              ),
-            ),
-          ),
 
-          SliverToBoxAdapter(child: SizedBox(height: 24)),
-
-          // Rạp chiếu gần bạn
-          SliverToBoxAdapter(
-            child: Container(
-              color: Theme.of(context).colorScheme.inversePrimary,
-              child: Column(
-                children: [
-                  CustomSectionHeader(title: "Rạp chiếu gần bạn", isTap: false),
-                  Consumer<TheaterProvider>(
-                    builder: (context, provider, child) {
-                      if (provider.errorNear != null) {
-                        return Center(
-                          child: Column(
-                            children: [
-                              Text(provider.errorNear!),
-                              OutlinedButton(
-                                onPressed: () async {
-                                  final location = await context.read<TheaterProvider>().getCurrentLocation();
-                                  
-                                  provider.viDo = location[0];
-                                  provider.kinhDo = location[1];
-                                  provider.layRapGan();
-                                },
-                                child: Text("Cấp vị trí"),
-                              ),
-                            ],
-                          ),
-                        );
-                      }
-                      if (provider.isLoadingNear == true &&
-                          provider.errorNear == null) {
-                        return const CustomLoading(width: 88, height: 88);
-                      }
-                      if (provider.theaterNear.isEmpty &&
-                          provider.errorNear == null) {
-                        return TextButton(
-                          onPressed: () {},
-                          child: Text("Không có rạp phim nào!!"),
-                        );
-                      }
-                      return Column(
-                        children:
-                            provider.theaterNear.map((theater) {
-                              final theaterId = theater["ma_he_thong"];
-                              return CustomCardTheater(
-                                title: theater["ten_rap"] ?? "",
-                                address: theater["dia_chi"] ?? "",
-                                ward: getDistrict(theater["dia_chi"] ?? ""),
-                                image: brandLogos[theaterId] ?? "",
-                                onTap: () {},
-                                onDirectionTap: () {
-                                  // chỉ đường
+                                  context
+                                      .read<TheaterProvider>()
+                                      .moBanDoChiDuong(
+                                        context,
+                                        theater["vi_do"],
+                                        theater["kinh_do"],
+                                      );
                                 },
                               );
                             }).toList(),

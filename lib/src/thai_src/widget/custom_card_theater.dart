@@ -66,7 +66,8 @@ class CustomCardTheater extends StatelessWidget {
                       children: [
                         Text(
                           title,
-                          maxLines: 1,
+                          maxLines: 2,
+                          overflow: TextOverflow.ellipsis,
                           style: TextStyle(
                             color: Theme.of(context).colorScheme.primary,
                             fontWeight: FontWeight.bold,
@@ -85,17 +86,15 @@ class CustomCardTheater extends StatelessWidget {
                       ],
                     ),
                   ),
+                  SizedBox(width: 10),
                   // Nút "Tìm đường"
-                  GestureDetector(
-                    onTap: onDirectionTap,
-                    child: TextButton(
-                      onPressed: () {},
-                      child: Text(
-                        "Tìm đường",
-                        style: TextStyle(
-                          color: Theme.of(context).colorScheme.primary,
-                          fontWeight: FontWeight.bold,
-                        ),
+                  OutlinedButton(
+                    onPressed: onDirectionTap,
+                    child: Text(
+                      "Tìm đường",
+                      style: TextStyle(
+                        color: Theme.of(context).colorScheme.primary,
+                        fontWeight: FontWeight.bold,
                       ),
                     ),
                   ),

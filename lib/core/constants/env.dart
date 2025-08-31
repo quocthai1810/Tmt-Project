@@ -1,2 +1,4 @@
 //đây là file sẽ cho các biến môi trường vào, vd: api-key, domain của trang gọi API, ...
-const String apiTMT = "http://10.0.2.2:8080/api"; /// link back - end
+const String apiTMT = "http://10.0.2.2:8080/api";
+
+/// link back - end

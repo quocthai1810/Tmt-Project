@@ -17,7 +17,7 @@ Future<void> showCustomDialog(
 }) {
   return showDialog(
     context: context,
-    barrierDismissible: false,
+    barrierDismissible: true,
     builder:
         (context) => Dialog(
           insetPadding: const EdgeInsets.symmetric(horizontal: 24),

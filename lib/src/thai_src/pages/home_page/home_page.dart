@@ -116,7 +116,7 @@ class _HomePageState extends State<HomePage> {
                                             scrollDirection: Axis.horizontal,
                                             shrinkWrap: true,
                                             itemCount:
-                                                value.moviesDangChieu.length,
+                                                5,
                                             itemBuilder: (context, index) {
                                               final movie =
                                                   value.moviesDangChieu[index];
@@ -191,7 +191,7 @@ class _HomePageState extends State<HomePage> {
                                             scrollDirection: Axis.horizontal,
                                             shrinkWrap: true,
                                             itemCount:
-                                                value.moviesSapRaMat.length,
+                                                5,
                                             itemBuilder: (context, index) {
                                               final movie =
                                                   value.moviesSapRaMat[index];

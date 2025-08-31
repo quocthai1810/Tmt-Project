@@ -32,7 +32,7 @@ class MovieProvider extends ChangeNotifier {
         final data = layDuLieu["data"];
         moviesDangChieu = data;
       } else {
-        error = layDuLieu["message"];
+        error = "Không thể lấy dữ liệu";
       }
     } catch (e) {
       error = "Lỗi mạng !";
@@ -53,7 +53,7 @@ class MovieProvider extends ChangeNotifier {
         final data = layDuLieu["data"];
         moviesSapRaMat = data;
       } else {
-        error2 = layDuLieu["message"];
+        error2 = "Không thể lấy dữ liệu";
       }
     } catch (e) {
       error2 = "Lỗi mạng !";
@@ -74,7 +74,7 @@ class MovieProvider extends ChangeNotifier {
         final data = layDuLieu["data"];
         moviesDangHot = data;
       } else {
-        error3 = layDuLieu["message"];
+        error3 = "Không thể lấy dữ liệu";
       }
     } catch (e) {
       error3 = "Lỗi mạng !";

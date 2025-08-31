@@ -89,7 +89,7 @@ class _NewsPageState extends State<NewsPage> {
                       ),
                     ],
                   );
-                }
+                } 
 
                 /// tìm tin tức
                 final filterNews =

@@ -140,7 +140,7 @@ class _SearchGenreState extends State<SearchGenre> {
               year: DateTime.parse(movie["ngay_phat_hanh"]).year.toString(),
               stateMovies: trangThaiToPhim(movie["trang_thai_toan_cuc"]),
               stateColor: trangThaiToColor(movie["trang_thai_toan_cuc"]),
-              duration: movie["thoi_luong_phut"] ?? 0,
+              duration: movie["thoi_luong_phut"]??0,
               ageRating: movie["gioi_han_tuoi"]["ky_hieu"].toString(),
               genres:
                   movie["theloai"] != null

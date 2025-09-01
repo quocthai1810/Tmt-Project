@@ -255,7 +255,11 @@ class _TheaterPageState extends State<TheaterPage> {
                                   address: theater["dia_chi"] ?? "",
                                   ward: getDistrict(theater["dia_chi"] ?? ""),
                                   image: brandLogos[theaterId] ?? "",
-                                  onTap: () {},
+                                  onTap: () {
+                                    print(
+                                      "Đây là nút chuyển trang của rạp gần bạn",
+                                    );
+                                  },
                                   onDirectionTap: () {
                                     // chỉ đường
                                     context
@@ -291,7 +295,9 @@ class _TheaterPageState extends State<TheaterPage> {
                                 address: theater["dia_chi"] ?? "",
                                 ward: getDistrict(theater["dia_chi"] ?? ""),
                                 image: brandLogos[theaterId] ?? "",
-                                onTap: () {},
+                                onTap: () {
+                                  print("Đây là nút chuyển trang của các rạp");
+                                },
                                 onDirectionTap: () {
                                   // chỉ đường
 

@@ -5,6 +5,7 @@ import 'package:tmt_project/core/widgets/tin/custom_loading.dart';
 import 'package:tmt_project/src/thai_src/pages/new_page/new_provider.dart';
 import 'package:tmt_project/src/thai_src/widget/custom_card_news.dart';
 import 'package:tmt_project/src/thai_src/widget/custom_search.dart';
+import 'package:tmt_project/src/thai_src/widget/empty.dart';
 
 class NewsPage extends StatefulWidget {
   const NewsPage({super.key});
@@ -102,23 +103,7 @@ class _NewsPageState extends State<NewsPage> {
                           description.contains(showSearchNews);
                     }).toList();
                 if (filterNews.isEmpty) {
-                  return Center(
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        Image.asset("assets/img/searchResult.png"),
-                        SizedBox(height: 24),
-                        Text(
-                          "Rất tiếc, chúng tôi không tìm thấy tin tức của bạn",
-                          style: TextStyle(
-                            fontSize: 16,
-                            fontWeight: FontWeight.bold,
-                            color: Theme.of(context).colorScheme.primary,
-                          ),
-                        ),
-                      ],
-                    ),
-                  );
+                  return Empty();
                 }
                 return ListView.builder(
                   controller: _scrollController,

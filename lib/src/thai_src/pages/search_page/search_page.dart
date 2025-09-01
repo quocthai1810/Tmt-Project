@@ -5,6 +5,7 @@ import 'package:provider/provider.dart';
 import 'package:tmt_project/core/widgets/tin/custom_item_horizontal.dart';
 import 'package:tmt_project/core/widgets/tin/custom_loading.dart';
 import 'package:tmt_project/src/thai_src/widget/custom_search.dart';
+import 'package:tmt_project/src/thai_src/widget/empty.dart';
 import 'search_provider.dart'; // import provider bạn đã viết
 
 class SearchPage extends StatefulWidget {
@@ -134,7 +135,7 @@ class _SearchPageState extends State<SearchPage> {
 
                 final results = provider.searchMovies;
                 if (results.isEmpty && _searchController.text.isNotEmpty) {
-                  return const Center(child: Text("Không có phim nào"));
+                  return Empty();
                 }
 
                 return ListView.builder(

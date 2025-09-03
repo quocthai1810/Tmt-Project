@@ -49,7 +49,7 @@ class _CustomTabBarState extends State<CustomTabBar>
     _tabController = TabController(length: widget.tabs.length, vsync: this,initialIndex: widget.initialIndex,);
     _tabController.addListener(() {
       if (_tabController.indexIsChanging) {
-        print(_tabController.index);
+        
         widget.onTabChanged?.call(_tabController.index);
       }
     });

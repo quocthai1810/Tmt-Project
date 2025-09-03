@@ -4,6 +4,7 @@ import 'package:tmt_project/core/widgets/thai/custom_appBar.dart';
 import 'package:tmt_project/core/widgets/thai/custom_tabBar.dart';
 import 'package:tmt_project/core/widgets/tin/custom_item_horizontal.dart';
 import 'package:tmt_project/core/widgets/tin/custom_loading.dart';
+import 'package:tmt_project/routers/app_route.dart';
 import 'package:tmt_project/src/thai_src/pages/filter_page/filter_provider.dart';
 import 'package:tmt_project/src/thai_src/widget/empty.dart';
 
@@ -54,7 +55,7 @@ class _SearchGenreState extends State<SearchGenre> {
         if (args is List) {
           provider.layTheoTheLoai(args[0]);
           initialTabIndex = args[1];
-          print(initialTabIndex);
+          
         }
       }
     });
@@ -101,7 +102,7 @@ class _SearchGenreState extends State<SearchGenre> {
                       listen: false,
                     );
                     provider.layTheoTheLoai(ids[index]);
-                    debugPrint("Tab được chọn: ${names[index]}");
+                    
                   },
                   initialIndex: initialTabIndex,
                   selectedColor: Theme.of(context).colorScheme.primary,
@@ -134,24 +135,27 @@ class _SearchGenreState extends State<SearchGenre> {
           itemCount: movies.length,
           itemBuilder: (context, index) {
             final movie = movies[index];
-            return CustomItemHorizontal(
-              imageUrl: movie["anh_poster"] ?? "đang cập nhập",
-              title: movie["ten_phim"] ?? "chưa cập nhập",
-              year: DateTime.parse(movie["ngay_phat_hanh"]).year.toString(),
-              stateMovies: trangThaiToPhim(movie["trang_thai_toan_cuc"]),
-              stateColor: trangThaiToColor(movie["trang_thai_toan_cuc"]),
-              duration: movie["thoi_luong_phut"] ?? 0,
-              ageRating: movie["gioi_han_tuoi"]["ky_hieu"].toString(),
-              genres:
-                  movie["theloai"] != null
-                      ? List<String>.from(
-                        movie["theloai"].map(
-                          (tl) => tl["theLoai"]["ten_the_loai"].toString(),
-                        ),
-                      )
-                      : [],
-              rating:
-                  double.tryParse(movie["danh_gia"]?.toString() ?? "0") ?? 0.0,
+            return GestureDetector(
+              onTap: () => Navigator.pushNamed(context, AppRouteNames.detailMovie,arguments: movie["ma_phim"]),
+              child: CustomItemHorizontal(
+                imageUrl: movie["anh_poster"] ?? "đang cập nhập",
+                title: movie["ten_phim"] ?? "chưa cập nhập",
+                year: DateTime.parse(movie["ngay_phat_hanh"]).year.toString(),
+                stateMovies: trangThaiToPhim(movie["trang_thai_toan_cuc"]),
+                stateColor: trangThaiToColor(movie["trang_thai_toan_cuc"]),
+                duration: movie["thoi_luong_phut"] ?? 0,
+                ageRating: movie["gioi_han_tuoi"]["ky_hieu"].toString(),
+                genres:
+                    movie["theloai"] != null
+                        ? List<String>.from(
+                          movie["theloai"].map(
+                            (tl) => tl["theLoai"]["ten_the_loai"].toString(),
+                          ),
+                        )
+                        : [],
+                rating:
+                    double.tryParse(movie["danh_gia"]?.toString() ?? "0") ?? 0.0,
+              ),
             );
           },
         );

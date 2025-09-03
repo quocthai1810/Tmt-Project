@@ -3,6 +3,7 @@ import 'package:provider/provider.dart';
 import 'package:tmt_project/core/widgets/minh/custom_item_vertical.dart';
 import 'package:tmt_project/core/widgets/thai/custom_appBar.dart';
 import 'package:tmt_project/core/widgets/tin/custom_loading.dart';
+import 'package:tmt_project/routers/app_route.dart';
 import 'package:tmt_project/src/thai_src/pages/home_page/home_page_provider.dart';
 import 'package:tmt_project/src/thai_src/widget/custom_search.dart';
 
@@ -103,16 +104,20 @@ class _UpcomingMoviesPageState extends State<UpcomingMoviesPage> {
                   itemCount: filteredMovies.length,
                   itemBuilder: (context, index) {
                     final movie = filteredMovies[index];
-                    return CustomItemVertical(
-                      idMovie: movie["ma_phim"] ?? 0,
-                      imageUrl: movie["anh_poster"] ?? "",
-                      title: movie["ten_phim"] ?? "Không có tên",
-                      genre: movie["theloai"],
-                      ageLimit: movie["gioi_han_tuoi"],
-                      isSneakShow: movie["is_sneak_show"] ?? false,
-                      totalRating:
-                          (movie["tong_diem_danh_gia"] ?? 0).toDouble(),
-                      reviews: movie["tong_so_danh_gia"] ?? 0,
+                    return GestureDetector(
+                      onTap:
+                          () => Navigator.pushNamed(context, AppRouteNames.detailMovie,arguments: movie["ma_phim"]),
+                      child: CustomItemVertical(
+                        idMovie: movie["ma_phim"] ?? 0,
+                        imageUrl: movie["anh_poster"] ?? "",
+                        title: movie["ten_phim"] ?? "Không có tên",
+                        genre: movie["theloai"],
+                        ageLimit: movie["gioi_han_tuoi"],
+                        isSneakShow: movie["is_sneak_show"] ?? false,
+                        totalRating:
+                            (movie["tong_diem_danh_gia"] ?? 0).toDouble(),
+                        reviews: movie["tong_so_danh_gia"] ?? 0,
+                      ),
                     );
                   },
                 );

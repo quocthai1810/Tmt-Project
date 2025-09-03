@@ -67,7 +67,7 @@ class TheaterProvider extends ChangeNotifier {
       }
     } catch (e) {
       errorTakeAll = "Lỗi mạng !";
-      print(e);
+      
     }
     isLoadingTakeAll = false;
     notifyListeners();
@@ -145,7 +145,7 @@ class TheaterProvider extends ChangeNotifier {
       }
     } catch (e) {
       errorNear = "Lỗi mạng !";
-      print(e);
+     
     }
 
     isLoadingNear = false;

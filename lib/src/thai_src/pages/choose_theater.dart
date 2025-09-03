@@ -3,6 +3,7 @@ import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 import 'package:tmt_project/core/widgets/thai/custom_appBar.dart';
 import 'package:tmt_project/core/widgets/tin/custom_loading.dart';
+import 'package:tmt_project/routers/app_route.dart';
 import 'package:tmt_project/src/thai_src/pages/new_page/new_provider.dart';
 import 'package:tmt_project/src/thai_src/pages/theater_page/theater_provider.dart';
 import 'package:tmt_project/src/thai_src/widget/custom_animation.dart';
@@ -194,6 +195,16 @@ class _ChooseTheaterState extends State<ChooseTheater> {
                               return Padding(
                                 padding: const EdgeInsets.only(left: 8),
                                 child: CustomChooseTheater(
+                                  onShowTimeTap: (showTime) {
+                                    Navigator.pushNamed(
+                                      context,
+                                      AppRouteNames.chooseSeat,
+                                      arguments: [
+                                        showTime["ma_phong"],
+                                        showTime["ma_suat_chieu"],
+                                      ],
+                                    );
+                                  },
                                   title: theaterShow["ten_phim"],
                                   imageUrl: theaterShow["anh_poster"],
                                   genre: theaterShow["theloai"],

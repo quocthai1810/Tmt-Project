@@ -7,6 +7,7 @@ class CustomChooseTheater extends StatelessWidget {
   final List<dynamic> genre;
   final String ageLimit;
   final List<dynamic> showTimes;
+  final void Function(Map<String, dynamic>)? onShowTimeTap; // <-- callback mới
 
   const CustomChooseTheater({
     super.key,
@@ -15,6 +16,7 @@ class CustomChooseTheater extends StatelessWidget {
     required this.genre,
     required this.ageLimit,
     required this.showTimes,
+    this.onShowTimeTap,
   });
 
   String formatTime(String isoTime) {
@@ -24,13 +26,13 @@ class CustomChooseTheater extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    // Nhóm suất chiếu theo loại (2D, 3D, 4D...)
     final Map<String, List<dynamic>> groupedShows = {};
     for (var show in showTimes) {
       final type = show["phong"]["loai_suat"]["ten_loai_suat"];
       groupedShows.putIfAbsent(type, () => []);
       groupedShows[type]!.add(show);
     }
+
     return Card(
       margin: const EdgeInsets.all(12),
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
@@ -44,10 +46,7 @@ class CustomChooseTheater extends StatelessWidget {
             Row(
               children: [
                 Container(
-                  padding: const EdgeInsets.symmetric(
-                    horizontal: 6,
-                    vertical: 3,
-                  ),
+                  padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 3),
                   decoration: BoxDecoration(
                     color: Theme.of(context).colorScheme.inversePrimary,
                     borderRadius: BorderRadius.circular(6),
@@ -76,7 +75,7 @@ class CustomChooseTheater extends StatelessWidget {
             ),
             const SizedBox(height: 8),
 
-            /// Genre + Duration
+            /// Genre
             Row(
               children: List.generate(genre.length, (index) {
                 final text = genre[index]["theLoai"]["ten_the_loai"] as String;
@@ -92,10 +91,7 @@ class CustomChooseTheater extends StatelessWidget {
                       ),
                     ),
                     if (index != genre.length - 1)
-                      const Text(
-                        " | ",
-                        style: TextStyle(fontSize: 14, color: Colors.blueGrey),
-                      ),
+                      const Text(" | ", style: TextStyle(fontSize: 14, color: Colors.blueGrey)),
                   ],
                 );
               }),
@@ -104,7 +100,6 @@ class CustomChooseTheater extends StatelessWidget {
             Row(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                /// Poster
                 ClipRRect(
                   borderRadius: BorderRadius.circular(12),
                   child: Image.network(
@@ -115,106 +110,81 @@ class CustomChooseTheater extends StatelessWidget {
                   ),
                 ),
                 const SizedBox(width: 12),
-
-                /// Danh sách suất chiếu (theo loại)
                 Expanded(
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
-                    children:
-                        groupedShows.entries.map((entry) {
-                          final type = entry.key; // ví dụ: "2D"
-                          final shows = entry.value;
-                          return Padding(
-                            padding: const EdgeInsets.only(bottom: 12),
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                /// In ra loại suất chiếu 1 lần duy nhất
-                                Text(
-                                  "$type Phụ đề",
-                                  style: const TextStyle(
-                                    fontSize: 16,
-                                    color: Colors.black,
-                                    fontWeight: FontWeight.w600,
-                                  ),
-                                ),
-                                const SizedBox(height: 6),
+                    children: groupedShows.entries.map((entry) {
+                      final type = entry.key;
+                      final shows = entry.value;
 
-                                /// Các giờ chiếu của loại này
-                                Column(
-                                  children: List.generate(
-                                    (shows.length / 2).ceil(),
-                                    (rowIndex) {
-                                      final start = rowIndex * 2;
-                                      final end =
-                                          (start + 2 <= shows.length)
-                                              ? start + 2
-                                              : shows.length;
-                                      final rowShows = shows.sublist(
-                                        start,
-                                        end,
-                                      );
-
-                                      return Row(
-                                        children:
-                                            rowShows.map((show) {
-                                              return Padding(
-                                                padding: const EdgeInsets.only(
-                                                  right: 8,
-                                                  bottom: 8,
-                                                ),
-                                                child: Container(
-                                                  padding:
-                                                      const EdgeInsets.symmetric(
-                                                        horizontal: 9,
-                                                        vertical: 8,
-                                                      ),
-                                                  decoration: BoxDecoration(
-                                                    borderRadius:
-                                                        BorderRadius.circular(
-                                                          12,
-                                                        ),
-                                                    border: Border.all(
-                                                      color: Colors.black12,
-                                                      width: 1.5,
-                                                    ),
-                                                  ),
-                                                  child: Row(
-                                                    mainAxisSize:
-                                                        MainAxisSize.min,
-                                                    children: [
-                                                      Text(
-                                                        formatTime(
-                                                          show["thoi_gian_chieu"],
-                                                        ),
-                                                        style: const TextStyle(
-                                                          fontSize: 16,
-                                                          color: Colors.black,
-                                                          fontWeight:
-                                                              FontWeight.bold,
-                                                        ),
-                                                      ),
-                                                      const SizedBox(width: 6),
-                                                      Text(
-                                                        "~ ${formatTime(show["thoi_gian_ket_thuc"])}",
-                                                        style: const TextStyle(
-                                                          fontSize: 12,
-                                                          color: Colors.black54,
-                                                        ),
-                                                      ),
-                                                    ],
-                                                  ),
-                                                ),
-                                              );
-                                            }).toList(),
-                                      );
-                                    },
-                                  ),
-                                ),
-                              ],
+                      return Padding(
+                        padding: const EdgeInsets.only(bottom: 12),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              "$type Phụ đề",
+                              style: const TextStyle(
+                                fontSize: 16,
+                                color: Colors.black,
+                                fontWeight: FontWeight.w600,
+                              ),
                             ),
-                          );
-                        }).toList(),
+                            const SizedBox(height: 6),
+                            Column(
+                              children: List.generate((shows.length / 2).ceil(), (rowIndex) {
+                                final start = rowIndex * 2;
+                                final end = (start + 2 <= shows.length) ? start + 2 : shows.length;
+                                final rowShows = shows.sublist(start, end);
+
+                                return Row(
+                                  children: rowShows.map((show) {
+                                    return GestureDetector(
+                                      onTap: () {
+                                        if (onShowTimeTap != null) {
+                                          onShowTimeTap!(show); // <-- truyền show lên
+                                        }
+                                      },
+                                      child: Padding(
+                                        padding: const EdgeInsets.only(right: 8, bottom: 8),
+                                        child: Container(
+                                          padding: const EdgeInsets.symmetric(horizontal: 9, vertical: 8),
+                                          decoration: BoxDecoration(
+                                            borderRadius: BorderRadius.circular(12),
+                                            border: Border.all(color: Colors.black12, width: 1.5),
+                                          ),
+                                          child: Row(
+                                            mainAxisSize: MainAxisSize.min,
+                                            children: [
+                                              Text(
+                                                formatTime(show["thoi_gian_chieu"]),
+                                                style: const TextStyle(
+                                                  fontSize: 16,
+                                                  color: Colors.black,
+                                                  fontWeight: FontWeight.bold,
+                                                ),
+                                              ),
+                                              const SizedBox(width: 6),
+                                              Text(
+                                                "~ ${formatTime(show["thoi_gian_ket_thuc"])}",
+                                                style: const TextStyle(
+                                                  fontSize: 12,
+                                                  color: Colors.black54,
+                                                ),
+                                              ),
+                                            ],
+                                          ),
+                                        ),
+                                      ),
+                                    );
+                                  }).toList(),
+                                );
+                              }),
+                            ),
+                          ],
+                        ),
+                      );
+                    }).toList(),
                   ),
                 ),
               ],
@@ -225,3 +195,4 @@ class CustomChooseTheater extends StatelessWidget {
     );
   }
 }
+

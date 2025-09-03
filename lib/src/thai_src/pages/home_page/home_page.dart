@@ -115,8 +115,7 @@ class _HomePageState extends State<HomePage> {
                                           : ListView.builder(
                                             scrollDirection: Axis.horizontal,
                                             shrinkWrap: true,
-                                            itemCount:
-                                                5,
+                                            itemCount: 5,
                                             itemBuilder: (context, index) {
                                               final movie =
                                                   value.moviesDangChieu[index];
@@ -124,27 +123,38 @@ class _HomePageState extends State<HomePage> {
                                                 padding: const EdgeInsets.only(
                                                   left: 8,
                                                 ),
-                                                child: CustomItemVertical(
-                                                  idMovie:
-                                                      movie["ma_phim"] ?? 0,
-                                                  imageUrl:
-                                                      movie["anh_poster"] ?? "",
-                                                  title:
-                                                      movie["ten_phim"] ??
-                                                      "Không có tên",
-                                                  genre: movie["theloai"],
-                                                  ageLimit:
-                                                      movie["gioi_han_tuoi"],
-                                                  isSneakShow:
-                                                      movie["is_sneak_show"] ??
-                                                      false,
-                                                  totalRating:
-                                                      (movie["tong_diem_danh_gia"] ??
-                                                              0)
-                                                          .toDouble(),
-                                                  reviews:
-                                                      movie["tong_so_danh_gia"] ??
-                                                      0,
+                                                child: GestureDetector(
+                                                  onTap:
+                                                      () => Navigator.pushNamed(
+                                                        context,
+                                                        AppRouteNames
+                                                            .detailMovie,
+                                                        arguments:
+                                                            movie["ma_phim"],
+                                                      ),
+                                                  child: CustomItemVertical(
+                                                    idMovie:
+                                                        movie["ma_phim"] ?? 0,
+                                                    imageUrl:
+                                                        movie["anh_poster"] ??
+                                                        "",
+                                                    title:
+                                                        movie["ten_phim"] ??
+                                                        "Không có tên",
+                                                    genre: movie["theloai"],
+                                                    ageLimit:
+                                                        movie["gioi_han_tuoi"],
+                                                    isSneakShow:
+                                                        movie["is_sneak_show"] ??
+                                                        false,
+                                                    totalRating:
+                                                        (movie["tong_diem_danh_gia"] ??
+                                                                0)
+                                                            .toDouble(),
+                                                    reviews:
+                                                        movie["tong_so_danh_gia"] ??
+                                                        0,
+                                                  ),
                                                 ),
                                               );
                                             },
@@ -190,8 +200,7 @@ class _HomePageState extends State<HomePage> {
                                           : ListView.builder(
                                             scrollDirection: Axis.horizontal,
                                             shrinkWrap: true,
-                                            itemCount:
-                                                5,
+                                            itemCount: 5,
                                             itemBuilder: (context, index) {
                                               final movie =
                                                   value.moviesSapRaMat[index];
@@ -199,27 +208,38 @@ class _HomePageState extends State<HomePage> {
                                                 padding: const EdgeInsets.only(
                                                   left: 8,
                                                 ),
-                                                child: CustomItemVertical(
-                                                  idMovie:
-                                                      movie["ma_phim"] ?? 0,
-                                                  imageUrl:
-                                                      movie["anh_poster"] ?? "",
-                                                  title:
-                                                      movie["ten_phim"] ??
-                                                      "Không có tên",
-                                                  genre: movie["theloai"],
-                                                  ageLimit:
-                                                      movie["gioi_han_tuoi"],
-                                                  isSneakShow:
-                                                      movie["is_sneak_show"] ??
-                                                      false,
-                                                  totalRating:
-                                                      (movie["tong_diem_danh_gia"] ??
-                                                              0)
-                                                          .toDouble(),
-                                                  reviews:
-                                                      movie["tong_so_danh_gia"] ??
-                                                      0,
+                                                child: GestureDetector(
+                                                  onTap:
+                                                      () => Navigator.pushNamed(
+                                                        context,
+                                                        AppRouteNames
+                                                            .detailMovie,
+                                                        arguments:
+                                                            movie["ma_phim"],
+                                                      ),
+                                                  child: CustomItemVertical(
+                                                    idMovie:
+                                                        movie["ma_phim"] ?? 0,
+                                                    imageUrl:
+                                                        movie["anh_poster"] ??
+                                                        "",
+                                                    title:
+                                                        movie["ten_phim"] ??
+                                                        "Không có tên",
+                                                    genre: movie["theloai"],
+                                                    ageLimit:
+                                                        movie["gioi_han_tuoi"],
+                                                    isSneakShow:
+                                                        movie["is_sneak_show"] ??
+                                                        false,
+                                                    totalRating:
+                                                        (movie["tong_diem_danh_gia"] ??
+                                                                0)
+                                                            .toDouble(),
+                                                    reviews:
+                                                        movie["tong_so_danh_gia"] ??
+                                                        0,
+                                                  ),
                                                 ),
                                               );
                                             },

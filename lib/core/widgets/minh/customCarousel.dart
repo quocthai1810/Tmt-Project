@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:carousel_slider/carousel_slider.dart';
+import 'package:tmt_project/routers/app_route.dart';
 
 class Movie {
+  final int id;
   final String imageUrl;
   final String title;
   final List<String> genres;
@@ -10,6 +12,7 @@ class Movie {
   final String is16Plus;
 
   Movie({
+    required this.id,
     required this.imageUrl,
     required this.title,
     required this.genres,
@@ -23,6 +26,7 @@ class Movie {
     // Backend trả path poster (không có domain), cần nối baseUrl
     const String imgUrl = "https://image.tmdb.org/t/p/w500";
     return Movie(
+      id: json["ma_phim"],
       imageUrl: imgUrl + (json["anh_poster"] ?? ""),
       title: json["ten_phim"] ?? "Chưa cập nhập",
       genres:
@@ -52,7 +56,16 @@ class MovieCarousel extends StatelessWidget {
       itemCount: movies.length,
       itemBuilder: (context, index, realIdx) {
         final movie = movies[index];
-        return _MovieCard(movie: movie, width: 220);
+        return GestureDetector(
+          onTap: () {
+            Navigator.pushNamed(
+              context,
+              AppRouteNames.detailMovie,
+              arguments: movie.id, // <-- truyền Movie object
+            );
+          },
+          child: _MovieCard(movie: movie, width: 220),
+        );
       },
       options: CarouselOptions(
         height: 320,

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:tmt_project/src/thai_src/pages/choose_theater.dart';
 import 'package:tmt_project/src/thai_src/pages/entry_point_page.dart';
 import 'package:tmt_project/src/thai_src/pages/filter_page/filter_page.dart';
 import 'package:tmt_project/src/thai_src/pages/home_page/home_page.dart';
@@ -27,6 +28,7 @@ class AppRouteNames {
   static const upcomingPage = '/upcoming';
   static const showingPage = '/showing';
   static const pageTestWid = '/pageTestWid';
+  static const chooseTheater = '/chooseTheater';
 }
 
 final Map<String, WidgetBuilder> appRoutes = {
@@ -42,5 +44,6 @@ final Map<String, WidgetBuilder> appRoutes = {
   AppRouteNames.notificationPage: (context) => NotificationPage(),
   AppRouteNames.upcomingPage: (context) => UpcomingMoviesPage(),
   AppRouteNames.showingPage: (context) => ShowingMoviesPage(),
+  AppRouteNames.chooseTheater: (context) => ChooseTheater(),
   AppRouteNames.pageTestWid: (context) => const PageTestWid(),
 };

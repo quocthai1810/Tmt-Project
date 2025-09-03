@@ -3,6 +3,7 @@ import 'package:geolocator/geolocator.dart';
 import 'package:provider/provider.dart';
 import 'package:tmt_project/core/widgets/thai/custom_appBar.dart';
 import 'package:tmt_project/core/widgets/tin/custom_loading.dart';
+import 'package:tmt_project/routers/app_route.dart';
 import 'package:tmt_project/src/thai_src/pages/new_page/new_provider.dart';
 import 'package:tmt_project/src/thai_src/pages/theater_page/theater_provider.dart';
 import 'package:tmt_project/src/thai_src/widget/custom_animation.dart';
@@ -39,15 +40,6 @@ class _TheaterPageState extends State<TheaterPage> {
     3: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRtBO_eehVOKwYQEuKUT9jc8Q0rD9ttuJ0dEA&s", // Galaxy
   };
 
-  final List<Map<String, String>> theaterList = [
-    {
-      "name": "CGV Vincom Đồng Khởi",
-      "address": "72 Lê Thánh Tôn, Quận 1, TP.HCM",
-      "ward": "Quận Tân Bình . 1.1km",
-      "logoUrl":
-          "https://tenten.vn/tin-tuc/wp-content/uploads/2022/08/Lam-dep-code.jpg",
-    },
-  ];
   @override
   void initState() {
     super.initState();
@@ -123,7 +115,6 @@ class _TheaterPageState extends State<TheaterPage> {
                                   onTap: () async {
                                     if (provider.isLoadingNear)
                                       return; // đang chạy thì bỏ
-
                                     setState(() {
                                       selectedBrand = -1;
                                       selectedCinema = "Rạp gần bạn";
@@ -253,11 +244,19 @@ class _TheaterPageState extends State<TheaterPage> {
                                 return CustomCardTheater(
                                   title: theater["ten_rap"] ?? "",
                                   address: theater["dia_chi"] ?? "",
+                                  numberKm:
+                                      theater["khoang_cach_theo_duong_chim_bay"],
                                   ward: getDistrict(theater["dia_chi"] ?? ""),
                                   image: brandLogos[theaterId] ?? "",
                                   onTap: () {
-                                    print(
-                                      "Đây là nút chuyển trang của rạp gần bạn",
+                                    Navigator.pushNamed(
+                                      arguments: {
+                                        "ma_rap": theater["ma_rap"], // id rạp
+                                        "ten_rap":
+                                            theater["ten_rap"], // tên rạp
+                                      },
+                                      context,
+                                      AppRouteNames.chooseTheater,
                                     );
                                   },
                                   onDirectionTap: () {
@@ -294,13 +293,22 @@ class _TheaterPageState extends State<TheaterPage> {
                                 title: theater["ten_rap"] ?? "",
                                 address: theater["dia_chi"] ?? "",
                                 ward: getDistrict(theater["dia_chi"] ?? ""),
+                                numberKm:
+                                    theater["khoang_cach_theo_duong_chim_bay"],
                                 image: brandLogos[theaterId] ?? "",
                                 onTap: () {
-                                  print("Đây là nút chuyển trang của các rạp");
+                                  Navigator.pushNamed(
+                                    arguments: {
+                                        "ma_rap": theater["ma_rap"], // id rạp
+                                        "ten_rap":
+                                            theater["ten_rap"], // tên rạp
+                                      },
+                                    context,
+                                    AppRouteNames.chooseTheater,
+                                  );
                                 },
                                 onDirectionTap: () {
                                   // chỉ đường
-
                                   context
                                       .read<TheaterProvider>()
                                       .moBanDoChiDuong(

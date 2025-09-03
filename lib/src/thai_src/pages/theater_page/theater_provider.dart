@@ -26,6 +26,11 @@ class TheaterProvider extends ChangeNotifier {
   double? viDo;
   double? kinhDo;
 
+  /// lấy dữ liệu cho xuất chiếu theo rạp
+  List theaterShow = [];
+  bool isLoadingShow = false;
+  String? errorShow;
+
   dynamic layCacCumRap() async {
     try {
       isLoading = true;
@@ -208,5 +213,26 @@ class TheaterProvider extends ChangeNotifier {
 
     await launchUrl(googleMapsUrl, mode: LaunchMode.externalApplication);
     OverlayLoading.hide();
+  }
+
+  dynamic layXuatChieuTheoRap(int idRap, DateTime dateShow) async {
+    try {
+      isLoadingShow = true;
+      notifyListeners();
+      final response = await http
+          .get(Uri.parse("$apiTMT/SuatChieu/LaySuatChieuTheoRap?id=$idRap&ngay=$dateShow"))
+          .timeout(const Duration(seconds: 5));
+      final layDuLieu = jsonDecode(response.body);
+      if (response.statusCode == 200) {
+        final data = layDuLieu["data"];
+        theaterShow = data;
+      } else {
+        errorShow = "Không thể lấy dữ liệu";
+      }
+    } catch (e) {
+      errorShow = "Lỗi mạng !";
+    }
+    isLoadingShow = false;
+    notifyListeners();
   }
 }

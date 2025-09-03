@@ -4,6 +4,7 @@ class CustomCardTheater extends StatelessWidget {
   final String title;
   final String address;
   final String ward;
+  final double? numberKm;
   final String? image;
   final VoidCallback? onTap;
   final VoidCallback? onDirectionTap;
@@ -17,6 +18,9 @@ class CustomCardTheater extends StatelessWidget {
     /// địa chỉ rạp
     required this.address,
     required this.ward,
+
+    ///
+    this.numberKm,
 
     /// logo hoặc ảnh rạp
     this.image,
@@ -75,13 +79,36 @@ class CustomCardTheater extends StatelessWidget {
                           ),
                         ),
                         const SizedBox(height: 4),
-                        Text(
-                          ward,
-                          maxLines: 1,
-                          style: TextStyle(
-                            color: Theme.of(context).colorScheme.primary,
-                            fontSize: 14,
-                          ),
+                        Row(
+                          children: [
+                            Flexible(
+                              child: Text(
+                                ward,
+                                maxLines: 1,
+                                overflow: TextOverflow.ellipsis,
+                                style: TextStyle(
+                                  color: Theme.of(context).colorScheme.primary,
+                                  fontSize: 14,
+                                ),
+                              ),
+                            ),
+                            if (numberKm != null) ...[
+                              const SizedBox(width: 4),
+                              Icon(
+                                Icons.location_on,
+                                size: 16,
+                                color: Theme.of(context).colorScheme.primary,
+                              ),
+                              const SizedBox(width: 2),
+                              Text(
+                                "${numberKm!.toStringAsFixed(1)} km",
+                                style: TextStyle(
+                                  color: Theme.of(context).colorScheme.primary,
+                                  fontSize: 14,
+                                ),
+                              ),
+                            ],
+                          ],
                         ),
                       ],
                     ),

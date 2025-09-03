@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:intl/date_symbol_data_local.dart';
 import 'package:provider/provider.dart';
 import 'package:tmt_project/routers/app_route.dart';
 import 'package:tmt_project/src/thai_src/pages/filter_page/filter_provider.dart';
@@ -7,7 +8,9 @@ import 'package:tmt_project/src/thai_src/pages/new_page/new_provider.dart';
 import 'package:tmt_project/src/thai_src/pages/search_page/search_provider.dart';
 import 'package:tmt_project/src/thai_src/pages/theater_page/theater_provider.dart';
 
-void main() {
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  await initializeDateFormatting('vi'); // để DateFormat.E('vi') hoạt động
   runApp(
     MultiProvider(
       providers: [

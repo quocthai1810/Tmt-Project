@@ -11,6 +11,7 @@ import 'package:tmt_project/src/thai_src/pages/new_page/new_provider.dart';
 import 'package:tmt_project/src/thai_src/pages/search_page/search_provider.dart';
 import 'package:tmt_project/src/thai_src/pages/theater_page/theater_provider.dart';
 
+///import
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await initializeDateFormatting('vi'); // để DateFormat.E('vi') hoạt động

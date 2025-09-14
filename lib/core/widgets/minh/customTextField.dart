@@ -76,6 +76,7 @@ class CustomTextField extends StatelessWidget {
     this.obscureText = false,
     this.minLines,
     this.maxLines = 1,
+    required TextEditingController controller,
   });
 
   @override

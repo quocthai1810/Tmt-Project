@@ -106,7 +106,11 @@ class _UpcomingMoviesPageState extends State<UpcomingMoviesPage> {
                     final movie = filteredMovies[index];
                     return GestureDetector(
                       onTap:
-                          () => Navigator.pushNamed(context, AppRouteNames.detailMovie,arguments: movie["ma_phim"]),
+                          () => Navigator.pushNamed(
+                            context,
+                            AppRouteNames.detailPages,
+                            arguments: movie["ma_phim"],
+                          ), // em sửa lại chỗ này
                       child: CustomItemVertical(
                         idMovie: movie["ma_phim"] ?? 0,
                         imageUrl: movie["anh_poster"] ?? "",

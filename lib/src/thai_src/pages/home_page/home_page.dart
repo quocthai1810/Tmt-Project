@@ -128,7 +128,7 @@ class _HomePageState extends State<HomePage> {
                                                       () => Navigator.pushNamed(
                                                         context,
                                                         AppRouteNames
-                                                            .detailMovie,
+                                                            .detailPages, // em sửa lại chỗ này
                                                         arguments:
                                                             movie["ma_phim"],
                                                       ),
@@ -213,7 +213,7 @@ class _HomePageState extends State<HomePage> {
                                                       () => Navigator.pushNamed(
                                                         context,
                                                         AppRouteNames
-                                                            .detailMovie,
+                                                            .detailPages, // em sửa lại chỗ này
                                                         arguments:
                                                             movie["ma_phim"],
                                                       ),

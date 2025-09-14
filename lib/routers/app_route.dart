@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:tmt_project/src/minh_src/choose_seat_page.dart';
-import 'package:tmt_project/src/minh_src/detail_movie_page.dart';
+import 'package:tmt_project/src/minh_src/models/combo_item.dart';
 import 'package:tmt_project/src/thai_src/pages/choose_theater.dart';
 import 'package:tmt_project/src/thai_src/pages/entry_point_page.dart';
 import 'package:tmt_project/src/thai_src/pages/filter_page/filter_page.dart';
@@ -14,7 +13,15 @@ import 'package:tmt_project/src/thai_src/pages/test_page.dart';
 import 'package:tmt_project/src/thai_src/pages/theater_page/theater_page.dart';
 import 'package:tmt_project/src/thai_src/pages/upcoming_page.dart';
 import 'package:tmt_project/src/thai_src/pages/user_page.dart';
-import 'package:tmt_project/src/minh_src/page_test_wid.dart';
+//========= Route của Minh =========
+import 'package:tmt_project/src/minh_src/pages/booking_ticket_pages/booking_ticket_pages.dart';
+import 'package:tmt_project/src/minh_src/pages/change_pay_ticket/change_pay_ticket.dart';
+import 'package:tmt_project/src/minh_src/pages/chooseSeat/choose_seat_page.dart';
+import 'package:tmt_project/src/minh_src/pages/detail_pages/detail_pages.dart';
+import 'package:tmt_project/src/minh_src/pages/purchase_preview/purchase_preview_pages.dart';
+import 'package:tmt_project/src/minh_src/pages/takeCombo/take_combo_pages.dart';
+import 'package:tmt_project/src/minh_src/pages/takeSeat/take_seat_pages.dart';
+import 'package:tmt_project/src/minh_src/pages/trailer_pages/trailer_pages.dart';
 
 class AppRouteNames {
   static const entryPointPage = '/entry';
@@ -31,8 +38,17 @@ class AppRouteNames {
   static const showingPage = '/showing';
   static const pageTestWid = '/pageTestWid';
   static const chooseTheater = '/chooseTheater';
-  static const detailMovie = '/detailMovie';
   static const chooseSeat = '/chooseSeat';
+
+  // ======== Route của Minh ========
+  static const bookingTicketPages = '/bookingTicketPages';
+  static const changePayTicket = '/changePayTicket';
+  static const chooseSeatPage = '/chooseSeatPage';
+  static const detailPages = '/detailPages';
+  static const purchasePreviewPages = '/purchasePreviewPages';
+  static const takeComboPages = '/takeComboPages';
+  static const takeSeatPages = '/takeSeatPages';
+  static const trailerPages = '/trailerPages';
 }
 
 final Map<String, WidgetBuilder> appRoutes = {
@@ -49,7 +65,91 @@ final Map<String, WidgetBuilder> appRoutes = {
   AppRouteNames.upcomingPage: (context) => UpcomingMoviesPage(),
   AppRouteNames.showingPage: (context) => ShowingMoviesPage(),
   AppRouteNames.chooseTheater: (context) => ChooseTheater(),
-  AppRouteNames.pageTestWid: (context) => const PageTestWid(),
-  AppRouteNames.detailMovie: (context) => const DetailMoviePage(),
-  AppRouteNames.chooseSeat: (context) => const ChooseSeatPage(),
+
+  // ======== Route của Minh ========
+  AppRouteNames.bookingTicketPages: (context) {
+    final args = ModalRoute.of(context)!.settings.arguments;
+    final movieTitle = args is String ? args : 'Unknown Movie';
+    return BookingTicketPages(movieTitle: movieTitle);
+  },
+  AppRouteNames.changePayTicket: (context) {
+    final args =
+        ModalRoute.of(context)!.settings.arguments as ChangePayTicketArguments;
+
+    return ChangePayTicket(
+      movieTitle: args.movieTitle,
+      theaterName: args.theaterName,
+      receiveDate: args.receiveDate,
+      showTime: args.showTime,
+      selectedSeats: args.selectedSeats,
+      selectedCombos: args.selectedCombos,
+    );
+  },
+  AppRouteNames.chooseSeatPage: (context) => const ChooseSeatPage(),
+  AppRouteNames.detailPages: (context) {
+    final args = ModalRoute.of(context)!.settings.arguments;
+    final movieId = args is int ? args : -1;
+    return DetailPages(movieId: movieId);
+  },
+  AppRouteNames.purchasePreviewPages: (context) => const PurchasePreviewPages(),
+  AppRouteNames.takeComboPages: (context) {
+    final args =
+        ModalRoute.of(context)!.settings.arguments as Map<String, dynamic>;
+    return TakeComboPages(
+      theaterName: args['theaterName'] ?? '',
+      receiveDate: args['receiveDate'] ?? '',
+      movieTitle: args['movieTitle'] ?? 'Unknown Movie',
+      selectedSeats:
+          (args['selectedSeats'] as List<dynamic>?)?.cast<String>() ?? [],
+    );
+  },
+
+  AppRouteNames.takeSeatPages: (context) {
+    final args =
+        ModalRoute.of(context)!.settings.arguments as SeatPageArguments;
+
+    return SeatMapPage(
+      movieTitle: args.movieTitle,
+      theaterName: args.theaterName,
+      receiveDate: args.receiveDate,
+      showTime: args.showTime,
+    );
+  },
+  AppRouteNames.trailerPages: (context) {
+    final args = ModalRoute.of(context)!.settings.arguments;
+    final movieId = args is int ? args : -1;
+    return TrailerPages(movieId: movieId);
+  },
 };
+
+class SeatPageArguments {
+  final String movieTitle;
+  final String theaterName;
+  final String receiveDate;
+  final String showTime;
+
+  SeatPageArguments({
+    required this.movieTitle,
+    required this.theaterName,
+    required this.receiveDate,
+    required this.showTime,
+  });
+}
+
+class ChangePayTicketArguments {
+  final String movieTitle;
+  final String theaterName;
+  final String receiveDate;
+  final String showTime;
+  final List<String> selectedSeats;
+  final List<ComboItem> selectedCombos;
+
+  ChangePayTicketArguments({
+    required this.movieTitle,
+    required this.theaterName,
+    required this.receiveDate,
+    required this.showTime,
+    required this.selectedSeats,
+    required this.selectedCombos,
+  });
+}

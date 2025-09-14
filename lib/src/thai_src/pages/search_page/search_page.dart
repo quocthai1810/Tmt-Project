@@ -148,7 +148,7 @@ class _SearchPageState extends State<SearchPage> {
                       onTap:
                           () => Navigator.pushNamed(
                             context,
-                            AppRouteNames.detailMovie,
+                            AppRouteNames.detailPages, // em sửa lại chỗ này
                             arguments: movie["ma_phim"],
                           ),
                       child: CustomItemHorizontal(

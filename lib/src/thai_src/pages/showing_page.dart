@@ -104,7 +104,12 @@ class _ShowingMoviesPageState extends State<ShowingMoviesPage> {
                   itemBuilder: (context, index) {
                     final movie = filteredMovies[index];
                     return GestureDetector(
-                      onTap: () => Navigator.pushNamed(context, AppRouteNames.detailMovie,arguments: movie["ma_phim"]),
+                      onTap:
+                          () => Navigator.pushNamed(
+                            context,
+                            AppRouteNames.detailPages,
+                            arguments: movie["ma_phim"],
+                          ), // em sửa lại chỗ này
                       child: CustomItemVertical(
                         idMovie: movie["ma_phim"] ?? 0,
                         imageUrl: movie["anh_poster"] ?? "",

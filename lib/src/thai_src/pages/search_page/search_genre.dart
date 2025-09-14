@@ -55,7 +55,6 @@ class _SearchGenreState extends State<SearchGenre> {
         if (args is List) {
           provider.layTheoTheLoai(args[0]);
           initialTabIndex = args[1];
-          
         }
       }
     });
@@ -102,7 +101,6 @@ class _SearchGenreState extends State<SearchGenre> {
                       listen: false,
                     );
                     provider.layTheoTheLoai(ids[index]);
-                    
                   },
                   initialIndex: initialTabIndex,
                   selectedColor: Theme.of(context).colorScheme.primary,
@@ -136,7 +134,12 @@ class _SearchGenreState extends State<SearchGenre> {
           itemBuilder: (context, index) {
             final movie = movies[index];
             return GestureDetector(
-              onTap: () => Navigator.pushNamed(context, AppRouteNames.detailMovie,arguments: movie["ma_phim"]),
+              onTap:
+                  () => Navigator.pushNamed(
+                    context,
+                    AppRouteNames.detailPages,
+                    arguments: movie["ma_phim"],
+                  ), // e sửa lại chỗ này
               child: CustomItemHorizontal(
                 imageUrl: movie["anh_poster"] ?? "đang cập nhập",
                 title: movie["ten_phim"] ?? "chưa cập nhập",
@@ -154,7 +157,8 @@ class _SearchGenreState extends State<SearchGenre> {
                         )
                         : [],
                 rating:
-                    double.tryParse(movie["danh_gia"]?.toString() ?? "0") ?? 0.0,
+                    double.tryParse(movie["danh_gia"]?.toString() ?? "0") ??
+                    0.0,
               ),
             );
           },

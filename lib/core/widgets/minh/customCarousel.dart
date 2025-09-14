@@ -60,7 +60,7 @@ class MovieCarousel extends StatelessWidget {
           onTap: () {
             Navigator.pushNamed(
               context,
-              AppRouteNames.detailMovie,
+              AppRouteNames.detailPages,
               arguments: movie.id, // <-- truyền Movie object
             );
           },

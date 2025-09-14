@@ -15,8 +15,11 @@ import 'package:tmt_project/src/thai_src/pages/theater_page/theater_page.dart';
 import 'package:tmt_project/src/thai_src/pages/upcoming_page.dart';
 import 'package:tmt_project/src/thai_src/pages/user_page.dart';
 import 'package:tmt_project/src/minh_src/page_test_wid.dart';
+import '../src/tin_src/splash_screen.dart';
+
 
 class AppRouteNames {
+  static const splash = '/splash';
   static const entryPointPage = '/entry';
   static const homePage = '/';
   static const theaterPage = '/theater';
@@ -36,6 +39,7 @@ class AppRouteNames {
 }
 
 final Map<String, WidgetBuilder> appRoutes = {
+  AppRouteNames.splash: (context) => const SplashScreen(),
   AppRouteNames.entryPointPage: (context) => EntryPointPage(),
   AppRouteNames.homePage: (context) => HomePage(),
   AppRouteNames.theaterPage: (context) => TheaterPage(),

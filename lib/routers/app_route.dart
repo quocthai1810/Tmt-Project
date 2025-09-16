@@ -99,6 +99,7 @@ final Map<String, WidgetBuilder> appRoutes = {
       theaterName: args['theaterName'] ?? '',
       receiveDate: args['receiveDate'] ?? '',
       movieTitle: args['movieTitle'] ?? 'Unknown Movie',
+      showTime: args['showTime'] ?? 'Chưa chọn suất chiếu',
       selectedSeats:
           (args['selectedSeats'] as List<dynamic>?)?.cast<String>() ?? [],
     );

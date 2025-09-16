@@ -432,6 +432,7 @@ class _SeatMapPageState extends State<SeatMapPage> {
                                   theaterName: widget.theaterName,
                                   receiveDate: widget.receiveDate,
                                   movieTitle: widget.movieTitle,
+                                  showTime: widget.showTime,
                                   selectedSeats:
                                       selectedSeats.map((e) => e.name).toList(),
                                 ),

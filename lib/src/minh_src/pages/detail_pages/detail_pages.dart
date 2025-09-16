@@ -4,6 +4,7 @@ import 'package:flutter/gestures.dart';
 import 'package:tmt_project/core/widgets/minh/customTextField.dart';
 import 'package:tmt_project/core/widgets/minh/customToast.dart';
 import 'package:tmt_project/core/widgets/tin/custom_button.dart';
+import 'package:tmt_project/core/widgets/tin/custom_loading.dart';
 import 'package:tmt_project/routers/app_route.dart';
 import 'package:tmt_project/src/minh_src/pages/trailer_pages/trailer_pages.dart';
 import 'package:tmt_project/src/minh_src/pages/detail_pages/detailProvider.dart';
@@ -51,7 +52,7 @@ class _DetailPagesState extends State<DetailPages> {
       builder: (context, detail, comment, _) {
         if ((detail.isLoadingDetail ?? true) || detail.thongTinPhim == null) {
           return const Scaffold(
-            body: Center(child: CircularProgressIndicator()),
+            body: Center(child: CustomLoading(width: 88, height: 88)),
           );
         }
 
@@ -86,6 +87,13 @@ class _DetailPagesState extends State<DetailPages> {
                               imageBaseUrl + (movie["anh_header"] ?? ''),
                               width: double.infinity,
                               fit: BoxFit.cover,
+                              errorBuilder: (context, error, stackTrace) {
+                                return Image.network(
+                                  imageBaseUrl + (movie["anh_poster"] ?? ''),
+                                  width: double.infinity,
+                                  fit: BoxFit.cover,
+                                );
+                              },
                             ),
                           ),
                         ),
@@ -298,12 +306,55 @@ class _DetailPagesState extends State<DetailPages> {
                                     children: [
                                       ClipRRect(
                                         borderRadius: BorderRadius.circular(8),
-                                        child: Image.network(
-                                          imageBaseUrl + (info["avatar"] ?? ''),
-                                          width: 70,
-                                          height: 90,
-                                          fit: BoxFit.cover,
-                                        ),
+                                        child:
+                                            (info["avatar"] != null &&
+                                                    info["avatar"]
+                                                        .toString()
+                                                        .isNotEmpty)
+                                                ? Image.network(
+                                                  imageBaseUrl + info["avatar"],
+                                                  width: 70,
+                                                  height: 90,
+                                                  fit: BoxFit.cover,
+                                                  errorBuilder: (
+                                                    context,
+                                                    error,
+                                                    stackTrace,
+                                                  ) {
+                                                    // Nếu link ảnh lỗi → fallback sang text
+                                                    return Container(
+                                                      width: 70,
+                                                      height: 90,
+                                                      color:
+                                                          Colors.grey.shade300,
+                                                      alignment:
+                                                          Alignment.center,
+                                                      child: const Text(
+                                                        "Chưa có hình",
+                                                        textAlign:
+                                                            TextAlign.center,
+                                                        style: TextStyle(
+                                                          fontSize: 10,
+                                                          color: Colors.black54,
+                                                        ),
+                                                      ),
+                                                    );
+                                                  },
+                                                )
+                                                : Container(
+                                                  width: 70,
+                                                  height: 90,
+                                                  color: Colors.grey.shade300,
+                                                  alignment: Alignment.center,
+                                                  child: const Text(
+                                                    "Chưa có hình",
+                                                    textAlign: TextAlign.center,
+                                                    style: TextStyle(
+                                                      fontSize: 10,
+                                                      color: Colors.black54,
+                                                    ),
+                                                  ),
+                                                ),
                                       ),
                                       const SizedBox(height: 4),
                                       Text(

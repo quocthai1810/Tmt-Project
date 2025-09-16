@@ -9,6 +9,7 @@ class TakeComboPages extends StatefulWidget {
   final String theaterName;
   final String receiveDate;
   final String movieTitle;
+  final String showTime;
   final List<String> selectedSeats; // ✅ ghế chọn từ SeatMapPage
 
   const TakeComboPages({
@@ -16,6 +17,7 @@ class TakeComboPages extends StatefulWidget {
     required this.theaterName,
     required this.receiveDate,
     required this.movieTitle,
+    required this.showTime,
     required this.selectedSeats,
   });
 
@@ -208,7 +210,7 @@ class _TakeComboPagesState extends State<TakeComboPages> {
                                   movieTitle: widget.movieTitle,
                                   theaterName: widget.theaterName,
                                   receiveDate: widget.receiveDate,
-                                  showTime: "Chưa chọn suất chiếu",
+                                  showTime: widget.showTime,
                                   selectedSeats: widget.selectedSeats, // ✅ ghế
                                   selectedCombos: selectedCombos, // ✅ combo
                                 ),

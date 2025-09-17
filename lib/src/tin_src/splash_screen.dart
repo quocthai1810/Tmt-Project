@@ -1,7 +1,9 @@
 import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:tmt_project/routers/app_route.dart';
+import 'package:tmt_project/src/tin_src/pages/login_signin_page/login_signin_page.dart';
+
 import '../../core/widgets/tin/custom_loading.dart';
 
 class SplashScreen extends StatefulWidget {
@@ -39,12 +41,14 @@ class _SplashScreenState extends State<SplashScreen>
 
     _controller.forward();
 
-    // Navigate sau 5s
-    Future.delayed(const Duration(seconds: 4), () {
+    // Navigate sau 3s
+    // if (mounted) để chắc rằng màn hình Splash vẫn còn hiện trước khi gọi Navigator.of(context).pushReplacement(...)
+
+    Future.delayed(const Duration(seconds: 3), () {
       if (mounted) {
-        WidgetsBinding.instance.addPostFrameCallback((_) {
-          Navigator.pushReplacementNamed(context, AppRouteNames.entryPointPage);
-        });
+        Navigator.of(context).pushReplacement(
+          MaterialPageRoute(builder: (_) => const LoginSignInPage()),
+        );
       }
     });
   }
@@ -72,7 +76,7 @@ class _SplashScreenState extends State<SplashScreen>
                 Text(
                   "CINEMAX",
                   style: GoogleFonts.montserrat(
-                    color: Colors.redAccent,
+                    color: Color(0xFFFF4451),
                     fontSize: 26,
                     fontWeight: FontWeight.bold,
                     letterSpacing: 3,

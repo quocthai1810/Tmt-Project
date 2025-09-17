@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:tmt_project/src/tin_src/pages/create_new_password_page/create_new_password_page.dart';
 
 import '../../../../core/widgets/thai/custom_appBar.dart';
 import '../../../../core/widgets/tin/custom_button.dart';
@@ -23,9 +24,12 @@ class _VerificationPageState extends State<VerificationPage> {
     String otp = _otpControllers.map((c) => c.text).join();
     if (otp.length == 4) {
       // TODO: verify OTP logic
-      ScaffoldMessenger.of(
-        context,
-      ).showSnackBar(SnackBar(content: Text("OTP Entered: $otp")));
+      // ScaffoldMessenger.of(
+      //   context,
+      // ).showSnackBar(SnackBar(content: Text("OTP Entered: $otp")));
+      Navigator.of(context).pushReplacement(
+        MaterialPageRoute(builder: (_) => CreateNewPasswordPage()),
+      );
     } else {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(content: Text("Please enter 4 digit code")),
@@ -125,9 +129,7 @@ class _VerificationPageState extends State<VerificationPage> {
 
             // Resend text
             GestureDetector(
-              onTap: () {
-                // TODO: resend OTP logic
-              },
+              onTap: () {},
               child: Text(
                 "Didn't receive code? Resend",
                 style: TextStyle(color: kRedColor, fontSize: 14),

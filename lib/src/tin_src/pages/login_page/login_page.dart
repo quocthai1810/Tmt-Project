@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:tmt_project/src/tin_src/pages/reset_password_page/reset_password_page.dart';
 
 import '../../../../core/widgets/thai/custom_appBar.dart';
 import '../../../../core/widgets/tin/custom_button.dart';
@@ -133,7 +134,12 @@ class _LoginPageState extends State<LoginPage> {
                 alignment: Alignment.centerRight,
                 child: TextButton(
                   onPressed: () {
-                    // TODO: Forgot password navigation
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (_) => const ResetPasswordPage(),
+                      ),
+                    );
                   },
                   child: const Text(
                     "Forgot Password?",
@@ -148,9 +154,7 @@ class _LoginPageState extends State<LoginPage> {
               CustomButton(
                 width: double.infinity,
                 text: "Login",
-                onPressed: () {
-
-                },
+                onPressed: () {},
               ),
             ],
           ),

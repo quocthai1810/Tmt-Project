@@ -65,7 +65,7 @@ class _SignUpPageState extends State<SignUpPage> {
                   ),
                   SizedBox(height: 5),
                   Text(
-                    "The latest movies and series are here",
+                    "The latest movies and series\n are here",
                     style: TextStyle(color: Colors.white70, fontSize: 14),
                     textAlign: TextAlign.center,
                   ),

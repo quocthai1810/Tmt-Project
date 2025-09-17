@@ -29,7 +29,7 @@ class _ResetPasswordPageState extends State<ResetPasswordPage> {
     return Scaffold(
       backgroundColor: const Color(0xFF1E1E2C),
       appBar: CustomAppbar(
-        textTitle: "Reset Password",
+        textTitle: "Đặt lại mật khẩu",
         showLeading: true,
         listIcon: const [],
       ),
@@ -40,9 +40,9 @@ class _ResetPasswordPageState extends State<ResetPasswordPage> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
-              // Title + Subtitle
+              // Tiêu đề + mô tả
               const Text(
-                "Reset Password",
+                "Đặt lại mật khẩu",
                 style: TextStyle(
                   color: Colors.white,
                   fontSize: 26,
@@ -51,13 +51,13 @@ class _ResetPasswordPageState extends State<ResetPasswordPage> {
               ),
               const SizedBox(height: 5),
               const Text(
-                "Recover your account password",
+                "Khôi phục mật khẩu tài khoản của bạn",
                 style: TextStyle(color: Colors.white70, fontSize: 14),
                 textAlign: TextAlign.center,
               ),
               const SizedBox(height: 40),
 
-              // Email field
+              // Trường nhập Email
               TextFormField(
                 controller: _emailController,
                 style: const TextStyle(color: Colors.white),
@@ -74,10 +74,10 @@ class _ResetPasswordPageState extends State<ResetPasswordPage> {
                 ),
                 validator: (value) {
                   if (value == null || value.isEmpty) {
-                    return "Please enter email";
+                    return "Vui lòng nhập email";
                   }
                   if (!RegExp(r'^[^@]+@[^@]+\.[^@]+').hasMatch(value)) {
-                    return "Invalid email format";
+                    return "Email không hợp lệ";
                   }
                   return null;
                 },
@@ -85,10 +85,10 @@ class _ResetPasswordPageState extends State<ResetPasswordPage> {
 
               const SizedBox(height: 40),
 
-              // Next Button
+              // Nút Tiếp tục
               CustomButton(
                 width: double.infinity,
-                text: "Next",
+                text: "Tiếp tục",
                 onPressed: _onNext,
               ),
             ],

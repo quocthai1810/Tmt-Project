@@ -25,35 +25,34 @@ class _EditProfilePageState extends State<EditProfilePage> {
   );
 
   bool _isObscurePassword = true;
-  String? _nameError;
 
-  // Validate Name
+  // Kiểm tra Họ và tên
   String? _validateName(String? value) {
-    if (value == null || value.isEmpty) return "Name không được để trống";
+    if (value == null || value.isEmpty) return "Tên không được để trống";
     if (value == "Tiffany") {
-      // giả sử check từ DB => name đã tồn tại
-      return "* Name already exist";
+      // giả sử check từ DB => tên đã tồn tại
+      return "* Tên đã tồn tại";
     }
     return null;
   }
 
-  // Validate Email
+  // Kiểm tra Email
   String? _validateEmail(String? value) {
     if (value == null || value.isEmpty) return "Email không được để trống";
     if (!value.contains("@")) return "Email không hợp lệ";
     return null;
   }
 
-  // Validate Password
+  // Kiểm tra Mật khẩu
   String? _validatePassword(String? value) {
-    if (value == null || value.isEmpty) return "Password không được để trống";
-    if (value.length < 6) return "Password phải >= 6 ký tự";
+    if (value == null || value.isEmpty) return "Mật khẩu không được để trống";
+    if (value.length < 6) return "Mật khẩu phải >= 6 ký tự";
     return null;
   }
 
-  // Validate Phone
+  // Kiểm tra Số điện thoại
   String? _validatePhone(String? value) {
-    if (value == null || value.isEmpty) return "Phone không được để trống";
+    if (value == null || value.isEmpty) return "Số điện thoại không được để trống";
     if (!RegExp(r'^\+?[0-9]{10,15}$').hasMatch(value)) {
       return "Số điện thoại không hợp lệ";
     }
@@ -64,7 +63,7 @@ class _EditProfilePageState extends State<EditProfilePage> {
     if (_formKey.currentState!.validate()) {
       ScaffoldMessenger.of(
         context,
-      ).showSnackBar(const SnackBar(content: Text("Profile updated ✅")));
+      ).showSnackBar(const SnackBar(content: Text("Cập nhật hồ sơ thành công ✅")));
     }
   }
 
@@ -73,7 +72,7 @@ class _EditProfilePageState extends State<EditProfilePage> {
     return Scaffold(
       backgroundColor: const Color(0xFF1E1E2C),
       appBar: CustomAppbar(
-        textTitle: "Edit Profile",
+        textTitle: "Chỉnh sửa hồ sơ",
         listIcon: [],
         showLeading: true,
       ),
@@ -85,7 +84,7 @@ class _EditProfilePageState extends State<EditProfilePage> {
             children: [
               const SizedBox(height: 20),
 
-              // Avatar + Icon edit
+              // Ảnh đại diện + nút sửa
               Stack(
                 alignment: Alignment.bottomRight,
                 children: [
@@ -105,7 +104,7 @@ class _EditProfilePageState extends State<EditProfilePage> {
                         onPressed: () {
                           ScaffoldMessenger.of(context).showSnackBar(
                             const SnackBar(
-                              content: Text("Change avatar clicked"),
+                              content: Text("Đổi ảnh đại diện"),
                             ),
                           );
                         },
@@ -135,13 +134,13 @@ class _EditProfilePageState extends State<EditProfilePage> {
               ),
               const SizedBox(height: 30),
 
-              // Full Name
+              // Họ và tên
               TextFormField(
                 controller: _nameController,
                 validator: _validateName,
                 style: const TextStyle(color: Colors.white),
                 decoration: InputDecoration(
-                  labelText: "Full Name",
+                  labelText: "Họ và tên",
                   labelStyle: const TextStyle(color: Colors.white70),
                   filled: true,
                   fillColor: const Color(0xFF2C2C3A),
@@ -170,14 +169,14 @@ class _EditProfilePageState extends State<EditProfilePage> {
               ),
               const SizedBox(height: 20),
 
-              // Password
+              // Mật khẩu
               TextFormField(
                 controller: _passwordController,
                 obscureText: _isObscurePassword,
                 validator: _validatePassword,
                 style: const TextStyle(color: Colors.white),
                 decoration: InputDecoration(
-                  labelText: "Password",
+                  labelText: "Mật khẩu",
                   labelStyle: const TextStyle(color: Colors.white70),
                   filled: true,
                   fillColor: const Color(0xFF2C2C3A),
@@ -201,13 +200,13 @@ class _EditProfilePageState extends State<EditProfilePage> {
               ),
               const SizedBox(height: 20),
 
-              // Phone
+              // Số điện thoại
               TextFormField(
                 controller: _phoneController,
                 validator: _validatePhone,
                 style: const TextStyle(color: Colors.white),
                 decoration: InputDecoration(
-                  labelText: "Phone Number",
+                  labelText: "Số điện thoại",
                   labelStyle: const TextStyle(color: Colors.white70),
                   filled: true,
                   fillColor: const Color(0xFF2C2C3A),
@@ -218,10 +217,10 @@ class _EditProfilePageState extends State<EditProfilePage> {
               ),
               const SizedBox(height: 40),
 
-              // Save Changes button
+              // Nút lưu thay đổi
               CustomButton(
                 width: double.infinity,
-                text: "Save Changes",
+                text: "Lưu thay đổi",
                 onPressed: _saveChanges,
               ),
               const SizedBox(height: 30),

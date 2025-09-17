@@ -2,7 +2,6 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:tmt_project/src/tin_src/pages/login_signin_page/login_signin_page.dart';
 
 import '../../core/widgets/tin/custom_loading.dart';
 import '../../routers/app_route.dart';
@@ -73,7 +72,7 @@ class _SplashScreenState extends State<SplashScreen>
                 const CustomLoading(width: 180, height: 180),
                 const SizedBox(height: 20),
                 Text(
-                  "CINEMAX",
+                  "TMT",
                   style: GoogleFonts.montserrat(
                     color: Color(0xFFFF4451),
                     fontSize: 26,

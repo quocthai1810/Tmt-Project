@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 
 import '../../../../core/widgets/thai/custom_appBar.dart';
 import '../../../../core/widgets/tin/custom_button.dart';
+import '../../../../routers/app_route.dart';
 
 class SignUpPage extends StatefulWidget {
   const SignUpPage({super.key});
@@ -26,14 +27,14 @@ class _SignUpPageState extends State<SignUpPage> {
     if (_formKey.currentState!.validate()) {
       if (!_isChecked) {
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text("You must agree to continue")),
+          const SnackBar(content: Text("Bạn phải đồng ý để tiếp tục")),
         );
         return;
       }
-      // TODO: Logic gọi API sign up
+      // TODO: Gọi API đăng ký
       ScaffoldMessenger.of(
         context,
-      ).showSnackBar(const SnackBar(content: Text("Sign Up success 🚀")));
+      ).showSnackBar(const SnackBar(content: Text("Đăng ký thành công 🚀")));
     }
   }
 
@@ -42,7 +43,7 @@ class _SignUpPageState extends State<SignUpPage> {
     return Scaffold(
       backgroundColor: const Color(0xFF1E1E2C),
       appBar: CustomAppbar(
-        textTitle: "Sign Up",
+        textTitle: "Đăng ký",
         listIcon: [],
         showLeading: true,
       ),
@@ -52,11 +53,11 @@ class _SignUpPageState extends State<SignUpPage> {
           key: _formKey,
           child: Column(
             children: [
-              // Title
+              // Tiêu đề
               Column(
                 children: const [
                   Text(
-                    "Let's get started",
+                    "Bắt đầu ngay",
                     style: TextStyle(
                       color: Colors.white,
                       fontSize: 26,
@@ -65,7 +66,7 @@ class _SignUpPageState extends State<SignUpPage> {
                   ),
                   SizedBox(height: 5),
                   Text(
-                    "The latest movies and series\n are here",
+                    "Những bộ phim và series mới nhất\nđang chờ bạn",
                     style: TextStyle(color: Colors.white70, fontSize: 14),
                     textAlign: TextAlign.center,
                   ),
@@ -73,12 +74,12 @@ class _SignUpPageState extends State<SignUpPage> {
               ),
               const SizedBox(height: 40),
 
-              // Full Name
+              // Họ và tên
               TextFormField(
                 controller: _fullNameController,
                 style: const TextStyle(color: Colors.white),
                 decoration: InputDecoration(
-                  labelText: "Full Name",
+                  labelText: "Họ và tên",
                   labelStyle: const TextStyle(color: Colors.white70),
                   filled: true,
                   fillColor: const Color(0xFF2C2C3E),
@@ -86,11 +87,10 @@ class _SignUpPageState extends State<SignUpPage> {
                     borderRadius: BorderRadius.circular(12),
                   ),
                 ),
-                validator:
-                    (value) =>
-                        value == null || value.isEmpty
-                            ? "Please enter full name"
-                            : null,
+                validator: (value) =>
+                value == null || value.isEmpty
+                    ? "Vui lòng nhập họ và tên"
+                    : null,
               ),
               const SizedBox(height: 20),
 
@@ -111,23 +111,23 @@ class _SignUpPageState extends State<SignUpPage> {
                 ),
                 validator: (value) {
                   if (value == null || value.isEmpty) {
-                    return "Please enter email";
+                    return "Vui lòng nhập email";
                   }
                   if (!RegExp(r'^[^@]+@[^@]+\.[^@]+').hasMatch(value)) {
-                    return "Invalid email format";
+                    return "Email không hợp lệ";
                   }
                   return null;
                 },
               ),
               const SizedBox(height: 20),
 
-              // Password
+              // Mật khẩu
               TextFormField(
                 controller: _passwordController,
                 obscureText: _obscurePassword,
                 style: const TextStyle(color: Colors.white),
                 decoration: InputDecoration(
-                  labelText: "Password",
+                  labelText: "Mật khẩu",
                   labelStyle: const TextStyle(color: Colors.white70),
                   filled: true,
                   fillColor: const Color(0xFF2C2C3E),
@@ -150,17 +150,17 @@ class _SignUpPageState extends State<SignUpPage> {
                 ),
                 validator: (value) {
                   if (value == null || value.isEmpty) {
-                    return "Please enter password";
+                    return "Vui lòng nhập mật khẩu";
                   }
                   if (value.length < 6) {
-                    return "Password must be at least 6 characters";
+                    return "Mật khẩu phải có ít nhất 6 ký tự";
                   }
                   return null;
                 },
               ),
               const SizedBox(height: 20),
 
-              // Checkbox
+              // Checkbox điều khoản
               Row(
                 children: [
                   Checkbox(
@@ -180,25 +180,23 @@ class _SignUpPageState extends State<SignUpPage> {
                           fontSize: 14,
                         ),
                         children: [
-                          const TextSpan(text: "I agree to the "),
+                          const TextSpan(text: "Tôi đồng ý với "),
                           TextSpan(
-                            text: "Terms and Services",
+                            text: "Điều khoản dịch vụ",
                             style: TextStyle(color: kRedColor),
-                            recognizer:
-                                TapGestureRecognizer()
-                                  ..onTap = () {
-                                    // TODO: navigate Terms page
-                                  },
+                            recognizer: TapGestureRecognizer()
+                              ..onTap = () {
+                                Navigator.pushNamed(context, AppRouteNames.privacyPolicyPage);
+                              },
                           ),
-                          const TextSpan(text: " and "),
+                          const TextSpan(text: " và "),
                           TextSpan(
-                            text: "Privacy Policy",
+                            text: "Chính sách bảo mật",
                             style: TextStyle(color: kRedColor),
-                            recognizer:
-                                TapGestureRecognizer()
-                                  ..onTap = () {
-                                    // TODO: navigate Privacy Policy page
-                                  },
+                            recognizer: TapGestureRecognizer()
+                              ..onTap = () {
+                                Navigator.pushNamed(context, AppRouteNames.privacyPolicyPage);
+                              },
                           ),
                         ],
                       ),
@@ -209,11 +207,11 @@ class _SignUpPageState extends State<SignUpPage> {
 
               const SizedBox(height: 30),
 
-              // Sign Up button
+              // Nút Đăng ký
               CustomButton(
                 width: double.infinity,
-                text: "Sign Up",
-                onPressed: () {},
+                text: "Đăng ký",
+                onPressed: _signUp,
               ),
             ],
           ),

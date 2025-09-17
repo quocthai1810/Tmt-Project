@@ -10,7 +10,7 @@ class AboutUsPage extends StatelessWidget {
     return Scaffold(
       backgroundColor: const Color(0xFF1E1E2C),
       appBar: const CustomAppbar(
-        textTitle: "Privacy Policy",
+        textTitle: "Về chúng tôi",
         showLeading: true,
         listIcon: [],
       ),
@@ -19,9 +19,9 @@ class AboutUsPage extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: const [
-            // Section 1
+            // Phần 1
             Text(
-              "Terms",
+              "Giới thiệu",
               style: TextStyle(
                 color: Colors.white,
                 fontSize: 16,
@@ -31,15 +31,15 @@ class AboutUsPage extends StatelessWidget {
             SizedBox(height: 10),
             Text(
               "Lorem ipsum dolor sit amet, consectetur adipiscing elit. "
-              "Eget ornare quam vel facilisis feugiat amet sagittis arcu, tortor. "
-              "Sapien, consequat ultrices morbi orci semper sit nulla. "
-              "Leo auctor ut etiam est, amet aliquet ut vivamus. "
-              "Odio vulputate est id tincidunt fames.\n\n"
-              "Lorem ipsum dolor sit amet, consectetur adipiscing elit. "
-              "Eget ornare quam vel facilisis feugiat amet sagittis arcu, tortor. "
-              "Sapien, consequat ultrices morbi orci semper sit nulla. "
-              "Leo auctor ut etiam est, amet aliquet ut vivamus. "
-              "Odio vulputate est id tincidunt fames.",
+                  "Eget ornare quam vel facilisis feugiat amet sagittis arcu, tortor. "
+                  "Sapien, consequat ultrices morbi orci semper sit nulla. "
+                  "Leo auctor ut etiam est, amet aliquet ut vivamus. "
+                  "Odio vulputate est id tincidunt fames.\n\n"
+                  "Lorem ipsum dolor sit amet, consectetur adipiscing elit. "
+                  "Eget ornare quam vel facilisis feugiat amet sagittis arcu, tortor. "
+                  "Sapien, consequat ultrices morbi orci semper sit nulla. "
+                  "Leo auctor ut etiam est, amet aliquet ut vivamus. "
+                  "Odio vulputate est id tincidunt fames.",
               style: TextStyle(
                 color: Colors.white70,
                 fontSize: 14,
@@ -49,9 +49,9 @@ class AboutUsPage extends StatelessWidget {
 
             SizedBox(height: 20),
 
-            // Section 2
+            // Phần 2
             Text(
-              "Changes to the Service and/or Terms:",
+              "Sứ mệnh và giá trị",
               style: TextStyle(
                 color: Colors.white,
                 fontSize: 16,
@@ -61,15 +61,15 @@ class AboutUsPage extends StatelessWidget {
             SizedBox(height: 10),
             Text(
               "Lorem ipsum dolor sit amet, consectetur adipiscing elit. "
-              "Eget ornare quam vel facilisis feugiat amet sagittis arcu, tortor. "
-              "Sapien, consequat ultrices morbi orci semper sit nulla. "
-              "Leo auctor ut etiam est, amet aliquet ut vivamus. "
-              "Odio vulputate est id tincidunt fames.\n\n"
-              "Lorem ipsum dolor sit amet, consectetur adipiscing elit. "
-              "Eget ornare quam vel facilisis feugiat amet sagittis arcu, tortor. "
-              "Sapien, consequat ultrices morbi orci semper sit nulla. "
-              "Leo auctor ut etiam est, amet aliquet ut vivamus. "
-              "Odio vulputate est id tincidunt fames.",
+                  "Eget ornare quam vel facilisis feugiat amet sagittis arcu, tortor. "
+                  "Sapien, consequat ultrices morbi orci semper sit nulla. "
+                  "Leo auctor ut etiam est, amet aliquet ut vivamus. "
+                  "Odio vulputate est id tincidunt fames.\n\n"
+                  "Lorem ipsum dolor sit amet, consectetur adipiscing elit. "
+                  "Eget ornare quam vel facilisis feugiat amet sagittis arcu, tortor. "
+                  "Sapien, consequat ultrices morbi orci semper sit nulla. "
+                  "Leo auctor ut etiam est, amet aliquet ut vivamus. "
+                  "Odio vulputate est id tincidunt fames.",
               style: TextStyle(
                 color: Colors.white70,
                 fontSize: 14,

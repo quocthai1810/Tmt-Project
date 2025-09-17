@@ -89,7 +89,7 @@ class CustomProfile extends StatelessWidget {
             Icons.lock,
             "Change Password",
             onTap: () {
-              Navigator.pushNamed(context, AppRouteNames.resetPasswordPage);
+              Navigator.pushNamed(context, AppRouteNames.createNewPasswordPage);
             },
           ),
           _buildMenuItem(

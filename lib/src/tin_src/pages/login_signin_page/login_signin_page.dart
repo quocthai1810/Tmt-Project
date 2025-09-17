@@ -18,7 +18,7 @@ class LoginSignInPage extends StatelessWidget {
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                // Logo
+                // Logo TMT
                 Image.asset(
                   'assets/img/logo.png',
                   width: 148,
@@ -27,7 +27,7 @@ class LoginSignInPage extends StatelessWidget {
                 ),
                 const SizedBox(height: 7),
                 Text(
-                  "CINEMAX",
+                  "TMT",
                   style: GoogleFonts.montserrat(
                     color: Colors.white,
                     fontSize: 28,
@@ -37,7 +37,7 @@ class LoginSignInPage extends StatelessWidget {
 
                 const SizedBox(height: 7),
                 Text(
-                  "Enter your registered\nPhone Number to Sign Up",
+                  "Nhập số điện thoại đã đăng ký\ncủa bạn để tiếp tục",
                   textAlign: TextAlign.center,
                   style: GoogleFonts.montserrat(
                     color: Color(0xFF92929D),
@@ -50,29 +50,29 @@ class LoginSignInPage extends StatelessWidget {
 
                 CustomButton(
                   width: 327,
-                  text: "Sign Up",
+                  text: "Đăng ký",
                   onPressed: () {
                     Navigator.pushNamed(context, AppRouteNames.signupPage);
                   },
                 ),
                 const SizedBox(height: 34),
 
-                // Login text
+                // Văn bản đăng nhập
                 GestureDetector(
                   onTap: () {
                     Navigator.pushNamed(context, AppRouteNames.loginPage);
                   },
                   child: Text.rich(
                     TextSpan(
-                      text: "I already have an account? ",
+                      text: "Bạn đã có tài khoản? ",
                       style: const TextStyle(
-                        color: Color(0xFFFFA500), // vàng cam
+                        color: Color(0xFFFFA500), // màu cam
                         fontSize: 16,
                         fontWeight: FontWeight.w500,
                       ),
                       children: [
                         TextSpan(
-                          text: "Login",
+                          text: "Đăng nhập",
                           style: const TextStyle(
                             color: Color(0xFFFF4451),
                             fontWeight: FontWeight.w600,
@@ -86,14 +86,14 @@ class LoginSignInPage extends StatelessWidget {
 
                 const SizedBox(height: 32),
 
-                // Divider "Or Sign up with"
+                // Ngăn cách: "Hoặc đăng ký bằng"
                 Row(
                   children: const [
                     Expanded(child: Divider(color: Color(0xFF252836))),
                     Padding(
                       padding: EdgeInsets.symmetric(horizontal: 8),
                       child: Text(
-                        "Or Sign up with",
+                        "Hoặc đăng ký bằng",
                         style: TextStyle(color: Colors.grey),
                       ),
                     ),
@@ -103,7 +103,7 @@ class LoginSignInPage extends StatelessWidget {
 
                 const SizedBox(height: 32),
 
-                // Social buttons
+                // Nút Google
                 Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [GoogleButton(onTap: () {})],
@@ -117,7 +117,7 @@ class LoginSignInPage extends StatelessWidget {
   }
 }
 
-// Widget riêng cho google button
+// Widget riêng cho nút Google
 class GoogleButton extends StatelessWidget {
   final VoidCallback? onTap;
 

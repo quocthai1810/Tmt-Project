@@ -13,37 +13,35 @@ class _CreateNewPasswordPageState extends State<CreateNewPasswordPage> {
   final _formKey = GlobalKey<FormState>();
   final TextEditingController _newPasswordController = TextEditingController();
   final TextEditingController _confirmPasswordController =
-      TextEditingController();
+  TextEditingController();
 
   bool _isObscureNew = true;
   bool _isObscureConfirm = true;
 
-  // validate password
+  // Kiểm tra mật khẩu
   String? _validatePassword(String? value) {
-    if (value == null || value.isEmpty) return "Password không được để trống";
-    if (value.length < 6) return "Password phải >= 6 ký tự";
+    if (value == null || value.isEmpty) return "Mật khẩu không được để trống";
+    if (value.length < 6) return "Mật khẩu phải >= 6 ký tự";
     return null;
   }
 
-  // validate confirm password
+  // Kiểm tra nhập lại mật khẩu
   String? _validateConfirmPassword(String? value) {
-    if (value != _newPasswordController.text) return "Password không khớp";
+    if (value != _newPasswordController.text) return "Mật khẩu không khớp";
     return null;
   }
 
   void _resetPassword() {
     if (_formKey.currentState!.validate()) {
       if (_newPasswordController.text != _confirmPasswordController.text) {
-        // Nếu password không match => báo lỗi
         ScaffoldMessenger.of(
           context,
-        ).showSnackBar(const SnackBar(content: Text("Password không khớp ❌")));
+        ).showSnackBar(const SnackBar(content: Text("Mật khẩu không khớp ❌")));
         return;
       }
 
-      // Nếu pass hợp lệ => xử lý reset
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text("Password reset thành công ✅")),
+        const SnackBar(content: Text("Đặt lại mật khẩu thành công ✅")),
       );
     }
   }
@@ -70,7 +68,7 @@ class _CreateNewPasswordPageState extends State<CreateNewPasswordPage> {
               const SizedBox(height: 20),
               const Center(
                 child: Text(
-                  "Create New Password",
+                  "Tạo mật khẩu mới",
                   style: TextStyle(
                     fontSize: 24,
                     fontWeight: FontWeight.w600,
@@ -81,20 +79,20 @@ class _CreateNewPasswordPageState extends State<CreateNewPasswordPage> {
               const SizedBox(height: 8),
               const Center(
                 child: Text(
-                  "Enter your new password",
+                  "Nhập mật khẩu mới của bạn",
                   style: TextStyle(color: Colors.white70, fontSize: 14),
                 ),
               ),
               const SizedBox(height: 40),
 
-              // New Password
+              // Mật khẩu mới
               TextFormField(
                 controller: _newPasswordController,
                 obscureText: _isObscureNew,
                 validator: _validatePassword,
                 style: const TextStyle(color: Colors.white),
                 decoration: InputDecoration(
-                  labelText: "New Password",
+                  labelText: "Mật khẩu mới",
                   labelStyle: const TextStyle(color: Colors.white70),
                   filled: true,
                   fillColor: const Color(0xFF2C2C3A),
@@ -117,14 +115,14 @@ class _CreateNewPasswordPageState extends State<CreateNewPasswordPage> {
               ),
               const SizedBox(height: 20),
 
-              // Confirm Password
+              // Xác nhận mật khẩu
               TextFormField(
                 controller: _confirmPasswordController,
                 obscureText: _isObscureConfirm,
                 validator: _validateConfirmPassword,
                 style: const TextStyle(color: Colors.white),
                 decoration: InputDecoration(
-                  labelText: "Confirm Password",
+                  labelText: "Xác nhận mật khẩu",
                   labelStyle: const TextStyle(color: Colors.white70),
                   filled: true,
                   fillColor: const Color(0xFF2C2C3A),
@@ -149,10 +147,10 @@ class _CreateNewPasswordPageState extends State<CreateNewPasswordPage> {
               ),
               const SizedBox(height: 40),
 
-              // CustomButton Reset
+              // Nút Đặt lại
               CustomButton(
                 width: double.infinity,
-                text: "Reset",
+                text: "Đặt lại",
                 onPressed: _resetPassword,
               ),
             ],

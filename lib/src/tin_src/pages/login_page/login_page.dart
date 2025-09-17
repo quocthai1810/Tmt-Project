@@ -20,10 +20,10 @@ class _LoginPageState extends State<LoginPage> {
 
   void _login() {
     if (_formKey.currentState!.validate()) {
-      // TODO: Thêm logic call API login
+      // TODO: Thêm logic gọi API đăng nhập
       ScaffoldMessenger.of(
         context,
-      ).showSnackBar(const SnackBar(content: Text("Login success! 🚀")));
+      ).showSnackBar(const SnackBar(content: Text("Đăng nhập thành công! 🚀")));
     }
   }
 
@@ -31,7 +31,7 @@ class _LoginPageState extends State<LoginPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: const Color(0xFF1E1E2C),
-      appBar: CustomAppbar(textTitle: "Login", listIcon: [], showLeading: true),
+      appBar: CustomAppbar(textTitle: "Đăng nhập", listIcon: [], showLeading: true),
       body: Padding(
         padding: const EdgeInsets.only(left: 24, right: 24, top: 40),
         child: Form(
@@ -44,7 +44,7 @@ class _LoginPageState extends State<LoginPage> {
                   crossAxisAlignment: CrossAxisAlignment.center,
                   children: const [
                     Text(
-                      "Hi, Tiffany",
+                      "Xin chào, Tiffany",
                       style: TextStyle(
                         color: Colors.white,
                         fontSize: 28,
@@ -53,7 +53,7 @@ class _LoginPageState extends State<LoginPage> {
                     ),
                     SizedBox(height: 8),
                     Text(
-                      "Welcome back! Please enter\n your details.",
+                      "Chào mừng quay lại! Vui lòng nhập\nthông tin của bạn.",
                       style: TextStyle(color: Colors.white70, fontSize: 12),
                       textAlign: TextAlign.center,
                     ),
@@ -63,7 +63,7 @@ class _LoginPageState extends State<LoginPage> {
 
               const SizedBox(height: 62),
 
-              // Email field
+              // Trường nhập Email
               TextFormField(
                 controller: _emailController,
                 style: const TextStyle(color: Colors.white),
@@ -80,23 +80,23 @@ class _LoginPageState extends State<LoginPage> {
                 ),
                 validator: (value) {
                   if (value == null || value.isEmpty) {
-                    return "Please enter email";
+                    return "Vui lòng nhập email";
                   }
                   if (!RegExp(r'^[^@]+@[^@]+\.[^@]+').hasMatch(value)) {
-                    return "Invalid email format";
+                    return "Email không hợp lệ";
                   }
                   return null;
                 },
               ),
               const SizedBox(height: 20),
 
-              // Password field
+              // Trường nhập Mật khẩu
               TextFormField(
                 controller: _passwordController,
                 obscureText: _obscurePassword,
                 style: const TextStyle(color: Colors.white),
                 decoration: InputDecoration(
-                  labelText: "Password",
+                  labelText: "Mật khẩu",
                   labelStyle: const TextStyle(color: Colors.white70),
                   filled: true,
                   fillColor: const Color(0xFF2C2C3E),
@@ -119,10 +119,10 @@ class _LoginPageState extends State<LoginPage> {
                 ),
                 validator: (value) {
                   if (value == null || value.isEmpty) {
-                    return "Please enter password";
+                    return "Vui lòng nhập mật khẩu";
                   }
                   if (value.length < 6) {
-                    return "Password must be at least 6 characters";
+                    return "Mật khẩu phải có ít nhất 6 ký tự";
                   }
                   return null;
                 },
@@ -130,7 +130,7 @@ class _LoginPageState extends State<LoginPage> {
 
               const SizedBox(height: 10),
 
-              // Forgot password
+              // Quên mật khẩu
               Align(
                 alignment: Alignment.centerRight,
                 child: TextButton(
@@ -138,7 +138,7 @@ class _LoginPageState extends State<LoginPage> {
                     Navigator.pushNamed(context, AppRouteNames.resetPasswordPage);
                   },
                   child: const Text(
-                    "Forgot Password?",
+                    "Quên mật khẩu?",
                     style: TextStyle(color: Color(0xFFFF4451)),
                   ),
                 ),
@@ -146,11 +146,11 @@ class _LoginPageState extends State<LoginPage> {
 
               const SizedBox(height: 30),
 
-              // Login Button
+              // Nút Đăng nhập
               CustomButton(
                 width: double.infinity,
-                text: "Login",
-                onPressed: () {},
+                text: "Đăng nhập",
+                onPressed: _login,
               ),
             ],
           ),

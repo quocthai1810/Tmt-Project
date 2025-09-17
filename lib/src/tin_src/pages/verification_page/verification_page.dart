@@ -15,23 +15,23 @@ class VerificationPage extends StatefulWidget {
 class _VerificationPageState extends State<VerificationPage> {
   final Color kRedColor = const Color(0xFFFF4451);
 
-  // tạo 4 controller cho OTP
+  // tạo 4 ô nhập cho mã OTP
   final List<TextEditingController> _otpControllers = List.generate(
     4,
-    (_) => TextEditingController(),
+        (_) => TextEditingController(),
   );
 
   void _onContinue() {
     String otp = _otpControllers.map((c) => c.text).join();
     if (otp.length == 4) {
-      // TODO: verify OTP logic
+      // TODO: gọi API xác thực OTP
       // ScaffoldMessenger.of(
       //   context,
-      // ).showSnackBar(SnackBar(content: Text("OTP Entered: $otp")));
+      // ).showSnackBar(SnackBar(content: Text("Mã OTP: $otp")));
       Navigator.pushNamed(context, AppRouteNames.createNewPasswordPage);
     } else {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text("Please enter 4 digit code")),
+        const SnackBar(content: Text("Vui lòng nhập đủ 4 số OTP")),
       );
     }
   }
@@ -61,7 +61,7 @@ class _VerificationPageState extends State<VerificationPage> {
         ),
         onChanged: (value) {
           if (value.isNotEmpty && index < 3) {
-            FocusScope.of(context).nextFocus();
+            FocusScope.of(context).nextFocus(); // tự nhảy sang ô kế tiếp
           }
         },
       ),
@@ -73,7 +73,7 @@ class _VerificationPageState extends State<VerificationPage> {
     return Scaffold(
       backgroundColor: const Color(0xFF1E1E2C),
       appBar: CustomAppbar(
-        textTitle: "Verification",
+        textTitle: "Xác thực", // Verification
         showLeading: true,
         listIcon: const [],
       ),
@@ -82,7 +82,7 @@ class _VerificationPageState extends State<VerificationPage> {
         child: Column(
           children: [
             const Text(
-              "Verifying Your Account",
+              "Xác minh tài khoản", // Verifying Your Account
               style: TextStyle(
                 color: Colors.white,
                 fontSize: 22,
@@ -96,10 +96,10 @@ class _VerificationPageState extends State<VerificationPage> {
                 style: TextStyle(fontSize: 14, color: Colors.white70),
                 children: [
                   TextSpan(
-                    text: "We have just sent you 4 digit code via your\n",
+                    text: "Chúng tôi đã gửi mã gồm 4 số qua\n", // We have just sent you 4 digit code via your
                   ),
                   TextSpan(
-                    text: "email example@gmail.com",
+                    text: "email example@gmail.com", // email example@gmail.com
                     style: TextStyle(
                       color: Colors.white, // chữ email sáng hơn
                       fontWeight: FontWeight.w500,
@@ -111,26 +111,26 @@ class _VerificationPageState extends State<VerificationPage> {
 
             const SizedBox(height: 40),
 
-            // OTP input row
+            // Hàng nhập mã OTP
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
               children: List.generate(4, (index) => _buildOtpBox(index)),
             ),
             const SizedBox(height: 64),
 
-            // Continue button
+            // Nút Tiếp tục
             CustomButton(
               width: double.infinity,
-              text: "Continue",
+              text: "Tiếp tục", // Continue
               onPressed: _onContinue,
             ),
             const SizedBox(height: 64),
 
-            // Resend text
+            // Gửi lại mã
             GestureDetector(
               onTap: () {},
               child: Text(
-                "Didn't receive code? Resend",
+                "Chưa nhận được mã? Gửi lại", // Didn't receive code? Resend
                 style: TextStyle(color: kRedColor, fontSize: 14),
               ),
             ),

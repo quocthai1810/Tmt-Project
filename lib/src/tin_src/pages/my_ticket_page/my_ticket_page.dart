@@ -5,7 +5,7 @@ import 'ticket_card.dart';
 class MyTicketPage extends StatelessWidget {
   const MyTicketPage({super.key});
 
-  // demo list vé
+  // Danh sách vé demo
   List<TicketCard> get tickets => [
     TicketCard(
       movieName: "TÊN BỘ PHIM",
@@ -15,7 +15,6 @@ class MyTicketPage extends StatelessWidget {
       seats: "G10, G11",
       bookingCode: "091821912301",
       posterPath: "assets/img/test.jpg",
-      qrPath: "assets/img/test.jpg",
     ),
     TicketCard(
       movieName: "AVENGERS: ENDGAME",
@@ -25,7 +24,6 @@ class MyTicketPage extends StatelessWidget {
       seats: "C5, C6, C7",
       bookingCode: "123456789012",
       posterPath: "assets/img/test.jpg",
-      qrPath: "assets/img/test.jpg",
     ),
   ];
 
@@ -34,7 +32,7 @@ class MyTicketPage extends StatelessWidget {
     return Scaffold(
       backgroundColor: const Color(0xFF1E1E2C),
       appBar: const CustomAppbar(
-        textTitle: "My Ticket",
+        textTitle: "Vé của tôi",
         showLeading: true,
         listIcon: [],
       ),

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:tmt_project/src/tin_src/pages/verification_page/verification_page.dart';
 
 import '../../../../core/widgets/thai/custom_appBar.dart';
 import '../../../../core/widgets/tin/custom_button.dart';
@@ -18,9 +19,8 @@ class _ResetPasswordPageState extends State<ResetPasswordPage> {
 
   void _onNext() {
     if (_formKey.currentState!.validate()) {
-      // TODO: handle reset password logic
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text("Reset link sent 🚀")),
+      Navigator.of(context).pushReplacement(
+        MaterialPageRoute(builder: (_) => const VerificationPage()),
       );
     }
   }
@@ -32,7 +32,7 @@ class _ResetPasswordPageState extends State<ResetPasswordPage> {
       appBar: CustomAppbar(
         textTitle: "Reset Password",
         showLeading: true,
-        listIcon: const [], // không có icon bên phải
+        listIcon: const [],
       ),
       body: SingleChildScrollView(
         padding: const EdgeInsets.only(left: 24, right: 24, top: 40),

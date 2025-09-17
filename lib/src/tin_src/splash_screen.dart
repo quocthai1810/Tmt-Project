@@ -5,6 +5,7 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:tmt_project/src/tin_src/pages/login_signin_page/login_signin_page.dart';
 
 import '../../core/widgets/tin/custom_loading.dart';
+import '../../routers/app_route.dart';
 
 class SplashScreen extends StatefulWidget {
   const SplashScreen({super.key});
@@ -46,9 +47,7 @@ class _SplashScreenState extends State<SplashScreen>
 
     Future.delayed(const Duration(seconds: 3), () {
       if (mounted) {
-        Navigator.of(context).pushReplacement(
-          MaterialPageRoute(builder: (_) => const LoginSignInPage()),
-        );
+        Navigator.pushNamed(context, AppRouteNames.loginSignInPage);
       }
     });
   }

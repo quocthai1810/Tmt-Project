@@ -3,6 +3,7 @@ import 'package:tmt_project/src/tin_src/pages/verification_page/verification_pag
 
 import '../../../../core/widgets/thai/custom_appBar.dart';
 import '../../../../core/widgets/tin/custom_button.dart';
+import '../../../../routers/app_route.dart';
 
 class ResetPasswordPage extends StatefulWidget {
   const ResetPasswordPage({super.key});
@@ -19,9 +20,7 @@ class _ResetPasswordPageState extends State<ResetPasswordPage> {
 
   void _onNext() {
     if (_formKey.currentState!.validate()) {
-      Navigator.of(context).pushReplacement(
-        MaterialPageRoute(builder: (_) => const VerificationPage()),
-      );
+      Navigator.pushNamed(context, AppRouteNames.verificationPage);
     }
   }
 

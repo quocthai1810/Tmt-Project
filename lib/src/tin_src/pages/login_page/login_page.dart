@@ -3,6 +3,7 @@ import 'package:tmt_project/src/tin_src/pages/reset_password_page/reset_password
 
 import '../../../../core/widgets/thai/custom_appBar.dart';
 import '../../../../core/widgets/tin/custom_button.dart';
+import '../../../../routers/app_route.dart';
 
 class LoginPage extends StatefulWidget {
   const LoginPage({super.key});
@@ -134,12 +135,7 @@ class _LoginPageState extends State<LoginPage> {
                 alignment: Alignment.centerRight,
                 child: TextButton(
                   onPressed: () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (_) => const ResetPasswordPage(),
-                      ),
-                    );
+                    Navigator.pushNamed(context, AppRouteNames.resetPasswordPage);
                   },
                   child: const Text(
                     "Forgot Password?",

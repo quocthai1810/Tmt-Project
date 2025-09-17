@@ -3,6 +3,7 @@ import 'package:tmt_project/src/tin_src/pages/create_new_password_page/create_ne
 
 import '../../../../core/widgets/thai/custom_appBar.dart';
 import '../../../../core/widgets/tin/custom_button.dart';
+import '../../../../routers/app_route.dart';
 
 class VerificationPage extends StatefulWidget {
   const VerificationPage({super.key});
@@ -27,9 +28,7 @@ class _VerificationPageState extends State<VerificationPage> {
       // ScaffoldMessenger.of(
       //   context,
       // ).showSnackBar(SnackBar(content: Text("OTP Entered: $otp")));
-      Navigator.of(context).pushReplacement(
-        MaterialPageRoute(builder: (_) => CreateNewPasswordPage()),
-      );
+      Navigator.pushNamed(context, AppRouteNames.createNewPasswordPage);
     } else {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(content: Text("Please enter 4 digit code")),

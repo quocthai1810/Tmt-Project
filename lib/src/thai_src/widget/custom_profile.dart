@@ -5,6 +5,8 @@ import 'package:tmt_project/src/tin_src/pages/my_ticket_page/my_ticket_page.dart
 import 'package:tmt_project/src/tin_src/pages/privacy_policy_page/privacy_policy_page.dart';
 import 'package:tmt_project/src/tin_src/pages/reset_password_page/reset_password_page.dart';
 
+import '../../../routers/app_route.dart';
+
 class CustomProfile extends StatelessWidget {
   final String username;
   final String email;
@@ -62,12 +64,7 @@ class CustomProfile extends StatelessWidget {
                 ),
                 IconButton(
                   onPressed: () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (_) => const EditProfilePage(),
-                      ),
-                    );
+                    Navigator.pushNamed(context, AppRouteNames.editProfilePage);
                   },
                   icon: Icon(
                     Icons.edit_square,
@@ -92,10 +89,7 @@ class CustomProfile extends StatelessWidget {
             Icons.lock,
             "Change Password",
             onTap: () {
-              Navigator.push(
-                context,
-                MaterialPageRoute(builder: (_) => const ResetPasswordPage()),
-              );
+              Navigator.pushNamed(context, AppRouteNames.resetPasswordPage);
             },
           ),
           _buildMenuItem(
@@ -103,10 +97,7 @@ class CustomProfile extends StatelessWidget {
             Icons.confirmation_num,
             "My Ticket",
             onTap: () {
-              Navigator.push(
-                context,
-                MaterialPageRoute(builder: (_) => const MyTicketPage()),
-              );
+              Navigator.pushNamed(context, AppRouteNames.myTicketPage);
             },
           ),
           const SizedBox(height: 20),
@@ -118,10 +109,7 @@ class CustomProfile extends StatelessWidget {
             Icons.shield_moon_rounded,
             "Legal and Policies",
             onTap: () {
-              Navigator.push(
-                context,
-                MaterialPageRoute(builder: (_) => const PrivacyPolicyPage()),
-              );
+              Navigator.pushNamed(context, AppRouteNames.privacyPolicyPage);
             },
           ),
           _buildMenuItem(
@@ -129,10 +117,7 @@ class CustomProfile extends StatelessWidget {
             Icons.info,
             "About Us",
             onTap: () {
-              Navigator.push(
-                context,
-                MaterialPageRoute(builder: (_) => const PrivacyPolicyPage()),
-              );
+              Navigator.pushNamed(context, AppRouteNames.privacyPolicyPage);
             },
           ),
         ],

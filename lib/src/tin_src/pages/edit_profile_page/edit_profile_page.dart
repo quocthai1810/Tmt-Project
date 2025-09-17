@@ -94,22 +94,26 @@ class _EditProfilePageState extends State<EditProfilePage> {
                     backgroundImage: AssetImage("assets/img/logo.png"),
                   ),
                   Container(
+                    width: 40,
+                    height: 40,
                     decoration: const BoxDecoration(
                       color: Colors.redAccent,
                       shape: BoxShape.circle,
                     ),
-                    child: IconButton(
-                      onPressed: () {
-                        ScaffoldMessenger.of(context).showSnackBar(
-                          const SnackBar(
-                            content: Text("Change avatar clicked"),
-                          ),
-                        );
-                      },
-                      icon: const Icon(
-                        Icons.edit,
-                        size: 20,
-                        color: Colors.white,
+                    child: Center(
+                      child: IconButton(
+                        onPressed: () {
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            const SnackBar(
+                              content: Text("Change avatar clicked"),
+                            ),
+                          );
+                        },
+                        icon: const Icon(
+                          Icons.edit,
+                          size: 20,
+                          color: Colors.white,
+                        ),
                       ),
                     ),
                   ),

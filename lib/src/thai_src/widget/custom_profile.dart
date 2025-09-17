@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:tmt_project/core/widgets/thai/toggle_Switch/custom_toggle_1.dart';
+import 'package:tmt_project/src/tin_src/pages/edit_profile_page/edit_profile_page.dart';
 
 class CustomProfile extends StatelessWidget {
   final String username;
@@ -57,7 +58,14 @@ class CustomProfile extends StatelessWidget {
                   ),
                 ),
                 IconButton(
-                  onPressed: () {},
+                  onPressed: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (_) => const EditProfilePage(),
+                      ),
+                    );
+                  },
                   icon: Icon(
                     Icons.edit_square,
                     color: Theme.of(context).colorScheme.primary,

@@ -308,7 +308,7 @@ class _SeatMapPageState extends State<SeatMapPage> {
               },
               width: 280,
               height: 60,
-              backgroundColor: Colors.redAccent,
+              backgroundColor: Theme.of(context).colorScheme.inversePrimary,
               textColor: Colors.white,
               borderRadius: 20,
               fontWeight: FontWeight.w500,
@@ -415,6 +415,8 @@ class _SeatMapPageState extends State<SeatMapPage> {
                   Expanded(
                     child: CustomButton(
                       text: "Xác nhận",
+                      backgroundColor:
+                          Theme.of(context).colorScheme.inversePrimary,
                       onPressed: () {
                         CustomToast.show(
                           context,
@@ -439,7 +441,6 @@ class _SeatMapPageState extends State<SeatMapPage> {
                           ),
                         );
                       },
-                      backgroundColor: Colors.green.shade700,
                       textColor: Colors.white,
                       borderRadius: 20,
                       fontWeight: FontWeight.w500,

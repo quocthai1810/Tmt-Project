@@ -196,13 +196,34 @@ class _ChooseTheaterState extends State<ChooseTheater> {
                                 padding: const EdgeInsets.only(left: 8),
                                 child: CustomChooseTheater(
                                   onShowTimeTap: (showTime) {
+                                    final selectedDay = days[selectedDayIndex];
+                                    final receiveDate = DateFormat(
+                                      'dd/MM/yyyy',
+                                    ).format(selectedDay);
+
+                                    final String movieTitle =
+                                        theaterShow["ten_phim"] ??
+                                        "Phim chưa rõ tên";
+                                    final String? rawShowTime =
+                                        showTime["gio_chieu"];
+                                    final String showTimeValue =
+                                        rawShowTime ?? "00:00";
+
+                                    if (rawShowTime == null) {
+                                      debugPrint(
+                                        "⚠️ Cảnh báo: suất chiếu không có giờ chiếu rõ ràng!",
+                                      );
+                                    }
+
                                     Navigator.pushNamed(
                                       context,
-                                      AppRouteNames.chooseSeat,
-                                      arguments: [
-                                        showTime["ma_phong"],
-                                        showTime["ma_suat_chieu"],
-                                      ],
+                                      AppRouteNames.takeSeatPages,
+                                      arguments: SeatPageArguments(
+                                        movieTitle: movieTitle,
+                                        theaterName: theaterName,
+                                        receiveDate: receiveDate,
+                                        showTime: showTimeValue,
+                                      ),
                                     );
                                   },
                                   title: theaterShow["ten_phim"],

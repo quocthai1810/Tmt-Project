@@ -46,6 +46,36 @@ class _DetailPagesState extends State<DetailPages> {
     });
   }
 
+  Future<void> _pushWithLoader({
+    required BuildContext context,
+    required String routeName,
+    Object? arguments,
+  }) async {
+    showDialog(
+      context: context,
+      barrierDismissible: false,
+      builder: (_) => const Center(child: CustomLoading(width: 88, height: 88)),
+    );
+
+    await Future.delayed(const Duration(milliseconds: 400));
+
+    Navigator.of(context).pop(); // tắt loading
+    Navigator.pushNamed(context, routeName, arguments: arguments);
+  }
+
+  Future<void> _pushPageWithLoader(Widget page) async {
+    showDialog(
+      context: context,
+      barrierDismissible: false,
+      builder: (_) => const Center(child: CustomLoading(width: 88, height: 88)),
+    );
+
+    await Future.delayed(const Duration(milliseconds: 400));
+    Navigator.of(context).pop();
+
+    Navigator.push(context, MaterialPageRoute(builder: (_) => page));
+  }
+
   @override
   Widget build(BuildContext context) {
     return Consumer2<Detailprovider, CommentProvider>(
@@ -215,9 +245,9 @@ class _DetailPagesState extends State<DetailPages> {
                             child: CustomButton(
                               text: "Mua vé",
                               onPressed:
-                                  () => Navigator.pushNamed(
-                                    context,
-                                    AppRouteNames.bookingTicketPages,
+                                  () => _pushWithLoader(
+                                    context: context,
+                                    routeName: AppRouteNames.bookingTicketPages,
                                     arguments: movie["ten_phim"],
                                   ),
                             ),
@@ -227,15 +257,10 @@ class _DetailPagesState extends State<DetailPages> {
                             child: CustomButton(
                               text: "Trailer",
                               onPressed:
-                                  () => Navigator.push(
-                                    context,
-                                    MaterialPageRoute(
-                                      builder:
-                                          (_) => TrailerPages(
-                                            movieId:
-                                                movie["ma_phim"] ??
-                                                widget.movieId,
-                                          ),
+                                  () => _pushPageWithLoader(
+                                    TrailerPages(
+                                      movieId:
+                                          movie["ma_phim"] ?? widget.movieId,
                                     ),
                                   ),
                             ),

@@ -57,18 +57,23 @@ class ChangePayTicket extends StatelessWidget {
       (sum, combo) => sum + (combo.price * combo.quantity),
     );
 
+    final colorPrimary = Theme.of(context).colorScheme.primary;
+    final colorPrimaryContainer =
+        Theme.of(context).colorScheme.primaryContainer;
+    final colorInverse = Theme.of(context).colorScheme.inversePrimary;
+
     return Scaffold(
-      backgroundColor: const Color(0xFF121212),
+      backgroundColor: colorPrimaryContainer,
       appBar: AppBar(
         title: const Text("Xác nhận & Thanh toán"),
-        backgroundColor: Colors.redAccent,
+        backgroundColor: colorInverse,
       ),
       body: SingleChildScrollView(
         padding: const EdgeInsets.all(16),
         child: Container(
           padding: const EdgeInsets.all(20),
           decoration: BoxDecoration(
-            color: const Color(0xFF1C1B22),
+            color: colorPrimaryContainer,
             borderRadius: BorderRadius.circular(16),
             boxShadow: [
               BoxShadow(
@@ -83,26 +88,33 @@ class ChangePayTicket extends StatelessWidget {
             children: [
               Text(
                 "🎮 $movieTitle",
-                style: const TextStyle(
+                style: TextStyle(
                   fontSize: 20,
                   fontWeight: FontWeight.bold,
-                  color: Colors.white,
+                  color: colorPrimary,
                 ),
               ),
               const SizedBox(height: 12),
-              _infoRow(Icons.location_city, theaterName),
-              _infoRow(Icons.date_range, receiveDate),
-              _infoRow(Icons.access_time, showTime),
+              _infoRow(context, Icons.location_city, theaterName, colorPrimary),
+              _infoRow(context, Icons.date_range, receiveDate, colorPrimary),
+              _infoRow(context, Icons.access_time, showTime, colorPrimary),
               const SizedBox(height: 16),
 
               if (vipSeats.isNotEmpty)
-                _seatGroup("Loại VIP", vipSeats, vipPrice, currencyFormat),
+                _seatGroup(
+                  "Loại VIP",
+                  vipSeats,
+                  vipPrice,
+                  currencyFormat,
+                  colorPrimary,
+                ),
               if (normalSeats.isNotEmpty)
                 _seatGroup(
                   "Loại Thường",
                   normalSeats,
                   normalPrice,
                   currencyFormat,
+                  colorPrimary,
                 ),
               if (coupleSeats.isNotEmpty)
                 _seatGroup(
@@ -110,27 +122,28 @@ class ChangePayTicket extends StatelessWidget {
                   coupleSeats,
                   couplePrice,
                   currencyFormat,
+                  colorPrimary,
                 ),
 
               const Divider(height: 28, color: Colors.white24),
 
               Text(
                 "Tổng tạm tính (${selectedSeats.length} ghế): ${currencyFormat.format(totalTicket)}đ",
-                style: const TextStyle(
+                style: TextStyle(
                   fontSize: 16,
-                  color: Colors.redAccent,
+                  color: colorPrimary,
                   fontWeight: FontWeight.bold,
                 ),
               ),
 
               const SizedBox(height: 24),
               if (selectedCombos.isNotEmpty) ...[
-                const Text(
+                Text(
                   "🍿 Combo đã chọn:",
                   style: TextStyle(
                     fontSize: 16,
                     fontWeight: FontWeight.bold,
-                    color: Colors.lightBlueAccent,
+                    color: colorPrimary,
                   ),
                 ),
                 const SizedBox(height: 8),
@@ -143,13 +156,13 @@ class ChangePayTicket extends StatelessWidget {
                         Expanded(
                           child: Text(
                             "${c.name} (${c.popcorn} + ${c.drink}) x${c.quantity}",
-                            style: const TextStyle(color: Colors.white70),
+                            style: TextStyle(color: colorPrimary),
                           ),
                         ),
                         Text(
                           "${currencyFormat.format(c.price * c.quantity)}đ",
-                          style: const TextStyle(
-                            color: Colors.redAccent,
+                          style: TextStyle(
+                            color: colorPrimary,
                             fontWeight: FontWeight.bold,
                           ),
                         ),
@@ -161,14 +174,11 @@ class ChangePayTicket extends StatelessWidget {
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    const Text(
-                      "Tổng combo",
-                      style: TextStyle(color: Colors.white),
-                    ),
+                    Text("Tổng combo", style: TextStyle(color: colorPrimary)),
                     Text(
                       "${currencyFormat.format(comboTotal)}đ",
-                      style: const TextStyle(
-                        color: Colors.amber,
+                      style: TextStyle(
+                        color: colorPrimary,
                         fontWeight: FontWeight.bold,
                       ),
                     ),
@@ -180,27 +190,26 @@ class ChangePayTicket extends StatelessWidget {
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  const Text(
+                  Text(
                     "Tổng cộng:",
-                    style: TextStyle(fontSize: 16, color: Colors.white),
+                    style: TextStyle(fontSize: 16, color: colorPrimary),
                   ),
                   Text(
                     "${currencyFormat.format(totalTicket + comboTotal)}đ",
-                    style: const TextStyle(
+                    style: TextStyle(
                       fontSize: 18,
-                      color: Colors.greenAccent,
+                      color: colorPrimary,
                       fontWeight: FontWeight.bold,
                     ),
                   ),
                 ],
               ),
               const SizedBox(height: 20),
-
               SizedBox(
                 width: double.infinity,
                 child: ElevatedButton(
                   style: ElevatedButton.styleFrom(
-                    backgroundColor: Colors.green,
+                    backgroundColor: colorInverse,
                     padding: const EdgeInsets.symmetric(vertical: 14),
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(12),
@@ -211,7 +220,7 @@ class ChangePayTicket extends StatelessWidget {
                       context,
                       MaterialPageRoute(
                         builder:
-                            (context) => CheckbillPages(
+                            (_) => CheckbillPages(
                               movieTitle: movieTitle,
                               theaterName: theaterName,
                               receiveDate: receiveDate,
@@ -242,14 +251,17 @@ class ChangePayTicket extends StatelessWidget {
 
   bool _isCouple(String seat) => seat.startsWith("O");
 
-  Widget _infoRow(IconData icon, String text) {
+  Widget _infoRow(
+    BuildContext context,
+    IconData icon,
+    String text,
+    Color color,
+  ) {
     return Row(
       children: [
-        Icon(icon, color: Colors.white70, size: 18),
+        Icon(icon, color: color, size: 18),
         const SizedBox(width: 6),
-        Expanded(
-          child: Text(text, style: const TextStyle(color: Colors.white70)),
-        ),
+        Expanded(child: Text(text, style: TextStyle(color: color))),
       ],
     );
   }
@@ -259,6 +271,7 @@ class ChangePayTicket extends StatelessWidget {
     List<String> seats,
     int price,
     NumberFormat format,
+    Color color,
   ) {
     return Padding(
       padding: const EdgeInsets.only(bottom: 12),
@@ -268,16 +281,13 @@ class ChangePayTicket extends StatelessWidget {
           Expanded(
             child: Text(
               "$type\nGhế: ${seats.join(", ")}",
-              style: const TextStyle(color: Colors.white),
+              style: TextStyle(color: color),
             ),
           ),
           Text(
             "${format.format(price)}đ\n(${seats.length} ghế)",
             textAlign: TextAlign.right,
-            style: const TextStyle(
-              color: Colors.redAccent,
-              fontWeight: FontWeight.bold,
-            ),
+            style: TextStyle(color: color, fontWeight: FontWeight.bold),
           ),
         ],
       ),

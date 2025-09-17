@@ -62,7 +62,7 @@ class _TakeComboPagesState extends State<TakeComboPages> {
     showModalBottomSheet(
       context: context,
       isScrollControlled: true,
-      backgroundColor: const Color(0xFF1C1B22),
+      backgroundColor: Theme.of(context).colorScheme.inversePrimary,
       shape: const RoundedRectangleBorder(
         borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
       ),
@@ -76,9 +76,12 @@ class _TakeComboPagesState extends State<TakeComboPages> {
                   child: Column(
                     mainAxisSize: MainAxisSize.min,
                     children: [
-                      const Text(
+                      Text(
                         'Hiện không có sản phẩm nào trong giỏ',
-                        style: TextStyle(color: Colors.white, fontSize: 16),
+                        style: TextStyle(
+                          color: Theme.of(context).colorScheme.primary,
+                          fontSize: 16,
+                        ),
                       ),
                       const SizedBox(height: 20),
                       ElevatedButton(
@@ -113,10 +116,10 @@ class _TakeComboPagesState extends State<TakeComboPages> {
                 child: Column(
                   mainAxisSize: MainAxisSize.min,
                   children: [
-                    const Text(
+                    Text(
                       'Xác nhận thông tin',
                       style: TextStyle(
-                        color: Colors.white,
+                        color: Theme.of(context).colorScheme.primary,
                         fontSize: 18,
                         fontWeight: FontWeight.bold,
                       ),
@@ -127,7 +130,7 @@ class _TakeComboPagesState extends State<TakeComboPages> {
                         margin: const EdgeInsets.only(bottom: 12),
                         padding: const EdgeInsets.all(12),
                         decoration: BoxDecoration(
-                          color: const Color(0xFF2A2931),
+                          color: Theme.of(context).colorScheme.primaryContainer,
                           borderRadius: BorderRadius.circular(12),
                         ),
                         child: Row(
@@ -138,22 +141,25 @@ class _TakeComboPagesState extends State<TakeComboPages> {
                                 children: [
                                   Text(
                                     item.name,
-                                    style: const TextStyle(
-                                      color: Colors.white,
+                                    style: TextStyle(
+                                      color:
+                                          Theme.of(context).colorScheme.primary,
                                       fontWeight: FontWeight.bold,
                                     ),
                                   ),
                                   Text(
                                     '${item.popcorn} + ${item.drink}',
-                                    style: const TextStyle(
-                                      color: Colors.white70,
+                                    style: TextStyle(
+                                      color:
+                                          Theme.of(context).colorScheme.primary,
                                       fontSize: 13,
                                     ),
                                   ),
                                   Text(
                                     'x${item.quantity} - ${currencyFormat.format(item.price * item.quantity)}đ',
-                                    style: const TextStyle(
-                                      color: Colors.red,
+                                    style: TextStyle(
+                                      color:
+                                          Theme.of(context).colorScheme.primary,
                                       fontSize: 14,
                                     ),
                                   ),
@@ -163,9 +169,10 @@ class _TakeComboPagesState extends State<TakeComboPages> {
                             Row(
                               children: [
                                 IconButton(
-                                  icon: const Icon(
+                                  icon: Icon(
                                     Icons.remove_circle,
-                                    color: Colors.white,
+                                    color:
+                                        Theme.of(context).colorScheme.primary,
                                   ),
                                   onPressed: () {
                                     if (item.quantity > 1) {
@@ -176,9 +183,10 @@ class _TakeComboPagesState extends State<TakeComboPages> {
                                   },
                                 ),
                                 IconButton(
-                                  icon: const Icon(
+                                  icon: Icon(
                                     Icons.add_circle,
-                                    color: Colors.white,
+                                    color:
+                                        Theme.of(context).colorScheme.primary,
                                   ),
                                   onPressed:
                                       () =>
@@ -211,8 +219,8 @@ class _TakeComboPagesState extends State<TakeComboPages> {
                                   theaterName: widget.theaterName,
                                   receiveDate: widget.receiveDate,
                                   showTime: widget.showTime,
-                                  selectedSeats: widget.selectedSeats, // ✅ ghế
-                                  selectedCombos: selectedCombos, // ✅ combo
+                                  selectedSeats: widget.selectedSeats,
+                                  selectedCombos: selectedCombos,
                                 ),
                           ),
                         );
@@ -264,9 +272,9 @@ class _TakeComboPagesState extends State<TakeComboPages> {
     );
 
     return Scaffold(
-      backgroundColor: const Color(0xFF1C1B22),
+      backgroundColor: Theme.of(context).colorScheme.inversePrimary,
       appBar: AppBar(
-        backgroundColor: const Color(0xFF1C1B22),
+        backgroundColor: Theme.of(context).colorScheme.inversePrimary,
         title: const Text(
           'Mua bắp nước',
           style: TextStyle(color: Colors.white),
@@ -284,7 +292,7 @@ class _TakeComboPagesState extends State<TakeComboPages> {
                 hintStyle: const TextStyle(color: Colors.grey),
                 prefixIcon: const Icon(Icons.search, color: Colors.grey),
                 filled: true,
-                fillColor: const Color(0xFF2A2931),
+                fillColor: Theme.of(context).colorScheme.primaryContainer,
                 border: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(12),
                   borderSide: BorderSide.none,
@@ -325,8 +333,8 @@ class _TakeComboPagesState extends State<TakeComboPages> {
       ),
       bottomNavigationBar: Container(
         padding: const EdgeInsets.all(16),
-        decoration: const BoxDecoration(
-          color: Color(0xFF2A2931),
+        decoration: BoxDecoration(
+          color: Theme.of(context).colorScheme.primaryContainer,
           borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
         ),
         child: Column(
@@ -335,7 +343,12 @@ class _TakeComboPagesState extends State<TakeComboPages> {
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                const Text('Tạm tính', style: TextStyle(color: Colors.grey)),
+                Text(
+                  'Tạm tính',
+                  style: TextStyle(
+                    color: Theme.of(context).colorScheme.primary,
+                  ),
+                ),
                 Text(
                   '${currencyFormat.format(totalPrice)}đ',
                   style: const TextStyle(
@@ -352,7 +365,7 @@ class _TakeComboPagesState extends State<TakeComboPages> {
               child: ElevatedButton(
                 onPressed: _showReviewPopup,
                 style: ElevatedButton.styleFrom(
-                  backgroundColor: const Color(0xFFEF4444),
+                  backgroundColor: Theme.of(context).colorScheme.inversePrimary,
                   padding: const EdgeInsets.symmetric(vertical: 14),
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(12),
@@ -371,12 +384,15 @@ class _TakeComboPagesState extends State<TakeComboPages> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text(title, style: const TextStyle(color: Colors.white)),
+        Text(
+          title,
+          style: TextStyle(color: Theme.of(context).colorScheme.primary),
+        ),
         const SizedBox(height: 6),
         Container(
           padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
           decoration: BoxDecoration(
-            color: const Color(0xFF2A2931),
+            color: Theme.of(context).colorScheme.primaryContainer,
             borderRadius: BorderRadius.circular(12),
           ),
           child: Row(
@@ -385,7 +401,9 @@ class _TakeComboPagesState extends State<TakeComboPages> {
               Flexible(
                 child: Text(
                   value,
-                  style: const TextStyle(color: Colors.white),
+                  style: TextStyle(
+                    color: Theme.of(context).colorScheme.primary,
+                  ),
                   overflow: TextOverflow.ellipsis,
                 ),
               ),
@@ -412,7 +430,7 @@ class _TakeComboPagesState extends State<TakeComboPages> {
       },
       child: Container(
         decoration: BoxDecoration(
-          color: const Color(0xFF2A2931),
+          color: Theme.of(context).colorScheme.primaryContainer,
           borderRadius: BorderRadius.circular(12),
         ),
         padding: const EdgeInsets.all(12),
@@ -422,20 +440,26 @@ class _TakeComboPagesState extends State<TakeComboPages> {
             const Spacer(),
             Text(
               combo['name'],
-              style: const TextStyle(
-                color: Colors.white,
+              style: TextStyle(
+                color: Theme.of(context).colorScheme.primary,
                 fontWeight: FontWeight.bold,
               ),
             ),
             const SizedBox(height: 4),
             Text(
               combo['desc'],
-              style: const TextStyle(color: Colors.white70, fontSize: 12),
+              style: TextStyle(
+                color: Theme.of(context).colorScheme.primary,
+                fontSize: 12,
+              ),
             ),
             const SizedBox(height: 4),
-            const Text(
+            Text(
               'Áp dụng giá Lễ, Tết...',
-              style: TextStyle(color: Colors.white38, fontSize: 11),
+              style: TextStyle(
+                color: Theme.of(context).colorScheme.primary,
+                fontSize: 11,
+              ),
             ),
             const Spacer(),
             Text(
@@ -457,11 +481,11 @@ class _TakeComboPagesState extends State<TakeComboPages> {
     int quantity = 1;
 
     return AlertDialog(
-      backgroundColor: const Color(0xFF1C1B22),
+      backgroundColor: Theme.of(context).colorScheme.primaryContainer,
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
       title: Text(
         'Chọn $comboName',
-        style: const TextStyle(color: Colors.white),
+        style: TextStyle(color: Theme.of(context).colorScheme.primary),
       ),
       content: StatefulBuilder(
         builder: (context, setDialogState) {
@@ -469,7 +493,7 @@ class _TakeComboPagesState extends State<TakeComboPages> {
             mainAxisSize: MainAxisSize.min,
             children: [
               DropdownButton<String>(
-                dropdownColor: Colors.black,
+                dropdownColor: Theme.of(context).colorScheme.primaryContainer,
                 value: selectedDrink,
                 isExpanded: true,
                 onChanged:
@@ -481,7 +505,9 @@ class _TakeComboPagesState extends State<TakeComboPages> {
                             value: e,
                             child: Text(
                               e,
-                              style: const TextStyle(color: Colors.white),
+                              style: TextStyle(
+                                color: Theme.of(context).colorScheme.primary,
+                              ),
                             ),
                           ),
                         )
@@ -501,7 +527,9 @@ class _TakeComboPagesState extends State<TakeComboPages> {
                             value: e,
                             child: Text(
                               e,
-                              style: const TextStyle(color: Colors.white),
+                              style: TextStyle(
+                                color: Theme.of(context).colorScheme.primary,
+                              ),
                             ),
                           ),
                         )
@@ -511,7 +539,12 @@ class _TakeComboPagesState extends State<TakeComboPages> {
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  const Text('Số lượng', style: TextStyle(color: Colors.white)),
+                  Text(
+                    'Số lượng',
+                    style: TextStyle(
+                      color: Theme.of(context).colorScheme.primary,
+                    ),
+                  ),
                   Row(
                     children: [
                       IconButton(
@@ -520,15 +553,23 @@ class _TakeComboPagesState extends State<TakeComboPages> {
                               () =>
                                   quantity = (quantity > 1) ? quantity - 1 : 1,
                             ),
-                        icon: const Icon(Icons.remove, color: Colors.white),
+                        icon: Icon(
+                          Icons.remove,
+                          color: Theme.of(context).colorScheme.primary,
+                        ),
                       ),
                       Text(
                         quantity.toString(),
-                        style: const TextStyle(color: Colors.white),
+                        style: TextStyle(
+                          color: Theme.of(context).colorScheme.primary,
+                        ),
                       ),
                       IconButton(
                         onPressed: () => setDialogState(() => quantity++),
-                        icon: const Icon(Icons.add, color: Colors.white),
+                        icon: Icon(
+                          Icons.add,
+                          color: Theme.of(context).colorScheme.primary,
+                        ),
                       ),
                     ],
                   ),
@@ -541,7 +582,7 @@ class _TakeComboPagesState extends State<TakeComboPages> {
       actions: [
         TextButton(
           onPressed: () => Navigator.pop(context),
-          child: const Text('Hủy', style: TextStyle(color: Colors.red)),
+          child: const Text('Hủy', style: TextStyle(color: Colors.grey)),
         ),
         ElevatedButton(
           onPressed: () {

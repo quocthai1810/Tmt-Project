@@ -53,7 +53,7 @@ class _MyAppState extends State<MyApp> {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      initialRoute: AppRouteNames.entryPointPage,
+      initialRoute: AppRouteNames.splash,
       routes: appRoutes,
       title: 'Flutter Demo',
       theme: ThemeData(

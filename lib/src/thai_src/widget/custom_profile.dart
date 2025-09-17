@@ -1,5 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:tmt_project/core/widgets/thai/toggle_Switch/custom_toggle_1.dart';
+import 'package:tmt_project/src/tin_src/pages/edit_profile_page/edit_profile_page.dart';
+import 'package:tmt_project/src/tin_src/pages/my_ticket_page/my_ticket_page.dart';
+import 'package:tmt_project/src/tin_src/pages/privacy_policy_page/privacy_policy_page.dart';
+import 'package:tmt_project/src/tin_src/pages/reset_password_page/reset_password_page.dart';
+
+import '../../../routers/app_route.dart';
 
 class CustomProfile extends StatelessWidget {
   final String username;
@@ -57,7 +63,9 @@ class CustomProfile extends StatelessWidget {
                   ),
                 ),
                 IconButton(
-                  onPressed: () {},
+                  onPressed: () {
+                    Navigator.pushNamed(context, AppRouteNames.editProfilePage);
+                  },
                   icon: Icon(
                     Icons.edit_square,
                     color: Theme.of(context).colorScheme.primary,
@@ -69,47 +77,47 @@ class CustomProfile extends StatelessWidget {
           const SizedBox(height: 20),
 
           /// Account Section
-          _buildSectionTitle(context, "Account"),
+          _buildSectionTitle(context, "Tài khoản"),
           _buildMenuItem(
             context,
             Icons.notifications,
-            "Notification",
+            "Thông báo",
             toggle_switch: CustomToggleSwitch(),
           ),
           _buildMenuItem(
             context,
             Icons.lock,
-            "Change Password",
+            "Đổi mật khẩu",
             onTap: () {
-              /// chuyển trang đổi pass
+              Navigator.pushNamed(context, AppRouteNames.createNewPasswordPage);
             },
           ),
           _buildMenuItem(
             context,
             Icons.confirmation_num,
-            "My Ticket",
+            "Vé xem phim",
             onTap: () {
-              /// chuyển trang đổi Ticket
+              Navigator.pushNamed(context, AppRouteNames.myTicketPage);
             },
           ),
           const SizedBox(height: 20),
 
           /// More Section
-          _buildSectionTitle(context, "More"),
+          _buildSectionTitle(context, "Mở rộng"),
           _buildMenuItem(
             context,
             Icons.shield_moon_rounded,
-            "Legal and Policies",
+            "Điều khoản và chính sách",
             onTap: () {
-              /// chuyển trang đổi Legal
+              Navigator.pushNamed(context, AppRouteNames.privacyPolicyPage);
             },
           ),
           _buildMenuItem(
             context,
             Icons.info,
-            "About Us",
+            "Về chúng tôi",
             onTap: () {
-              /// chuyển trang đổi pass
+              Navigator.pushNamed(context, AppRouteNames.privacyPolicyPage);
             },
           ),
         ],

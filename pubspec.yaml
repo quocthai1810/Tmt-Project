@@ -26,6 +26,8 @@ dependencies:
   youtube_player_flutter: ^9.1.2
   book_my_seat: ^1.0.1
  
+  google_fonts: ^6.2.1
+  qr_flutter: ^4.1.0
 
 dev_dependencies:
   
@@ -41,4 +43,5 @@ flutter:
     - assets/img/logo.png
     - assets/img/searchResult.png
     - assets/img/test.jpg
+    - assets/img/iconGoogle.png
   uses-material-design: true

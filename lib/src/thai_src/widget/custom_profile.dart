@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:tmt_project/core/widgets/thai/toggle_Switch/custom_toggle_1.dart';
 import 'package:tmt_project/src/tin_src/pages/edit_profile_page/edit_profile_page.dart';
+import 'package:tmt_project/src/tin_src/pages/my_ticket_page/my_ticket_page.dart';
 
 class CustomProfile extends StatelessWidget {
   final String username;
@@ -97,7 +98,12 @@ class CustomProfile extends StatelessWidget {
             Icons.confirmation_num,
             "My Ticket",
             onTap: () {
-              /// chuyển trang đổi Ticket
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (_) => const MyTicketPage(),
+                ),
+              );
             },
           ),
           const SizedBox(height: 20),

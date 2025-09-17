@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:tmt_project/core/widgets/tin/custom_button.dart';
 import 'package:tmt_project/src/tin_src/pages/login_page/login_page.dart';
+import 'package:tmt_project/src/tin_src/pages/signup_page/signup_page.dart';
 
 class LoginSignInPage extends StatelessWidget {
   const LoginSignInPage({super.key});
@@ -47,7 +48,16 @@ class LoginSignInPage extends StatelessWidget {
 
                 const SizedBox(height: 30),
 
-                CustomButton(width: 327, text: "Sign Up", onPressed: () {}),
+                CustomButton(
+                  width: 327,
+                  text: "Sign Up",
+                  onPressed: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(builder: (_) => const SignUpPage()),
+                    );
+                  },
+                ),
                 const SizedBox(height: 34),
 
                 // Login text

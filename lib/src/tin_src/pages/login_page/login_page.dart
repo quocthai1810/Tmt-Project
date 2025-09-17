@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import '../../../../core/widgets/thai/custom_appBar.dart';
+import '../../../../core/widgets/tin/custom_button.dart';
 
 class LoginPage extends StatefulWidget {
   const LoginPage({super.key});
@@ -144,22 +145,12 @@ class _LoginPageState extends State<LoginPage> {
               const SizedBox(height: 30),
 
               // Login Button
-              SizedBox(
+              CustomButton(
                 width: double.infinity,
-                height: 55,
-                child: ElevatedButton(
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: Color(0xFFFF4451),
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(30),
-                    ),
-                  ),
-                  onPressed: _login,
-                  child: const Text(
-                    "Login",
-                    style: TextStyle(fontSize: 18, color: Colors.white),
-                  ),
-                ),
+                text: "Login",
+                onPressed: () {
+
+                },
               ),
             ],
           ),

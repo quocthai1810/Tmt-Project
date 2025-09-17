@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:tmt_project/core/widgets/tin/custom_button.dart';
+import 'package:tmt_project/src/tin_src/pages/login_page/login_page.dart';
 
 class LoginSignInPage extends StatelessWidget {
   const LoginSignInPage({super.key});
@@ -52,7 +53,10 @@ class LoginSignInPage extends StatelessWidget {
                 // Login text
                 GestureDetector(
                   onTap: () {
-                    // TODO: navigate Login
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(builder: (_) => const LoginPage()),
+                    );
                   },
                   child: Text.rich(
                     TextSpan(

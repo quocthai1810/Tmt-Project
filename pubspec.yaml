@@ -36,4 +36,5 @@ flutter:
     - assets/img/logo.png
     - assets/img/searchResult.png
     - assets/img/test.jpg
+    - assets/img/iconGoogle.png
   uses-material-design: true

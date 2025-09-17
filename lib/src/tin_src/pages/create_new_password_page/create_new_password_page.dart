@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 
+import '../../../../core/widgets/thai/custom_appBar.dart';
 import '../../../../core/widgets/tin/custom_button.dart';
 
 class CreateNewPasswordPage extends StatefulWidget {
@@ -11,14 +12,22 @@ class CreateNewPasswordPage extends StatefulWidget {
 
 class _CreateNewPasswordPageState extends State<CreateNewPasswordPage> {
   final _formKey = GlobalKey<FormState>();
+  final TextEditingController _oldPasswordController = TextEditingController();
   final TextEditingController _newPasswordController = TextEditingController();
   final TextEditingController _confirmPasswordController =
   TextEditingController();
 
+  bool _isObscureOld = true;
   bool _isObscureNew = true;
   bool _isObscureConfirm = true;
 
-  // Kiểm tra mật khẩu
+  // Kiểm tra mật khẩu cũ
+  String? _validateOldPassword(String? value) {
+    if (value == null || value.isEmpty) return "Mật khẩu cũ không được để trống";
+    return null;
+  }
+
+  // Kiểm tra mật khẩu mới
   String? _validatePassword(String? value) {
     if (value == null || value.isEmpty) return "Mật khẩu không được để trống";
     if (value.length < 6) return "Mật khẩu phải >= 6 ký tự";
@@ -50,13 +59,10 @@ class _CreateNewPasswordPageState extends State<CreateNewPasswordPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: const Color(0xFF1E1E2C),
-      appBar: AppBar(
-        backgroundColor: Colors.transparent,
-        elevation: 0,
-        leading: IconButton(
-          icon: const Icon(Icons.arrow_back, color: Colors.white),
-          onPressed: () => Navigator.pop(context),
-        ),
+      appBar: CustomAppbar(
+        textTitle: "Tạo mật khẩu mới",
+        showLeading: true,
+        listIcon: const [],
       ),
       body: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 20),
@@ -84,6 +90,36 @@ class _CreateNewPasswordPageState extends State<CreateNewPasswordPage> {
                 ),
               ),
               const SizedBox(height: 40),
+
+              // Mật khẩu cũ
+              TextFormField(
+                controller: _oldPasswordController,
+                obscureText: _isObscureOld,
+                validator: _validateOldPassword,
+                style: const TextStyle(color: Colors.white),
+                decoration: InputDecoration(
+                  labelText: "Mật khẩu cũ",
+                  labelStyle: const TextStyle(color: Colors.white70),
+                  filled: true,
+                  fillColor: const Color(0xFF2C2C3A),
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(12),
+                    borderSide: BorderSide.none,
+                  ),
+                  suffixIcon: IconButton(
+                    icon: Icon(
+                      _isObscureOld ? Icons.visibility_off : Icons.visibility,
+                      color: Colors.white70,
+                    ),
+                    onPressed: () {
+                      setState(() {
+                        _isObscureOld = !_isObscureOld;
+                      });
+                    },
+                  ),
+                ),
+              ),
+              const SizedBox(height: 20),
 
               // Mật khẩu mới
               TextFormField(

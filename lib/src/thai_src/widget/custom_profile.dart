@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:tmt_project/core/widgets/thai/toggle_Switch/custom_toggle_1.dart';
 import 'package:tmt_project/src/tin_src/pages/edit_profile_page/edit_profile_page.dart';
 import 'package:tmt_project/src/tin_src/pages/my_ticket_page/my_ticket_page.dart';
+import 'package:tmt_project/src/tin_src/pages/privacy_policy_page/privacy_policy_page.dart';
+import 'package:tmt_project/src/tin_src/pages/reset_password_page/reset_password_page.dart';
 
 class CustomProfile extends StatelessWidget {
   final String username;
@@ -90,7 +92,10 @@ class CustomProfile extends StatelessWidget {
             Icons.lock,
             "Change Password",
             onTap: () {
-              /// chuyển trang đổi pass
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (_) => const ResetPasswordPage()),
+              );
             },
           ),
           _buildMenuItem(
@@ -100,9 +105,7 @@ class CustomProfile extends StatelessWidget {
             onTap: () {
               Navigator.push(
                 context,
-                MaterialPageRoute(
-                  builder: (_) => const MyTicketPage(),
-                ),
+                MaterialPageRoute(builder: (_) => const MyTicketPage()),
               );
             },
           ),
@@ -115,7 +118,10 @@ class CustomProfile extends StatelessWidget {
             Icons.shield_moon_rounded,
             "Legal and Policies",
             onTap: () {
-              /// chuyển trang đổi Legal
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (_) => const PrivacyPolicyPage()),
+              );
             },
           ),
           _buildMenuItem(
@@ -123,7 +129,10 @@ class CustomProfile extends StatelessWidget {
             Icons.info,
             "About Us",
             onTap: () {
-              /// chuyển trang đổi pass
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (_) => const PrivacyPolicyPage()),
+              );
             },
           ),
         ],

@@ -162,7 +162,11 @@ final Map<String, WidgetBuilder> appRoutes = {
   AppRouteNames.privacyPolicyPage: (context) => const PrivacyPolicyPage(),
   AppRouteNames.resetPasswordPage: (context) => const ResetPasswordPage(),
   AppRouteNames.signupPage: (context) => const SignUpPage(),
-  AppRouteNames.verificationPage: (context) => const VerificationPage(),
+  AppRouteNames.verificationPage: (context) {
+    final args = ModalRoute.of(context)!.settings.arguments as String;
+    return VerificationPage(email: args);
+  },
+
 };
 
 class SeatPageArguments {

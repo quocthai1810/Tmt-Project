@@ -1,7 +1,7 @@
 import 'dart:async';
-
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 import '../../core/widgets/tin/custom_loading.dart';
 import '../../routers/app_route.dart';
@@ -41,14 +41,22 @@ class _SplashScreenState extends State<SplashScreen>
 
     _controller.forward();
 
-    // Navigate sau 3s
-    // if (mounted) để chắc rằng màn hình Splash vẫn còn hiện trước khi gọi Navigator.of(context).pushReplacement(...)
+    // check token sau 3 giây
+    _checkAuth();
+  }
 
-    Future.delayed(const Duration(seconds: 3), () {
-      if (mounted) {
-        Navigator.pushNamed(context, AppRouteNames.loginSignInPage);
-      }
-    });
+  Future<void> _checkAuth() async {
+    await Future.delayed(const Duration(seconds: 3));
+    final prefs = await SharedPreferences.getInstance();
+    final token = prefs.getString("accessToken");
+
+    if (!mounted) return;
+
+    if (token != null) {
+      Navigator.pushReplacementNamed(context, AppRouteNames.entryPointPage);
+    } else {
+      Navigator.pushReplacementNamed(context, AppRouteNames.loginSignInPage);
+    }
   }
 
   @override
@@ -74,7 +82,7 @@ class _SplashScreenState extends State<SplashScreen>
                 Text(
                   "TMT",
                   style: GoogleFonts.montserrat(
-                    color: Color(0xFFFF4451),
+                    color: const Color(0xFFFF4451),
                     fontSize: 26,
                     fontWeight: FontWeight.bold,
                     letterSpacing: 3,

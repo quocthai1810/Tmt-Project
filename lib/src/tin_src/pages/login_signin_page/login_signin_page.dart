@@ -52,7 +52,7 @@ class LoginSignInPage extends StatelessWidget {
                   width: 327,
                   text: "Đăng ký",
                   onPressed: () {
-                    Navigator.pushNamed(context, AppRouteNames.signupPage);
+                    Navigator.pushReplacementNamed(context, AppRouteNames.signupPage);
                   },
                 ),
                 const SizedBox(height: 34),
@@ -60,7 +60,7 @@ class LoginSignInPage extends StatelessWidget {
                 // Văn bản đăng nhập
                 GestureDetector(
                   onTap: () {
-                    Navigator.pushNamed(context, AppRouteNames.loginPage);
+                    Navigator.pushReplacementNamed(context, AppRouteNames.loginPage);
                   },
                   child: Text.rich(
                     TextSpan(

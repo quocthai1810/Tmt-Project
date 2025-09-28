@@ -26,7 +26,7 @@ class _UserPageState extends State<UserPage> {
             email: "thai@gmail.com",
             avatarUrl: "https://picsum.photos/id/1005/800/500",
           ),
-          CustomButton(text: "Logout", onPressed: () {}),
+          CustomButton(text: "Đăng xuất", onPressed: () {}),
         ],
       ),
     );

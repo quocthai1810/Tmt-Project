@@ -13,6 +13,7 @@ import 'package:tmt_project/src/thai_src/pages/test_page.dart';
 import 'package:tmt_project/src/thai_src/pages/theater_page/theater_page.dart';
 import 'package:tmt_project/src/thai_src/pages/upcoming_page.dart';
 import 'package:tmt_project/src/thai_src/pages/user_page.dart';
+
 //========= Route của Minh =========
 import 'package:tmt_project/src/minh_src/pages/booking_ticket_pages/booking_ticket_pages.dart';
 import 'package:tmt_project/src/minh_src/pages/change_pay_ticket/change_pay_ticket.dart';
@@ -21,9 +22,23 @@ import 'package:tmt_project/src/minh_src/pages/purchase_preview/purchase_preview
 import 'package:tmt_project/src/minh_src/pages/takeCombo/take_combo_pages.dart';
 import 'package:tmt_project/src/minh_src/pages/takeSeat/take_seat_pages.dart';
 import 'package:tmt_project/src/minh_src/pages/trailer_pages/trailer_pages.dart';
+import 'package:tmt_project/src/tin_src/pages/signup_page/signup_page.dart';
+
+import '../src/tin_src/pages/about_us_page/about_us_page.dart';
+import '../src/tin_src/pages/create_new_password_page/create_new_password_page.dart';
+import '../src/tin_src/pages/edit_profile_page/edit_profile_page.dart';
+import '../src/tin_src/pages/login_page/login_page.dart';
+import '../src/tin_src/pages/login_signin_page/login_signin_page.dart';
+import '../src/tin_src/pages/my_ticket_page/my_ticket_page.dart';
+import '../src/tin_src/pages/privacy_policy_page/privacy_policy_page.dart';
+import '../src/tin_src/pages/reset_password_page/reset_password_page.dart';
+import '../src/tin_src/pages/verification_page/verification_page.dart';
+import '../src/tin_src/splash_screen.dart';
+
 import 'package:tmt_project/src/minh_src/pages/check_bill_pages/checkBill_pages.dart';
 
 class AppRouteNames {
+  static const splash = '/splash';
   static const entryPointPage = '/entry';
   static const homePage = '/';
   static const theaterPage = '/theater';
@@ -49,10 +64,24 @@ class AppRouteNames {
   static const takeComboPages = '/takeComboPages';
   static const takeSeatPages = '/takeSeatPages';
   static const trailerPages = '/trailerPages';
+
+  static const aboutUsPage = '/aboutUs';
+  static const createNewPasswordPage = '/createNewPassword';
+  static const editProfilePage = '/editProfile';
+  static const loginPage = '/login';
+  static const loginSignInPage = '/loginSignin';
+  static const myTicketPage = '/myTicket';
+  static const ticketCardPage = '/ticketCard';
+  static const privacyPolicyPage = '/privacyPolicy';
+  static const resetPasswordPage = '/resetPassword';
+  static const signupPage = '/signup';
+  static const verificationPage = '/verification';
+
   static const checkBillPages = '/check-bill';
 }
 
 final Map<String, WidgetBuilder> appRoutes = {
+  AppRouteNames.splash: (context) => const SplashScreen(),
   AppRouteNames.entryPointPage: (context) => EntryPointPage(),
   AppRouteNames.homePage: (context) => HomePage(),
   AppRouteNames.theaterPage: (context) => TheaterPage(),
@@ -139,6 +168,19 @@ final Map<String, WidgetBuilder> appRoutes = {
     final movieId = args is int ? args : -1;
     return TrailerPages(movieId: movieId);
   },
+
+  AppRouteNames.chooseSeat: (context) => const ChooseSeatPage(),
+  AppRouteNames.aboutUsPage: (context) => const AboutUsPage(),
+  AppRouteNames.createNewPasswordPage:
+      (context) => const CreateNewPasswordPage(),
+  AppRouteNames.editProfilePage: (context) => const EditProfilePage(),
+  AppRouteNames.loginPage: (context) => const LoginPage(),
+  AppRouteNames.loginSignInPage: (context) => const LoginSignInPage(),
+  AppRouteNames.myTicketPage: (context) => const MyTicketPage(),
+  AppRouteNames.privacyPolicyPage: (context) => const PrivacyPolicyPage(),
+  AppRouteNames.resetPasswordPage: (context) => const ResetPasswordPage(),
+  AppRouteNames.signupPage: (context) => const SignUpPage(),
+  AppRouteNames.verificationPage: (context) => const VerificationPage(),
 
   AppRouteNames.checkBillPages: (context) {
     final args =

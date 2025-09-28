@@ -1,16 +1,18 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+import 'package:provider/provider.dart';
+import 'package:tmt_project/src/minh_src/models/modelTMT.dart';
 import 'package:tmt_project/src/minh_src/pages/change_pay_ticket/change_pay_ticket.dart';
-import 'package:tmt_project/src/minh_src/pages/takeSeat/take_seat_pages.dart';
-// ✅ import model dùng chung
-import 'package:tmt_project/src/minh_src/models/combo_item.dart';
+import 'package:tmt_project/src/minh_src/pages/takeCombo/takeComboProvider.dart';
+import 'package:tmt_project/src/minh_src/models/takeComboModel.dart'; // ✅ Model riêng cho Combo
 
 class TakeComboPages extends StatefulWidget {
   final String theaterName;
   final String receiveDate;
   final String movieTitle;
   final String showTime;
-  final List<String> selectedSeats; // ✅ ghế chọn từ SeatMapPage
+  final List<String> selectedSeats;
+  final int maHeThong;
 
   const TakeComboPages({
     super.key,
@@ -19,6 +21,7 @@ class TakeComboPages extends StatefulWidget {
     required this.movieTitle,
     required this.showTime,
     required this.selectedSeats,
+    required this.maHeThong,
   });
 
   @override
@@ -29,35 +32,15 @@ class _TakeComboPagesState extends State<TakeComboPages> {
   final currencyFormat = NumberFormat('#,###', 'vi_VN');
   List<ComboItem> selectedCombos = [];
 
-  final combos = [
-    {
-      'name': 'Combo Siêu Rạp',
-      'desc': '1 bắp ngọt lớn + 2 nước + quà tặng',
-      'price': 110000,
-    },
-    {'name': 'Combo Cặp Đôi', 'desc': '2 bắp + 2 nước', 'price': 150000},
-    {
-      'name': 'Combo Sinh Viên',
-      'desc': '1 bắp vừa + 1 nước Sting',
-      'price': 79000,
-    },
-    {
-      'name': 'Combo Gia Đình',
-      'desc': '2 bắp lớn + 4 nước + snack',
-      'price': 199000,
-    },
-    {
-      'name': 'Combo Trẻ Em',
-      'desc': '1 bắp nhỏ + 1 sữa chua uống',
-      'price': 59000,
-    },
-    {
-      'name': 'Combo Party',
-      'desc': '3 bắp + 3 nước + 1 khoai tây chiên',
-      'price': 230000,
-    },
-  ];
+  @override
+  void initState() {
+    super.initState();
+    Future.delayed(Duration.zero, () {
+      context.read<ComboProvider>().fetchCombos(maHeThong: widget.maHeThong);
+    });
+  }
 
+  // ================== POPUP REVIEW ==================
   void _showReviewPopup() {
     showModalBottomSheet(
       context: context,
@@ -70,170 +53,165 @@ class _TakeComboPagesState extends State<TakeComboPages> {
           (_) => StatefulBuilder(
             builder: (context, setModalState) {
               if (selectedCombos.isEmpty) {
-                // === GIỎ RỖNG ===
-                return Padding(
-                  padding: const EdgeInsets.all(16),
-                  child: Column(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      Text(
-                        'Hiện không có sản phẩm nào trong giỏ',
-                        style: TextStyle(
-                          color: Theme.of(context).colorScheme.primary,
-                          fontSize: 16,
-                        ),
-                      ),
-                      const SizedBox(height: 20),
-                      ElevatedButton(
-                        onPressed: () {
-                          Navigator.pop(context); // đóng popup
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                              builder:
-                                  (_) => ChangePayTicket(
-                                    movieTitle: widget.movieTitle,
-                                    theaterName: widget.theaterName,
-                                    receiveDate: widget.receiveDate,
-                                    showTime: "Chưa chọn suất chiếu",
-                                    selectedSeats: widget.selectedSeats,
-                                    selectedCombos:
-                                        const [], // ✅ không có combo
-                                  ),
-                            ),
-                          );
-                        },
-                        child: const Text('Tiếp tục'),
-                      ),
-                    ],
-                  ),
-                );
+                return _buildEmptyPopup();
               }
-
-              // === GIỎ CÓ HÀNG ===
-              return Padding(
-                padding: const EdgeInsets.all(16),
-                child: Column(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    Text(
-                      'Xác nhận thông tin',
-                      style: TextStyle(
-                        color: Theme.of(context).colorScheme.primary,
-                        fontSize: 18,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                    const SizedBox(height: 12),
-                    ...selectedCombos.map((item) {
-                      return Container(
-                        margin: const EdgeInsets.only(bottom: 12),
-                        padding: const EdgeInsets.all(12),
-                        decoration: BoxDecoration(
-                          color: Theme.of(context).colorScheme.primaryContainer,
-                          borderRadius: BorderRadius.circular(12),
-                        ),
-                        child: Row(
-                          children: [
-                            Expanded(
-                              child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  Text(
-                                    item.name,
-                                    style: TextStyle(
-                                      color:
-                                          Theme.of(context).colorScheme.primary,
-                                      fontWeight: FontWeight.bold,
-                                    ),
-                                  ),
-                                  Text(
-                                    '${item.popcorn} + ${item.drink}',
-                                    style: TextStyle(
-                                      color:
-                                          Theme.of(context).colorScheme.primary,
-                                      fontSize: 13,
-                                    ),
-                                  ),
-                                  Text(
-                                    'x${item.quantity} - ${currencyFormat.format(item.price * item.quantity)}đ',
-                                    style: TextStyle(
-                                      color:
-                                          Theme.of(context).colorScheme.primary,
-                                      fontSize: 14,
-                                    ),
-                                  ),
-                                ],
-                              ),
-                            ),
-                            Row(
-                              children: [
-                                IconButton(
-                                  icon: Icon(
-                                    Icons.remove_circle,
-                                    color:
-                                        Theme.of(context).colorScheme.primary,
-                                  ),
-                                  onPressed: () {
-                                    if (item.quantity > 1) {
-                                      setModalState(() => item.quantity--);
-                                    } else {
-                                      _confirmDelete(item, setModalState);
-                                    }
-                                  },
-                                ),
-                                IconButton(
-                                  icon: Icon(
-                                    Icons.add_circle,
-                                    color:
-                                        Theme.of(context).colorScheme.primary,
-                                  ),
-                                  onPressed:
-                                      () =>
-                                          setModalState(() => item.quantity++),
-                                ),
-                                IconButton(
-                                  icon: const Icon(
-                                    Icons.delete,
-                                    color: Colors.red,
-                                  ),
-                                  onPressed:
-                                      () => _confirmDelete(item, setModalState),
-                                ),
-                              ],
-                            ),
-                          ],
-                        ),
-                      );
-                    }).toList(),
-                    const SizedBox(height: 8),
-                    ElevatedButton(
-                      onPressed: () {
-                        Navigator.pop(context); // đóng popup
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder:
-                                (_) => ChangePayTicket(
-                                  movieTitle: widget.movieTitle,
-                                  theaterName: widget.theaterName,
-                                  receiveDate: widget.receiveDate,
-                                  showTime: widget.showTime,
-                                  selectedSeats: widget.selectedSeats,
-                                  selectedCombos: selectedCombos,
-                                ),
-                          ),
-                        );
-                      },
-                      child: const Text('Tiếp tục'),
-                    ),
-                  ],
-                ),
-              );
+              return _buildConfirmPopup(setModalState);
             },
           ),
     );
   }
+
+  Widget _buildEmptyPopup() => Padding(
+    padding: const EdgeInsets.all(16),
+    child: Column(
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        Text(
+          'Hiện không có sản phẩm nào trong giỏ',
+          style: TextStyle(
+            color: Theme.of(context).colorScheme.primary,
+            fontSize: 16,
+          ),
+        ),
+        const SizedBox(height: 20),
+        ElevatedButton(
+          onPressed: () {
+            Navigator.pop(context);
+            Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder:
+                    (_) => ChangePayTicket(
+                      movieTitle: widget.movieTitle,
+                      theaterName: widget.theaterName,
+                      receiveDate: widget.receiveDate,
+                      showTime: widget.showTime,
+                      selectedSeats: widget.selectedSeats,
+                      selectedCombos: const [],
+                    ),
+              ),
+            );
+          },
+          child: const Text('Tiếp tục'),
+        ),
+      ],
+    ),
+  );
+
+  Widget _buildConfirmPopup(void Function(void Function()) setModalState) =>
+      Padding(
+        padding: const EdgeInsets.all(16),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Text(
+              'Xác nhận thông tin',
+              style: TextStyle(
+                color: Theme.of(context).colorScheme.primary,
+                fontSize: 18,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+            const SizedBox(height: 12),
+            ...selectedCombos.map(
+              (item) => _buildComboTile(item, setModalState),
+            ),
+            const SizedBox(height: 8),
+            ElevatedButton(
+              onPressed: () {
+                Navigator.pop(context);
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder:
+                        (_) => ChangePayTicket(
+                          movieTitle: widget.movieTitle,
+                          theaterName: widget.theaterName,
+                          receiveDate: widget.receiveDate,
+                          showTime: widget.showTime,
+                          selectedSeats: widget.selectedSeats,
+                          selectedCombos: selectedCombos,
+                        ),
+                  ),
+                );
+              },
+              child: const Text('Tiếp tục'),
+            ),
+          ],
+        ),
+      );
+
+  Widget _buildComboTile(
+    ComboItem item,
+    void Function(void Function()) setModalState,
+  ) => Container(
+    margin: const EdgeInsets.only(bottom: 12),
+    padding: const EdgeInsets.all(12),
+    decoration: BoxDecoration(
+      color: Theme.of(context).colorScheme.primaryContainer,
+      borderRadius: BorderRadius.circular(12),
+    ),
+    child: Row(
+      children: [
+        Expanded(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                item.name,
+                style: TextStyle(
+                  color: Theme.of(context).colorScheme.primary,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+              Text(
+                '${item.popcorn} + ${item.drink}',
+                style: TextStyle(
+                  color: Theme.of(context).colorScheme.primary,
+                  fontSize: 13,
+                ),
+              ),
+              Text(
+                'x${item.quantity} - ${currencyFormat.format(item.price * item.quantity)}đ',
+                style: TextStyle(
+                  color: Theme.of(context).colorScheme.primary,
+                  fontSize: 14,
+                ),
+              ),
+            ],
+          ),
+        ),
+        Row(
+          children: [
+            IconButton(
+              icon: Icon(
+                Icons.remove_circle,
+                color: Theme.of(context).colorScheme.primary,
+              ),
+              onPressed: () {
+                if (item.quantity > 1) {
+                  setModalState(() => item.quantity--);
+                } else {
+                  _confirmDelete(item, setModalState);
+                }
+              },
+            ),
+            IconButton(
+              icon: Icon(
+                Icons.add_circle,
+                color: Theme.of(context).colorScheme.primary,
+              ),
+              onPressed: () => setModalState(() => item.quantity++),
+            ),
+            IconButton(
+              icon: const Icon(Icons.delete, color: Colors.red),
+              onPressed: () => _confirmDelete(item, setModalState),
+            ),
+          ],
+        ),
+      ],
+    ),
+  );
 
   void _confirmDelete(
     ComboItem item,
@@ -264,11 +242,13 @@ class _TakeComboPagesState extends State<TakeComboPages> {
     }
   }
 
+  // ================== MAIN UI ==================
   @override
   Widget build(BuildContext context) {
-    int totalPrice = selectedCombos.fold(
+    final comboProvider = context.watch<ComboProvider>();
+    final totalPrice = selectedCombos.fold(
       0,
-      (sum, item) => sum + (item.price * item.quantity),
+      (sum, item) => sum + item.price * item.quantity,
     );
 
     return Scaffold(
@@ -276,7 +256,7 @@ class _TakeComboPagesState extends State<TakeComboPages> {
       appBar: AppBar(
         backgroundColor: Theme.of(context).colorScheme.inversePrimary,
         title: const Text(
-          'Mua bắp nước',
+          "Mua bắp nước",
           style: TextStyle(color: Colors.white),
         ),
         iconTheme: const IconThemeData(color: Colors.white),
@@ -284,6 +264,7 @@ class _TakeComboPagesState extends State<TakeComboPages> {
       body: Column(
         children: [
           const SizedBox(height: 12),
+          // search box
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 16),
             child: TextField(
@@ -301,6 +282,7 @@ class _TakeComboPagesState extends State<TakeComboPages> {
             ),
           ),
           const SizedBox(height: 12),
+          // dropdown nhận tại + ngày
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 16),
             child: Column(
@@ -316,17 +298,39 @@ class _TakeComboPagesState extends State<TakeComboPages> {
             ),
           ),
           const SizedBox(height: 12),
+          // list combos
           Expanded(
-            child: GridView.builder(
-              padding: const EdgeInsets.symmetric(horizontal: 16),
-              gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                crossAxisCount: 2,
-                mainAxisSpacing: 16,
-                crossAxisSpacing: 16,
-                childAspectRatio: 0.75,
-              ),
-              itemCount: combos.length,
-              itemBuilder: (_, i) => _buildComboCard(combos[i]),
+            child: Builder(
+              builder: (_) {
+                if (comboProvider.isLoading) {
+                  return const Center(child: CircularProgressIndicator());
+                }
+                if (comboProvider.errorMessage.isNotEmpty) {
+                  return Center(
+                    child: Text(
+                      comboProvider.errorMessage,
+                      style: const TextStyle(color: Colors.red),
+                    ),
+                  );
+                }
+                if (comboProvider.combos.isEmpty) {
+                  return const Center(
+                    child: Text("Không có combo nào khả dụng"),
+                  );
+                }
+                return GridView.builder(
+                  padding: const EdgeInsets.symmetric(horizontal: 16),
+                  gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                    crossAxisCount: 2,
+                    mainAxisSpacing: 16,
+                    crossAxisSpacing: 16,
+                    childAspectRatio: 0.75,
+                  ),
+                  itemCount: comboProvider.combos.length,
+                  itemBuilder:
+                      (_, i) => _buildComboCard(comboProvider.combos[i]),
+                );
+              },
             ),
           ),
         ],
@@ -335,7 +339,7 @@ class _TakeComboPagesState extends State<TakeComboPages> {
         padding: const EdgeInsets.all(16),
         decoration: BoxDecoration(
           color: Theme.of(context).colorScheme.primaryContainer,
-          borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
+          borderRadius: const BorderRadius.vertical(top: Radius.circular(24)),
         ),
         child: Column(
           mainAxisSize: MainAxisSize.min,
@@ -380,6 +384,7 @@ class _TakeComboPagesState extends State<TakeComboPages> {
     );
   }
 
+  // ================== WIDGET BUILDERS ==================
   Widget _buildDropdown({required String title, required String value}) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -398,15 +403,7 @@ class _TakeComboPagesState extends State<TakeComboPages> {
           child: Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              Flexible(
-                child: Text(
-                  value,
-                  style: TextStyle(
-                    color: Theme.of(context).colorScheme.primary,
-                  ),
-                  overflow: TextOverflow.ellipsis,
-                ),
-              ),
+              Flexible(child: Text(value, overflow: TextOverflow.ellipsis)),
               const Icon(Icons.arrow_drop_down, color: Colors.white),
             ],
           ),
@@ -415,12 +412,12 @@ class _TakeComboPagesState extends State<TakeComboPages> {
     );
   }
 
-  Widget _buildComboCard(Map<String, dynamic> combo) {
+  Widget _buildComboCard(ComboModel combo) {
     return GestureDetector(
       onTap: () async {
         final result = await showDialog<ComboItem>(
           context: context,
-          builder: (_) => _buildComboDialog(combo['name'], combo['price']),
+          builder: (_) => _buildComboDialog(combo.tenCombo, combo.gia),
         );
         if (result != null) {
           setState(() {
@@ -437,33 +434,32 @@ class _TakeComboPagesState extends State<TakeComboPages> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            const Spacer(),
+            Image.network(
+              combo.hinhAnh,
+              height: 100,
+              width: double.infinity,
+              fit: BoxFit.cover,
+            ),
+            const SizedBox(height: 8),
             Text(
-              combo['name'],
+              combo.tenCombo,
               style: TextStyle(
                 color: Theme.of(context).colorScheme.primary,
                 fontWeight: FontWeight.bold,
               ),
             ),
-            const SizedBox(height: 4),
             Text(
-              combo['desc'],
+              combo.moTa,
+              maxLines: 2,
+              overflow: TextOverflow.ellipsis,
               style: TextStyle(
                 color: Theme.of(context).colorScheme.primary,
                 fontSize: 12,
               ),
             ),
-            const SizedBox(height: 4),
-            Text(
-              'Áp dụng giá Lễ, Tết...',
-              style: TextStyle(
-                color: Theme.of(context).colorScheme.primary,
-                fontSize: 11,
-              ),
-            ),
             const Spacer(),
             Text(
-              '${currencyFormat.format(combo['price'])}đ',
+              '${currencyFormat.format(combo.gia)}đ',
               style: const TextStyle(
                 color: Colors.red,
                 fontWeight: FontWeight.bold,
@@ -500,39 +496,19 @@ class _TakeComboPagesState extends State<TakeComboPages> {
                     (value) => setDialogState(() => selectedDrink = value!),
                 items:
                     ['Pepsi', '7Up', 'Sting']
-                        .map(
-                          (e) => DropdownMenuItem(
-                            value: e,
-                            child: Text(
-                              e,
-                              style: TextStyle(
-                                color: Theme.of(context).colorScheme.primary,
-                              ),
-                            ),
-                          ),
-                        )
+                        .map((e) => DropdownMenuItem(value: e, child: Text(e)))
                         .toList(),
               ),
               const SizedBox(height: 12),
               DropdownButton<String>(
-                dropdownColor: Colors.black,
+                dropdownColor: Theme.of(context).colorScheme.primaryContainer,
                 value: selectedPopcorn,
                 isExpanded: true,
                 onChanged:
                     (value) => setDialogState(() => selectedPopcorn = value!),
                 items:
                     ['Bắp ngọt', 'Bắp phô mai']
-                        .map(
-                          (e) => DropdownMenuItem(
-                            value: e,
-                            child: Text(
-                              e,
-                              style: TextStyle(
-                                color: Theme.of(context).colorScheme.primary,
-                              ),
-                            ),
-                          ),
-                        )
+                        .map((e) => DropdownMenuItem(value: e, child: Text(e)))
                         .toList(),
               ),
               const SizedBox(height: 12),
@@ -582,7 +558,7 @@ class _TakeComboPagesState extends State<TakeComboPages> {
       actions: [
         TextButton(
           onPressed: () => Navigator.pop(context),
-          child: const Text('Hủy', style: TextStyle(color: Colors.grey)),
+          child: const Text('Hủy'),
         ),
         ElevatedButton(
           onPressed: () {

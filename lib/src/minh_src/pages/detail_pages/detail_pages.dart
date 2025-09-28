@@ -248,7 +248,12 @@ class _DetailPagesState extends State<DetailPages> {
                                   () => _pushWithLoader(
                                     context: context,
                                     routeName: AppRouteNames.bookingTicketPages,
-                                    arguments: movie["ten_phim"],
+                                    arguments: {
+                                      "movieId":
+                                          movie["ma_phim"], // 🔹 ID dùng cho các màn sau
+                                      "movieTitle":
+                                          movie["ten_phim"], // 🔹 Giữ tiêu đề cho AppBar
+                                    },
                                   ),
                             ),
                           ),

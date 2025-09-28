@@ -4,12 +4,14 @@ import 'package:provider/provider.dart';
 import 'package:tmt_project/routers/app_route.dart';
 import 'package:tmt_project/src/minh_src/pages/booking_ticket_pages/bookingProvider.dart';
 import 'package:tmt_project/src/minh_src/pages/detail_pages/detailProvider.dart';
+import 'package:tmt_project/src/minh_src/pages/takeSeat/takeSeatProvider.dart';
 import 'package:tmt_project/src/minh_src/pages/trailer_pages/trailerProviders.dart';
 import 'package:tmt_project/src/thai_src/pages/filter_page/filter_provider.dart';
 import 'package:tmt_project/src/thai_src/pages/home_page/home_page_provider.dart';
 import 'package:tmt_project/src/thai_src/pages/new_page/new_provider.dart';
 import 'package:tmt_project/src/thai_src/pages/search_page/search_provider.dart';
 import 'package:tmt_project/src/thai_src/pages/theater_page/theater_provider.dart';
+import 'package:tmt_project/src/minh_src/pages/takeCombo/takeComboProvider.dart';
 
 ///import
 void main() async {
@@ -36,6 +38,14 @@ void main() async {
         ChangeNotifierProvider<LayRapPhimProvider>(
           create: (_) => LayRapPhimProvider(),
         ),
+        ChangeNotifierProvider<ShowtimeProvider>(
+          create: (_) => ShowtimeProvider(),
+        ),
+        ChangeNotifierProvider<SuatChieuProvider>(
+          create: (_) => SuatChieuProvider(),
+        ),
+        ChangeNotifierProvider<GheProvider>(create: (_) => GheProvider()),
+        ChangeNotifierProvider<ComboProvider>(create: (_) => ComboProvider()),
       ],
       child: const MyApp(),
     ),

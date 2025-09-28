@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:tmt_project/src/minh_src/models/combo_item.dart';
+import 'package:tmt_project/src/minh_src/models/modelTMT.dart';
 import 'package:tmt_project/src/thai_src/pages/choose_theater.dart';
 import 'package:tmt_project/src/thai_src/pages/entry_point_page.dart';
 import 'package:tmt_project/src/thai_src/pages/filter_page/filter_page.dart';
@@ -16,12 +16,12 @@ import 'package:tmt_project/src/thai_src/pages/user_page.dart';
 //========= Route của Minh =========
 import 'package:tmt_project/src/minh_src/pages/booking_ticket_pages/booking_ticket_pages.dart';
 import 'package:tmt_project/src/minh_src/pages/change_pay_ticket/change_pay_ticket.dart';
-import 'package:tmt_project/src/minh_src/pages/chooseSeat/choose_seat_page.dart';
 import 'package:tmt_project/src/minh_src/pages/detail_pages/detail_pages.dart';
 import 'package:tmt_project/src/minh_src/pages/purchase_preview/purchase_preview_pages.dart';
 import 'package:tmt_project/src/minh_src/pages/takeCombo/take_combo_pages.dart';
 import 'package:tmt_project/src/minh_src/pages/takeSeat/take_seat_pages.dart';
 import 'package:tmt_project/src/minh_src/pages/trailer_pages/trailer_pages.dart';
+import 'package:tmt_project/src/minh_src/pages/check_bill_pages/checkBill_pages.dart';
 
 class AppRouteNames {
   static const entryPointPage = '/entry';
@@ -49,6 +49,7 @@ class AppRouteNames {
   static const takeComboPages = '/takeComboPages';
   static const takeSeatPages = '/takeSeatPages';
   static const trailerPages = '/trailerPages';
+  static const checkBillPages = '/check-bill';
 }
 
 final Map<String, WidgetBuilder> appRoutes = {
@@ -68,9 +69,16 @@ final Map<String, WidgetBuilder> appRoutes = {
 
   // ======== Route của Minh ========
   AppRouteNames.bookingTicketPages: (context) {
-    final args = ModalRoute.of(context)!.settings.arguments;
-    final movieTitle = args is String ? args : 'Unknown Movie';
-    return BookingTicketPages(movieTitle: movieTitle);
+    final args =
+        ModalRoute.of(context)!.settings.arguments as Map<String, dynamic>;
+
+    // Phòng khi API trả type lạ (String/int), convert an toàn:
+    final dynamic rawId = args["movieId"];
+    final int movieId = rawId is int ? rawId : int.tryParse("$rawId") ?? 0;
+
+    final String movieTitle = (args["movieTitle"] ?? "").toString();
+
+    return BookingTicketPages(movieId: movieId, movieTitle: movieTitle);
   },
   AppRouteNames.changePayTicket: (context) {
     final args =
@@ -85,7 +93,7 @@ final Map<String, WidgetBuilder> appRoutes = {
       selectedCombos: args.selectedCombos,
     );
   },
-  AppRouteNames.chooseSeatPage: (context) => const ChooseSeatPage(),
+
   AppRouteNames.detailPages: (context) {
     final args = ModalRoute.of(context)!.settings.arguments;
     final movieId = args is int ? args : -1;
@@ -95,6 +103,7 @@ final Map<String, WidgetBuilder> appRoutes = {
   AppRouteNames.takeComboPages: (context) {
     final args =
         ModalRoute.of(context)!.settings.arguments as Map<String, dynamic>;
+
     return TakeComboPages(
       theaterName: args['theaterName'] ?? '',
       receiveDate: args['receiveDate'] ?? '',
@@ -102,6 +111,11 @@ final Map<String, WidgetBuilder> appRoutes = {
       showTime: args['showTime'] ?? 'Chưa chọn suất chiếu',
       selectedSeats:
           (args['selectedSeats'] as List<dynamic>?)?.cast<String>() ?? [],
+
+      // 💥 Thêm 3 dòng dưới đây để fix lỗi:
+      // maPhong: args['maPhong'] ?? 0,
+      // maSuatChieu: args['maSuatChieu'] ?? 0,
+      maHeThong: args['maHeThong'] ?? 0,
     );
   },
 
@@ -109,17 +123,35 @@ final Map<String, WidgetBuilder> appRoutes = {
     final args =
         ModalRoute.of(context)!.settings.arguments as SeatPageArguments;
 
-    return SeatMapPage(
+    return TakeSeatPages(
       movieTitle: args.movieTitle,
       theaterName: args.theaterName,
       receiveDate: args.receiveDate,
       showTime: args.showTime,
+      maPhong: args.maPhong,
+      maSuatChieu: args.maSuatChieu,
+      maHeThong: args.maHeThong,
     );
   },
+
   AppRouteNames.trailerPages: (context) {
     final args = ModalRoute.of(context)!.settings.arguments;
     final movieId = args is int ? args : -1;
     return TrailerPages(movieId: movieId);
+  },
+
+  AppRouteNames.checkBillPages: (context) {
+    final args =
+        ModalRoute.of(context)!.settings.arguments as Map<String, dynamic>;
+
+    return CheckbillPages(
+      movieTitle: args['movieTitle'],
+      theaterName: args['theaterName'],
+      receiveDate: args['receiveDate'],
+      showTime: args['showTime'],
+      selectedSeats: args['selectedSeats'],
+      selectedCombos: args['selectedCombos'],
+    );
   },
 };
 
@@ -128,12 +160,18 @@ class SeatPageArguments {
   final String theaterName;
   final String receiveDate;
   final String showTime;
+  final int maPhong;
+  final int maSuatChieu;
+  final int maHeThong;
 
   SeatPageArguments({
     required this.movieTitle,
     required this.theaterName,
     required this.receiveDate,
     required this.showTime,
+    required this.maPhong,
+    required this.maSuatChieu,
+    required this.maHeThong,
   });
 }
 

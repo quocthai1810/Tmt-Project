@@ -1,63 +1,55 @@
 import 'package:flutter/material.dart';
 import 'dart:math' as math;
 import 'package:intl/intl.dart';
+import 'package:provider/provider.dart';
 import 'package:tmt_project/core/widgets/minh/customToast.dart';
 import 'package:tmt_project/core/widgets/tin/custom_button.dart';
+import 'package:tmt_project/core/widgets/tin/custom_loading.dart';
 import 'package:tmt_project/src/minh_src/pages/takeCombo/take_combo_pages.dart';
+import 'package:tmt_project/src/minh_src/models/modelGhe.dart';
+import 'package:tmt_project/src/minh_src/pages/takeSeat/takeSeatProvider.dart';
 
-class SeatModel {
-  final int row;
-  final int col;
-  final String name;
-  bool isSelected;
-  final bool isVip;
-  final bool isCouple;
-
-  SeatModel({
-    required this.row,
-    required this.col,
-    required this.name,
-    this.isSelected = false,
-    this.isVip = false,
-    this.isCouple = false,
-  });
-}
-
-class SeatMapPage extends StatefulWidget {
+class TakeSeatPages extends StatefulWidget {
+  final int maPhong;
+  final int maSuatChieu;
   final String movieTitle;
   final String theaterName;
   final String receiveDate;
   final String showTime;
+  final int maHeThong;
 
-  const SeatMapPage({
+  const TakeSeatPages({
     super.key,
+    required this.maPhong,
+    required this.maSuatChieu,
     required this.movieTitle,
     required this.theaterName,
     required this.receiveDate,
     required this.showTime,
+    required this.maHeThong,
   });
 
   @override
-  State<SeatMapPage> createState() => _SeatMapPageState();
+  State<TakeSeatPages> createState() => _TakeSeatPagesState();
 }
 
-class _SeatMapPageState extends State<SeatMapPage> {
-  final int numRows = 16;
-  final int numCols = 14;
-  final List<int> aisleCols = [3, 7, 10];
-  final List<int> aisleRows = [4, 7, 13];
-  final double seatSize = 50.0;
+class _TakeSeatPagesState extends State<TakeSeatPages> {
   late TransformationController _transformationController;
   double _zoomValue = 1.0;
   bool showMiniMap = false;
-  List<SeatModel> seats = [];
+  List<GheModel> selectedSeats = [];
 
   @override
   void initState() {
     super.initState();
     _transformationController = TransformationController();
     _transformationController.addListener(_onZoomChange);
-    seats = _generateSeats();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      context.read<GheProvider>().fetchGheTheoPhong(
+        maPhong: widget.maPhong,
+        maSuatChieu: widget.maSuatChieu,
+      );
+    });
   }
 
   void _onZoomChange() {
@@ -68,56 +60,6 @@ class _SeatMapPageState extends State<SeatMapPage> {
     });
   }
 
-  List<SeatModel> _generateSeats() {
-    List<SeatModel> list = [];
-    const seatLetters = 'ABCDEFGHIJKLMNOPQR';
-
-    for (int row = 0; row < numRows; row++) {
-      for (int col = 0; col < numCols; col++) {
-        if (aisleCols.contains(col) || aisleRows.contains(row)) continue;
-        if (seatLetters[row] == 'P') continue;
-
-        String seatLetter = seatLetters[row];
-
-        if (seatLetter == 'A' && col == 6) {
-          list.add(SeatModel(row: row, col: col, name: 'A7'));
-          continue;
-        }
-        if (seatLetter == 'A' && col == 5) {
-          list.add(SeatModel(row: row, col: col, name: 'A6'));
-          continue;
-        }
-
-        if (seatLetter == 'O' && (col == 0 || col == 4 || col == 11)) continue;
-
-        int seatNumber = (col < numCols ~/ 2) ? col + 1 : col + 8;
-        String name = '$seatLetter$seatNumber';
-
-        bool isVip =
-            seatLetter.compareTo('F') >= 0 &&
-            seatLetter.compareTo('M') <= 0 &&
-            seatNumber >= 5 &&
-            seatNumber <= 18;
-
-        bool isCouple = seatLetter == 'O';
-
-        list.add(
-          SeatModel(
-            row: row,
-            col: col,
-            name: name,
-            isVip: isVip,
-            isCouple: isCouple,
-          ),
-        );
-      }
-    }
-    return list;
-  }
-
-  List<SeatModel> get selectedSeats =>
-      seats.where((e) => e.isSelected).toList();
-
   @override
   void dispose() {
     _transformationController.dispose();
@@ -126,11 +68,8 @@ class _SeatMapPageState extends State<SeatMapPage> {
 
   @override
   Widget build(BuildContext context) {
-    final Size seatMapSize = Size(seatSize * numCols, seatSize * numRows);
-
     return Scaffold(
       appBar: AppBar(
-        backgroundColor: Theme.of(context).colorScheme.inversePrimary,
         title: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
@@ -141,328 +80,315 @@ class _SeatMapPageState extends State<SeatMapPage> {
             ),
           ],
         ),
+        backgroundColor: Theme.of(context).colorScheme.inversePrimary,
         leading: const BackButton(color: Colors.white),
       ),
-      body: SafeArea(
-        child: Column(
-          children: [
-            const SizedBox(height: 16),
-            const Text('Khu vực màn hình', style: TextStyle(fontSize: 16)),
-            const SizedBox(height: 8),
-            Slider(
-              value: _zoomValue,
-              min: 0.6,
-              max: 2.8,
-              divisions: 22,
-              label: 'Zoom sơ đồ: ${_zoomValue.toStringAsFixed(2)}x',
-              onChanged: (val) {
-                setState(() {
-                  _zoomValue = val;
-                  _transformationController.value =
-                      Matrix4.identity()..scale(val);
-                });
-              },
-            ),
-            Text('Zoom sơ đồ: ${_zoomValue.toStringAsFixed(2)}x'),
-            const SizedBox(height: 8),
-            Expanded(
-              child: Stack(
-                children: [
-                  InteractiveViewer(
-                    transformationController: _transformationController,
-                    boundaryMargin: const EdgeInsets.all(100),
-                    minScale: 0.6,
-                    maxScale: 2.8,
-                    child: Center(
-                      child: SizedBox(
-                        width: seatMapSize.width,
-                        height: seatMapSize.height,
-                        child: GridView.builder(
-                          physics: const NeverScrollableScrollPhysics(),
-                          gridDelegate:
-                              SliverGridDelegateWithFixedCrossAxisCount(
-                                crossAxisCount: numCols,
-                                mainAxisSpacing: 6,
-                                crossAxisSpacing: 6,
-                              ),
-                          itemCount: numRows * numCols,
-                          itemBuilder: (context, index) {
-                            int row = index ~/ numCols;
-                            int col = index % numCols;
-                            if (aisleCols.contains(col) ||
-                                aisleRows.contains(row)) {
-                              return const SizedBox.shrink();
-                            }
-                            SeatModel seat = seats.firstWhere(
-                              (e) => e.row == row && e.col == col,
-                              orElse:
-                                  () => SeatModel(row: row, col: col, name: ''),
-                            );
-                            if (seat.name.isEmpty)
-                              return const SizedBox.shrink();
-                            return GestureDetector(
-                              onTap: () {
-                                setState(
-                                  () => seat.isSelected = !seat.isSelected,
-                                );
-                                if (seat.isVip && seat.isSelected) {
-                                  ScaffoldMessenger.of(context).showSnackBar(
-                                    const SnackBar(
-                                      content: Text(
-                                        'Bạn đang chọn ghế VIP 🎟️',
-                                      ),
-                                    ),
-                                  );
-                                }
-                              },
-                              child: Container(
-                                width: seatSize,
-                                height: seatSize,
-                                alignment: Alignment.center,
-                                decoration: BoxDecoration(
-                                  border: Border.all(
-                                    color:
-                                        seat.isVip
-                                            ? Colors.red
-                                            : (seat.isCouple
-                                                ? Colors.purple
-                                                : Colors.green),
-                                    width: 2,
+      body: Consumer<GheProvider>(
+        builder: (context, provider, _) {
+          if (provider.isLoading) {
+            return const Center(child: CustomLoading(width: 88, height: 88));
+          } else if (provider.errorMessage != null) {
+            return Center(child: Text(provider.errorMessage!));
+          } else {
+            final danhSachGhe = provider.danhSachGhe;
+
+            final int numCols = 6;
+            final int numRows = (danhSachGhe.map((e) => e.row).toSet().length);
+            final double seatSize = 80;
+            final Size seatMapSize = Size(
+              seatSize * numCols,
+              seatSize * numRows,
+            );
+
+            return Column(
+              children: [
+                const SizedBox(height: 16),
+                const Text('Khu vực màn hình', style: TextStyle(fontSize: 16)),
+                const SizedBox(height: 8),
+                Slider(
+                  value: _zoomValue,
+                  min: 0.6,
+                  max: 2.8,
+                  divisions: 30,
+                  label: 'Zoom sơ đồ: ${_zoomValue.toStringAsFixed(2)}x',
+                  onChanged: (val) {
+                    setState(() {
+                      _zoomValue = val;
+                      _transformationController.value =
+                          Matrix4.identity()..scale(val);
+                    });
+                  },
+                ),
+                Text('Zoom sơ đồ: ${_zoomValue.toStringAsFixed(2)}x'),
+                const SizedBox(height: 8),
+                Expanded(
+                  child: Stack(
+                    children: [
+                      InteractiveViewer(
+                        transformationController: _transformationController,
+                        boundaryMargin: const EdgeInsets.all(100),
+                        minScale: 0.6,
+                        maxScale: 2.8,
+                        child: Center(
+                          child: SizedBox(
+                            width: seatMapSize.width,
+                            height: seatMapSize.height,
+                            child: GridView.builder(
+                              physics: const NeverScrollableScrollPhysics(),
+                              gridDelegate:
+                                  SliverGridDelegateWithFixedCrossAxisCount(
+                                    crossAxisCount: numCols,
+                                    mainAxisSpacing: 8,
+                                    crossAxisSpacing: 6,
                                   ),
-                                  color:
-                                      seat.isSelected
-                                          ? (seat.isVip
-                                              ? Colors.red
-                                              : (seat.isCouple
-                                                  ? Colors.purple
-                                                  : Colors.pinkAccent))
-                                          : Colors.transparent,
-                                  borderRadius: BorderRadius.circular(8),
-                                ),
-                                child: FittedBox(
-                                  child: Padding(
-                                    padding: const EdgeInsets.all(4.0),
+                              itemCount: danhSachGhe.length,
+                              itemBuilder: (_, i) {
+                                final ghe = danhSachGhe[i];
+                                final isSelected = selectedSeats.contains(ghe);
+
+                                Color borderColor = Colors.green;
+                                if (ghe.tenLoaiGhe == "Ghế VIP")
+                                  borderColor = Colors.red;
+                                if (ghe.tenLoaiGhe == "Ghế đôi")
+                                  borderColor = Colors.purple;
+
+                                Color fillColor =
+                                    isSelected
+                                        ? (ghe.tenLoaiGhe == "Ghế VIP"
+                                            ? Colors.red
+                                            : ghe.tenLoaiGhe == "Ghế đôi"
+                                            ? Colors.purple
+                                            : Colors.pinkAccent)
+                                        : Colors.transparent;
+
+                                return GestureDetector(
+                                  onTap:
+                                      ghe.daDat
+                                          ? null
+                                          : () {
+                                            setState(() {
+                                              if (isSelected) {
+                                                selectedSeats.remove(ghe);
+                                              } else {
+                                                selectedSeats.add(ghe);
+                                              }
+                                            });
+                                          },
+                                  child: Container(
+                                    decoration: BoxDecoration(
+                                      border: Border.all(
+                                        color: borderColor,
+                                        width: 3,
+                                      ),
+                                      color: fillColor,
+                                      borderRadius: BorderRadius.circular(6),
+                                    ),
+                                    alignment: Alignment.center,
                                     child: Text(
-                                      seat.name,
+                                      ghe.viTriGhe,
+                                      textAlign: TextAlign.center,
                                       style: const TextStyle(
-                                        fontSize: 18,
                                         fontWeight: FontWeight.bold,
                                       ),
                                     ),
                                   ),
-                                ),
-                              ),
-                            );
-                          },
+                                );
+                              },
+                            ),
+                          ),
                         ),
                       ),
-                    ),
-                  ),
-                  if (showMiniMap)
-                    Positioned(
-                      top: 12,
-                      right: 12,
-                      child: _buildMiniMap(seatMapSize),
-                    ),
-                ],
-              ),
-            ),
-            const SizedBox(height: 10),
-            Wrap(
-              spacing: 12,
-              runSpacing: 12,
-              alignment: WrapAlignment.center,
-              children: [
-                _buildLegend(color: Colors.grey.shade400, label: "Unselected"),
-                _buildLegend(color: Colors.pinkAccent, label: "Selected"),
-                _buildLegend(color: Colors.green, label: "Normal"),
-                _buildLegend(color: Colors.red, label: "VIP"),
-                _buildLegend(color: Colors.purple, label: "Couple"),
-              ],
-            ),
-            const SizedBox(height: 10),
-
-            // ✅ Custom Button - Tiếp tục
-            CustomButton(
-              text: "Tiếp tục",
-              onPressed: () {
-                if (selectedSeats.isEmpty) {
-                  CustomToast.show(
-                    context,
-                    message: "Chưa chọn ghế nào hết trơn á 😢",
-                    type: ToastType.warning,
-                  );
-                  return;
-                }
-
-                CustomToast.show(
-                  context,
-                  message: "Ghế đã được chọn rồi nè bé 😘",
-                  type: ToastType.success,
-                );
-
-                print("Anh vừa bấm tiếp tục nè 😎");
-
-                // Open sheet
-                _showConfirmSheet(context);
-              },
-              width: 280,
-              height: 60,
-              backgroundColor: Theme.of(context).colorScheme.inversePrimary,
-              textColor: Colors.white,
-              borderRadius: 20,
-              fontWeight: FontWeight.w500,
-            ),
-
-            const SizedBox(height: 20),
-          ],
-        ),
-      ),
-    );
-  }
-
-  // ✅ Đoạn code bên dưới là phần cập nhật bên trong `_showConfirmSheet` của `SeatMapPage`
-  // ✅ Bao gồm thêm nút "Huỷ" để người dùng chọn lại ghế
-
-  void _showConfirmSheet(BuildContext context) {
-    const priceVip = 120000;
-    const priceNormal = 80000;
-    const priceCouple = 200000;
-
-    Map<String, List<String>> groupedSeats = {
-      "VIP": [],
-      "Thường": [],
-      "Couple": [],
-    };
-
-    int seatTotal = 0;
-    for (var seat in selectedSeats) {
-      if (seat.isVip) {
-        groupedSeats["VIP"]!.add(seat.name);
-        seatTotal += priceVip;
-      } else if (seat.isCouple) {
-        groupedSeats["Couple"]!.add(seat.name);
-        seatTotal += priceCouple;
-      } else {
-        groupedSeats["Thường"]!.add(seat.name);
-        seatTotal += priceNormal;
-      }
-    }
-
-    showModalBottomSheet(
-      context: context,
-      backgroundColor: Colors.white,
-      shape: const RoundedRectangleBorder(
-        borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
-      ),
-      builder: (_) {
-        return Padding(
-          padding: const EdgeInsets.all(16.0),
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              const Text(
-                "Xác nhận đặt vé",
-                style: TextStyle(fontWeight: FontWeight.bold),
-              ),
-              const SizedBox(height: 12),
-              ...groupedSeats.entries.where((e) => e.value.isNotEmpty).map((
-                entry,
-              ) {
-                int price =
-                    entry.key == "VIP"
-                        ? priceVip
-                        : entry.key == "Thường"
-                        ? priceNormal
-                        : priceCouple;
-
-                return ListTile(
-                  title: Text("${entry.key} (${entry.value.length} ghế)"),
-                  subtitle: Text("Ghế: ${entry.value.join(", ")}"),
-                  trailing: Text(
-                    "${NumberFormat('#,###', 'vi_VN').format(price)}đ",
-                    style: const TextStyle(color: Colors.red),
-                  ),
-                );
-              }),
-              const Divider(),
-
-              // ✅ Row chứa 2 nút: Huỷ + Xác nhận
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Expanded(
-                    child: CustomButton(
-                      text: "Huỷ",
-                      onPressed: () {
-                        CustomToast.show(
-                          context,
-                          message: "Bạn có thể chọn lại ghế nha 😗",
-                          type: ToastType.warning,
-                        );
-                        print("Người dùng đã bấm huỷ chọn ghế ❌");
-                        Navigator.pop(context);
-                      },
-                      backgroundColor: Colors.grey.shade300,
-                      textColor: Colors.black87,
-                      borderRadius: 20,
-                      fontWeight: FontWeight.w500,
-                      height: 50,
-                    ),
-                  ),
-                  const SizedBox(width: 16),
-                  Expanded(
-                    child: CustomButton(
-                      text: "Xác nhận",
-                      backgroundColor:
-                          Theme.of(context).colorScheme.inversePrimary,
-                      onPressed: () {
-                        CustomToast.show(
-                          context,
-                          message: "Chuyển sang chọn combo bé 😘",
-                          type: ToastType.success,
-                        );
-                        print("Bấm xác nhận để qua bước chọn combo nha 😏");
-
-                        Navigator.pop(context);
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder:
-                                (_) => TakeComboPages(
-                                  theaterName: widget.theaterName,
-                                  receiveDate: widget.receiveDate,
-                                  movieTitle: widget.movieTitle,
-                                  showTime: widget.showTime,
-                                  selectedSeats:
-                                      selectedSeats.map((e) => e.name).toList(),
-                                ),
+                      if (showMiniMap)
+                        Positioned(
+                          top: 12,
+                          right: 12,
+                          child: _buildMiniMap(
+                            seatMapSize,
+                            danhSachGhe,
+                            numCols,
+                            seatSize,
                           ),
-                        );
-                      },
-                      textColor: Colors.white,
-                      borderRadius: 20,
-                      fontWeight: FontWeight.w500,
-                      height: 50,
-                    ),
+                        ),
+                    ],
                   ),
-                ],
-              ),
-            ],
-          ),
-        );
-      },
+                ),
+                const SizedBox(height: 10),
+                Wrap(
+                  spacing: 12,
+                  runSpacing: 12,
+                  alignment: WrapAlignment.center,
+                  children: [
+                    _legend(color: Colors.grey.shade400, label: "Chưa chọn"),
+                    _legend(color: Colors.pinkAccent, label: "Đã chọn"),
+                    _legend(color: Colors.green, label: "Thường"),
+                    _legend(color: Colors.red, label: "VIP"),
+                    _legend(color: Colors.purple, label: "Couple"),
+                  ],
+                ),
+                const SizedBox(height: 10),
+                CustomButton(
+                  text: "Tiếp tục",
+                  onPressed: () {
+                    if (selectedSeats.isEmpty) {
+                      CustomToast.show(
+                        context,
+                        message: "Chưa chọn ghế nào hết trơn á 😢",
+                        type: ToastType.warning,
+                      );
+                      return;
+                    }
+
+                    int tongTien = selectedSeats.fold(
+                      0,
+                      (sum, ghe) => sum + ghe.giaTien,
+                    );
+
+                    showDialog(
+                      context: context,
+                      builder:
+                          (_) => AlertDialog(
+                            title: const Text("Xác nhận ghế đã chọn"),
+                            content: Column(
+                              mainAxisSize: MainAxisSize.min,
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text(
+                                  "🎟️ Số ghế đã chọn: ${selectedSeats.length}",
+                                  style: const TextStyle(
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                                ),
+                                const SizedBox(height: 8),
+                                SizedBox(
+                                  height: 160,
+                                  width: double.maxFinite,
+                                  child: ListView.separated(
+                                    itemCount: selectedSeats.length,
+                                    separatorBuilder:
+                                        (_, __) => const Divider(height: 8),
+                                    itemBuilder: (_, i) {
+                                      final ghe = selectedSeats[i];
+                                      return Row(
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.spaceBetween,
+                                        children: [
+                                          Text("Ghế: ${ghe.viTriGhe}"),
+                                          Text(
+                                            ghe.tenLoaiGhe,
+                                            style: const TextStyle(
+                                              fontStyle: FontStyle.italic,
+                                            ),
+                                          ),
+                                          Text(
+                                            NumberFormat.currency(
+                                              locale: 'vi_VN',
+                                              symbol: 'đ',
+                                            ).format(ghe.giaTien),
+                                          ),
+                                        ],
+                                      );
+                                    },
+                                  ),
+                                ),
+                                const SizedBox(height: 12),
+                                Row(
+                                  mainAxisAlignment:
+                                      MainAxisAlignment.spaceBetween,
+                                  children: [
+                                    const Text(
+                                      "💰 Tạm tính:",
+                                      style: TextStyle(
+                                        fontWeight: FontWeight.bold,
+                                      ),
+                                    ),
+                                    Text(
+                                      NumberFormat.currency(
+                                        locale: 'vi_VN',
+                                        symbol: 'đ',
+                                      ).format(tongTien),
+                                      style: const TextStyle(
+                                        fontWeight: FontWeight.bold,
+                                        color: Colors.red,
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ],
+                            ),
+                            actions: [
+                              TextButton(
+                                onPressed: () => Navigator.pop(context),
+                                child: const Text("Huỷ"),
+                              ),
+                              CustomButton(
+                                text: "Xác nhận",
+                                onPressed: () {
+                                  CustomToast.show(
+                                    context,
+                                    message: "nè bé",
+                                    type: ToastType.confirm,
+                                  );
+                                  print("Anh vừa bấm đó nghen 😘");
+
+                                  Navigator.pop(context); // đóng dialog
+                                  Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                      builder:
+                                          (_) => TakeComboPages(
+                                            //lỗi
+                                            // maPhong: widget.maPhong,
+                                            // maSuatChieu: widget.maSuatChieu,
+                                            maHeThong: widget.maHeThong,
+                                            theaterName: widget.theaterName,
+                                            receiveDate: widget.receiveDate,
+                                            movieTitle: widget.movieTitle,
+                                            showTime: widget.showTime,
+                                            selectedSeats:
+                                                selectedSeats
+                                                    .map((e) => e.viTriGhe)
+                                                    .toList(),
+                                          ),
+                                    ),
+                                  );
+                                },
+                                width: 100,
+                                height: 40,
+                                backgroundColor:
+                                    Theme.of(
+                                      context,
+                                    ).colorScheme.inversePrimary,
+                                textColor: Colors.white,
+                                borderRadius: 20,
+                                fontWeight: FontWeight.w500,
+                              ),
+                            ],
+                          ),
+                    );
+                  },
+
+                  width: 280,
+                  height: 60,
+                  backgroundColor: Theme.of(context).colorScheme.inversePrimary,
+                  textColor: Colors.white,
+                  borderRadius: 20,
+                ),
+                const SizedBox(height: 20),
+              ],
+            );
+          }
+        },
+      ),
     );
   }
 
-  Widget _buildLegend({required Color color, required String label}) {
+  Widget _legend({required Color color, required String label}) {
     return Row(
       mainAxisSize: MainAxisSize.min,
       children: [
         Container(
-          width: 16,
-          height: 16,
+          width: 14,
+          height: 14,
           decoration: BoxDecoration(
             color: color,
             borderRadius: BorderRadius.circular(4),
@@ -475,7 +401,12 @@ class _SeatMapPageState extends State<SeatMapPage> {
     );
   }
 
-  Widget _buildMiniMap(Size seatMapSize) {
+  Widget _buildMiniMap(
+    Size seatMapSize,
+    List<GheModel> danhSachGhe,
+    int numCols,
+    double seatSize,
+  ) {
     final Matrix4 matrix = _transformationController.value;
     final double scale = matrix.getMaxScaleOnAxis();
     final Offset translation = Offset(matrix[12], matrix[13]);
@@ -501,7 +432,7 @@ class _SeatMapPageState extends State<SeatMapPage> {
         children: [
           Positioned.fill(
             child: CustomPaint(
-              painter: _SeatMapPainter(seats, seatMapSize, ratio),
+              painter: _SeatMapPainter(danhSachGhe, ratio, seatSize, numCols),
             ),
           ),
           Positioned(
@@ -523,22 +454,23 @@ class _SeatMapPageState extends State<SeatMapPage> {
 }
 
 class _SeatMapPainter extends CustomPainter {
-  final List<SeatModel> seats;
-  final Size originalSize;
+  final List<GheModel> seats;
   final double ratio;
+  final double seatSize;
+  final int numCols;
 
-  _SeatMapPainter(this.seats, this.originalSize, this.ratio);
+  _SeatMapPainter(this.seats, this.ratio, this.seatSize, this.numCols);
 
   @override
   void paint(Canvas canvas, Size size) {
     final paint = Paint()..style = PaintingStyle.fill;
     for (var seat in seats) {
-      final double x = seat.col * 50 * ratio;
-      final double y = seat.row * 50 * ratio;
+      final double x = seat.col * seatSize * ratio;
+      final double y = seat.row * seatSize * ratio;
       paint.color =
-          seat.isVip
+          seat.tenLoaiGhe == "Ghế VIP"
               ? Colors.red
-              : (seat.isCouple ? Colors.purple : Colors.green);
+              : (seat.tenLoaiGhe == "Ghế đôi" ? Colors.purple : Colors.green);
       canvas.drawRect(Rect.fromLTWH(x, y, 12, 12), paint);
     }
   }

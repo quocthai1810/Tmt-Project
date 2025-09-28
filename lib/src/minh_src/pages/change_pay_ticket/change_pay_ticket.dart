@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
-import 'package:tmt_project/src/minh_src/models/combo_item.dart';
+import 'package:tmt_project/src/minh_src/models/modelTMT.dart';
 import 'package:tmt_project/src/minh_src/pages/check_bill_pages/checkBill_pages.dart';
 
 class ChangePayTicket extends StatelessWidget {

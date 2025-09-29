@@ -16,6 +16,7 @@ class TakeSeatPages extends StatefulWidget {
   final String theaterName;
   final String receiveDate;
   final String showTime;
+  final String poster; // ✅ thêm poster
   final int maHeThong;
 
   const TakeSeatPages({
@@ -26,6 +27,7 @@ class TakeSeatPages extends StatefulWidget {
     required this.theaterName,
     required this.receiveDate,
     required this.showTime,
+    required this.poster, // ✅ required
     required this.maHeThong,
   });
 
@@ -147,10 +149,12 @@ class _TakeSeatPagesState extends State<TakeSeatPages> {
                                 final isSelected = selectedSeats.contains(ghe);
 
                                 Color borderColor = Colors.green;
-                                if (ghe.tenLoaiGhe == "Ghế VIP")
+                                if (ghe.tenLoaiGhe == "Ghế VIP") {
                                   borderColor = Colors.red;
-                                if (ghe.tenLoaiGhe == "Ghế đôi")
+                                }
+                                if (ghe.tenLoaiGhe == "Ghế đôi") {
                                   borderColor = Colors.purple;
+                                }
 
                                 Color fillColor =
                                     isSelected
@@ -323,14 +327,7 @@ class _TakeSeatPagesState extends State<TakeSeatPages> {
                               CustomButton(
                                 text: "Xác nhận",
                                 onPressed: () {
-                                  CustomToast.show(
-                                    context,
-                                    message: "nè bé",
-                                    type: ToastType.confirm,
-                                  );
-                                  print("Anh vừa bấm đó nghen 😘");
-
-                                  Navigator.pop(context); // đóng dialog
+                                  Navigator.pop(context);
                                   Navigator.push(
                                     context,
                                     MaterialPageRoute(
@@ -341,10 +338,10 @@ class _TakeSeatPagesState extends State<TakeSeatPages> {
                                             receiveDate: widget.receiveDate,
                                             movieTitle: widget.movieTitle,
                                             showTime: widget.showTime,
-                                            selectedSeats:
-                                                selectedSeats
-                                                    .map((e) => e.viTriGhe)
-                                                    .toList(),
+                                            poster:
+                                                widget
+                                                    .poster, // ✅ truyền poster
+                                            selectedSeats: selectedSeats,
                                           ),
                                     ),
                                   );
@@ -363,7 +360,6 @@ class _TakeSeatPagesState extends State<TakeSeatPages> {
                           ),
                     );
                   },
-
                   width: 280,
                   height: 60,
                   backgroundColor: Theme.of(context).colorScheme.inversePrimary,

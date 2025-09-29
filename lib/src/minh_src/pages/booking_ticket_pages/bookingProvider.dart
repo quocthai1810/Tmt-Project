@@ -2,7 +2,7 @@ import 'package:http/http.dart' as http;
 import 'package:tmt_project/core/constants/env.dart';
 import 'dart:convert';
 import 'package:flutter/material.dart';
-import 'package:tmt_project/src/minh_src/models/modelTMT.dart';
+import 'package:tmt_project/src/minh_src/models/modelMovie.dart';
 import 'package:tmt_project/src/minh_src/models/modelSuatChieu.dart';
 import 'package:tmt_project/src/minh_src/models/modelShowtime.dart';
 

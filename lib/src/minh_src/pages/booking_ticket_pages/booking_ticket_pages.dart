@@ -10,11 +10,12 @@ import 'package:tmt_project/src/minh_src/pages/takeSeat/take_seat_pages.dart';
 class BookingTicketPages extends StatefulWidget {
   final int movieId; // ma_phim
   final String movieTitle; // hiển thị AppBar
-
+  final String poster; // hiển thị poster
   const BookingTicketPages({
     super.key,
     required this.movieId,
     required this.movieTitle,
+    required this.poster,
   });
 
   @override
@@ -342,6 +343,7 @@ class _BookingTicketPagesState extends State<BookingTicketPages> {
                                   MaterialPageRoute(
                                     builder:
                                         (_) => TakeSeatPages(
+                                          poster: widget.poster,
                                           maPhong: rap.maRap ?? 0,
                                           maSuatChieu: s.maSuatChieu ?? 0,
                                           theaterName: rap.tenRap ?? '',

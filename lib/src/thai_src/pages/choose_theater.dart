@@ -230,6 +230,8 @@ class _ChooseTheaterState extends State<ChooseTheater> {
                                         showTime: showTimeValue,
                                         maPhong: maPhong,
                                         maSuatChieu: maSuatChieu,
+                                        posterUrl:
+                                            theaterShow["anh_poster"] ?? '',
                                         maHeThong:
                                             theaterShow["ma_he_thong"] ?? 0,
                                       ),

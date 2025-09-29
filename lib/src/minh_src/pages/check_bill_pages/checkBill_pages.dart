@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
-import 'package:tmt_project/src/minh_src/models/modelTMT.dart';
+import 'package:tmt_project/src/minh_src/models/modelGhe.dart';
+import 'package:tmt_project/src/minh_src/models/takeComboModel.dart';
 import 'package:tmt_project/src/minh_src/pages/purchase_preview/purchase_preview_pages.dart';
 
 class CheckbillPages extends StatelessWidget {
@@ -8,8 +9,9 @@ class CheckbillPages extends StatelessWidget {
   final String theaterName;
   final String receiveDate;
   final String showTime;
-  final List<String> selectedSeats;
-  final List<ComboItem> selectedCombos;
+  final String poster; // ✅ thêm poster
+  final List<GheModel> selectedSeats;
+  final List<ComboModel> selectedCombos;
 
   const CheckbillPages({
     super.key,
@@ -17,33 +19,56 @@ class CheckbillPages extends StatelessWidget {
     required this.theaterName,
     required this.receiveDate,
     required this.showTime,
+    required this.poster, // ✅ bắt buộc
     required this.selectedSeats,
     required this.selectedCombos,
   });
 
+  // 🔹 Chuẩn hóa loại ghế
+  String _normalizeSeatType(String type) {
+    final t = type.toLowerCase();
+    if (t.contains("vip")) return "VIP";
+    if (t.contains("couple")) return "COUPLE";
+    return "NORMAL";
+  }
+
+  String _getSeatTypeLabel(String type) {
+    switch (_normalizeSeatType(type)) {
+      case "VIP":
+        return "Loại VIP";
+      case "COUPLE":
+        return "Loại Couple";
+      default:
+        return "Loại Thường";
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     final currencyFormat = NumberFormat('#,###', 'vi_VN');
+    final colorPrimary = Theme.of(context).colorScheme.primary;
 
-    final vipSeats = selectedSeats.where((s) => s.startsWith("M")).toList();
-    final coupleSeats = selectedSeats.where((s) => s.startsWith("O")).toList();
+    // Tách ghế theo loại đã chuẩn hóa
+    final vipSeats =
+        selectedSeats
+            .where((g) => _normalizeSeatType(g.tenLoaiGhe) == "VIP")
+            .toList();
+    final coupleSeats =
+        selectedSeats
+            .where((g) => _normalizeSeatType(g.tenLoaiGhe) == "COUPLE")
+            .toList();
     final normalSeats =
         selectedSeats
-            .where((s) => !s.startsWith("M") && !s.startsWith("O"))
+            .where((g) => _normalizeSeatType(g.tenLoaiGhe) == "NORMAL")
             .toList();
 
-    const vipPrice = 120000;
-    const couplePrice = 200000;
-    const normalPrice = 80000;
+    // Tính tổng ghế
+    final seatTotal = selectedSeats.fold(0, (sum, g) => sum + g.giaTien);
 
-    final totalVip = vipSeats.length * vipPrice;
-    final totalCouple = coupleSeats.length * couplePrice;
-    final totalNormal = normalSeats.length * normalPrice;
-    final seatTotal = totalVip + totalCouple + totalNormal;
-
-    final comboTotal = selectedCombos.fold<int>(
+    // Tính tổng combo
+    final comboTotal = selectedCombos.fold(
       0,
-      (sum, c) => sum + (c.price * c.quantity),
+      (sum, c) => sum + (c.gia * c.quantity),
     );
 
     final totalAll = seatTotal + comboTotal;
@@ -70,7 +95,7 @@ class CheckbillPages extends StatelessWidget {
                 style: TextStyle(
                   fontSize: 20,
                   fontWeight: FontWeight.bold,
-                  color: Theme.of(context).colorScheme.primary,
+                  color: colorPrimary,
                 ),
               ),
               const SizedBox(height: 12),
@@ -82,24 +107,21 @@ class CheckbillPages extends StatelessWidget {
               if (vipSeats.isNotEmpty)
                 _buildSeatRow(
                   context,
-                  "Loại VIP",
-                  vipPrice,
+                  _getSeatTypeLabel("VIP"),
                   vipSeats,
                   currencyFormat,
                 ),
               if (normalSeats.isNotEmpty)
                 _buildSeatRow(
                   context,
-                  "Loại Thường",
-                  normalPrice,
+                  _getSeatTypeLabel("NORMAL"),
                   normalSeats,
                   currencyFormat,
                 ),
               if (coupleSeats.isNotEmpty)
                 _buildSeatRow(
                   context,
-                  "Loại Couple",
-                  couplePrice,
+                  _getSeatTypeLabel("COUPLE"),
                   coupleSeats,
                   currencyFormat,
                 ),
@@ -118,7 +140,7 @@ class CheckbillPages extends StatelessWidget {
                   "🍿 Combo đã chọn:",
                   style: TextStyle(
                     fontSize: 16,
-                    color: Theme.of(context).colorScheme.primary,
+                    color: colorPrimary,
                     fontWeight: FontWeight.bold,
                   ),
                 ),
@@ -129,16 +151,14 @@ class CheckbillPages extends StatelessWidget {
                     children: [
                       Expanded(
                         child: Text(
-                          "${c.name} (${c.popcorn} + ${c.drink}) x${c.quantity}",
-                          style: TextStyle(
-                            color: Theme.of(context).colorScheme.primary,
-                          ),
+                          "${c.tenCombo} (${c.moTa}) x${c.quantity}",
+                          style: TextStyle(color: colorPrimary),
                         ),
                       ),
                       Text(
-                        "${currencyFormat.format(c.price * c.quantity)}đ",
+                        "${currencyFormat.format(c.gia * c.quantity)}đ",
                         style: TextStyle(
-                          color: Theme.of(context).colorScheme.primary,
+                          color: colorPrimary,
                           fontWeight: FontWeight.bold,
                         ),
                       ),
@@ -160,13 +180,14 @@ class CheckbillPages extends StatelessWidget {
                 style: TextStyle(
                   fontSize: 16,
                   fontWeight: FontWeight.bold,
-                  color: Theme.of(context).colorScheme.primary,
+                  color: colorPrimary,
                 ),
               ),
               const SizedBox(height: 12),
 
               Wrap(
                 spacing: 16,
+                runSpacing: 12,
                 children: [
                   _buildPaymentOption(
                     context,
@@ -209,8 +230,7 @@ class CheckbillPages extends StatelessWidget {
   Widget _buildSeatRow(
     BuildContext context,
     String type,
-    int price,
-    List<String> seats,
+    List<GheModel> seats,
     NumberFormat format,
   ) {
     return Padding(
@@ -219,14 +239,16 @@ class CheckbillPages extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(
-            "$type ${format.format(price)}đ",
+            type,
             style: TextStyle(
               color: Theme.of(context).colorScheme.primary,
               fontWeight: FontWeight.w600,
             ),
           ),
           Text(
-            "Ghế: ${seats.join(", ")} (${seats.length} ghế)",
+            "Ghế: ${seats.map((g) => g.viTriGhe).join(", ")} "
+            "(${seats.length} ghế) - "
+            "${format.format(seats.fold(0, (sum, g) => sum + g.giaTien))}đ",
             style: TextStyle(color: Theme.of(context).colorScheme.primary),
           ),
         ],
@@ -333,7 +355,18 @@ class CheckbillPages extends StatelessWidget {
             Future.delayed(const Duration(seconds: 2), () {
               Navigator.pushReplacement(
                 context,
-                MaterialPageRoute(builder: (_) => const PurchasePreviewPages()),
+                MaterialPageRoute(
+                  builder:
+                      (_) => PurchasePreviewPages(
+                        movieTitle: movieTitle,
+                        theaterName: theaterName,
+                        receiveDate: receiveDate,
+                        showTime: showTime,
+                        selectedSeats: selectedSeats,
+                        selectedCombos: selectedCombos,
+                        poster: poster, // ✅ truyền tiếp qua
+                      ),
+                ),
               );
             });
           },
@@ -358,7 +391,18 @@ class CheckbillPages extends StatelessWidget {
             Future.delayed(const Duration(milliseconds: 300), () {
               Navigator.pushReplacement(
                 context,
-                MaterialPageRoute(builder: (_) => const PurchasePreviewPages()),
+                MaterialPageRoute(
+                  builder:
+                      (_) => PurchasePreviewPages(
+                        movieTitle: movieTitle,
+                        theaterName: theaterName,
+                        receiveDate: receiveDate,
+                        showTime: showTime,
+                        selectedSeats: selectedSeats,
+                        selectedCombos: selectedCombos,
+                        poster: poster, // ✅ truyền tiếp qua
+                      ),
+                ),
               );
             });
           },

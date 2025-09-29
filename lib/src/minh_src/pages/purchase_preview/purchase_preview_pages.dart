@@ -1,9 +1,29 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_swiper_null_safety/flutter_swiper_null_safety.dart';
+import 'package:intl/intl.dart';
 import 'package:tmt_project/core/widgets/minh/customToast.dart';
+import 'package:tmt_project/src/minh_src/models/modelGhe.dart';
+import 'package:tmt_project/src/minh_src/models/takeComboModel.dart';
 
 class PurchasePreviewPages extends StatefulWidget {
-  const PurchasePreviewPages({super.key});
+  final String movieTitle;
+  final String poster;
+  final String theaterName;
+  final String receiveDate;
+  final String showTime;
+  final List<GheModel> selectedSeats;
+  final List<ComboModel> selectedCombos;
+
+  const PurchasePreviewPages({
+    super.key,
+    required this.movieTitle,
+    required this.poster,
+    required this.theaterName,
+    required this.receiveDate,
+    required this.showTime,
+    required this.selectedSeats,
+    required this.selectedCombos,
+  });
 
   @override
   State<PurchasePreviewPages> createState() => _PurchasePreviewPagesState();
@@ -15,6 +35,15 @@ class _PurchasePreviewPagesState extends State<PurchasePreviewPages> {
   @override
   Widget build(BuildContext context) {
     final color = Theme.of(context).colorScheme;
+    final currencyFormat = NumberFormat('#,###', 'vi_VN');
+
+    // 🔹 Tính tổng tiền
+    final seatTotal = widget.selectedSeats.fold(0, (sum, g) => sum + g.giaTien);
+    final comboTotal = widget.selectedCombos.fold(
+      0,
+      (sum, c) => sum + (c.gia * c.quantity),
+    );
+    final totalAll = seatTotal + comboTotal;
 
     return Scaffold(
       backgroundColor: color.inversePrimary,
@@ -37,72 +66,111 @@ class _PurchasePreviewPagesState extends State<PurchasePreviewPages> {
             borderRadius: BorderRadius.circular(16),
           ),
           child: Column(
-            mainAxisSize: MainAxisSize.min,
             children: [
+              // 🔹 Poster phim
               ClipRRect(
                 borderRadius: const BorderRadius.vertical(
                   top: Radius.circular(16),
                 ),
                 child: Image.network(
-                  "https://picsum.photos/400/200",
+                  widget.poster,
                   width: double.infinity,
                   height: 180,
                   fit: BoxFit.cover,
+                  errorBuilder:
+                      (_, __, ___) => Container(
+                        height: 180,
+                        color: Colors.grey,
+                        child: const Center(child: Icon(Icons.broken_image)),
+                      ),
                 ),
               ),
-              Padding(
-                padding: const EdgeInsets.all(16),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      "Phim: Người Phụ Nữ",
-                      style: TextStyle(
-                        fontSize: 18,
-                        fontWeight: FontWeight.bold,
-                        color: color.primary,
-                      ),
-                    ),
-                    const SizedBox(height: 12),
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        _infoColumn(
-                          "Ghế",
-                          "VIP, Thường, Couple",
-                          color.primary,
+
+              // 🔹 Nội dung scroll
+              Expanded(
+                child: SingleChildScrollView(
+                  padding: const EdgeInsets.all(16),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        "🎬 ${widget.movieTitle}",
+                        style: TextStyle(
+                          fontSize: 18,
+                          fontWeight: FontWeight.bold,
+                          color: color.primary,
                         ),
-                        _infoColumn("Hàng", "11, 12, 16", color.primary),
-                        _infoColumn("Ngày", "2 Thg 12", color.primary),
-                        _infoColumn("Giờ", "19:30", color.primary),
-                      ],
-                    ),
-                    const SizedBox(height: 16),
-                    Text("Địa chỉ rạp", style: TextStyle(color: color.primary)),
-                    const SizedBox(height: 4),
-                    Text(
-                      "CineMax, Hoàng Văn Thụ, Quận Gò Vấp",
-                      style: TextStyle(
-                        fontWeight: FontWeight.bold,
-                        color: color.primary,
                       ),
-                    ),
-                    const SizedBox(height: 16),
-                    _tableHeader(color.primary),
-                    _ticketRow(color.primary),
-                    const SizedBox(height: 12),
-                    Divider(thickness: 1, color: color.outline),
-                    const SizedBox(height: 4),
-                    Text(
-                      "Phương thức thanh toán: Chuyển khoản",
-                      style: TextStyle(
-                        fontWeight: FontWeight.bold,
-                        color: color.primary,
+                      const SizedBox(height: 12),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          _infoColumn(
+                            "Ghế",
+                            widget.selectedSeats
+                                .map((g) => g.viTriGhe)
+                                .join(", "),
+                            color.primary,
+                          ),
+                          _infoColumn(
+                            "Ngày",
+                            widget.receiveDate,
+                            color.primary,
+                          ),
+                          _infoColumn("Giờ", widget.showTime, color.primary),
+                        ],
                       ),
-                    ),
-                  ],
+                      const SizedBox(height: 16),
+                      Text(
+                        "Địa chỉ rạp",
+                        style: TextStyle(color: color.primary),
+                      ),
+                      const SizedBox(height: 4),
+                      Text(
+                        widget.theaterName,
+                        style: TextStyle(
+                          fontWeight: FontWeight.bold,
+                          color: color.primary,
+                        ),
+                      ),
+                      const SizedBox(height: 16),
+
+                      // 🔹 Bảng vé + combo
+                      _tableHeader(color.primary),
+                      ...widget.selectedSeats.map(
+                        (s) => _ticketRow(
+                          color.primary,
+                          "Vé ${s.tenLoaiGhe}",
+                          "1",
+                          "-",
+                          "${currencyFormat.format(s.giaTien)}đ",
+                        ),
+                      ),
+                      ...widget.selectedCombos.map(
+                        (c) => _ticketRow(
+                          color.primary,
+                          "Combo",
+                          "${c.quantity}",
+                          c.tenCombo,
+                          "${currencyFormat.format(c.gia * c.quantity)}đ",
+                        ),
+                      ),
+                      const SizedBox(height: 12),
+                      Divider(thickness: 1, color: color.outline),
+                      const SizedBox(height: 4),
+                      Text(
+                        "Tổng cộng: ${currencyFormat.format(totalAll)}đ",
+                        style: TextStyle(
+                          fontWeight: FontWeight.bold,
+                          color: color.primary,
+                        ),
+                      ),
+                    ],
+                  ),
                 ),
               ),
+
+              // 🔹 ZigZag
               CustomPaint(
                 size: const Size(double.infinity, 10),
                 painter: ZigZagPainter(),
@@ -114,6 +182,8 @@ class _PurchasePreviewPagesState extends State<PurchasePreviewPages> {
                   painter: ZigZagPainter(),
                 ),
               ),
+
+              // 🔹 Swiper
               SizedBox(
                 height: 150,
                 child: Swiper(
@@ -124,7 +194,7 @@ class _PurchasePreviewPagesState extends State<PurchasePreviewPages> {
                       final result = await showDialog(
                         context: context,
                         builder:
-                            (context) => AlertDialog(
+                            (_) => AlertDialog(
                               title: const Text("Xác nhận"),
                               content: const Text(
                                 "Bạn có chắc chắn đồng ý với thông tin đã chọn không?",
@@ -188,7 +258,7 @@ class _PurchasePreviewPagesState extends State<PurchasePreviewPages> {
                           ),
                           const SizedBox(height: 8),
                           Text(
-                            "Mã vé: 25177255",
+                            "Mã vé: #${DateTime.now().millisecondsSinceEpoch.toString().substring(5)}",
                             style: TextStyle(color: color.primary),
                           ),
                         ],
@@ -205,6 +275,7 @@ class _PurchasePreviewPagesState extends State<PurchasePreviewPages> {
     );
   }
 
+  // ===== WIDGET PHỤ =====
   Widget _infoColumn(String label, String value, Color color) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -249,7 +320,13 @@ class _PurchasePreviewPagesState extends State<PurchasePreviewPages> {
     );
   }
 
-  Widget _ticketRow(Color color) {
+  Widget _ticketRow(
+    Color color,
+    String tenVe,
+    String soLuong,
+    String tenCombo,
+    String gia,
+  ) {
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 8),
       child: Row(
@@ -257,26 +334,26 @@ class _PurchasePreviewPagesState extends State<PurchasePreviewPages> {
         children: [
           Expanded(
             child: Text(
-              "Vé xem phim, Vé Couple, Vé Combo",
+              tenVe,
               style: TextStyle(fontWeight: FontWeight.bold, color: color),
             ),
           ),
           Expanded(
             child: Text(
-              "8 ghế",
+              soLuong,
               textAlign: TextAlign.center,
               style: TextStyle(fontWeight: FontWeight.bold, color: color),
             ),
           ),
           Expanded(
             child: Text(
-              "Bắp + Nước + Quà tặng",
+              tenCombo,
               style: TextStyle(fontWeight: FontWeight.bold, color: color),
             ),
           ),
           Expanded(
             child: Text(
-              "990.000₫",
+              gia,
               textAlign: TextAlign.center,
               style: TextStyle(fontWeight: FontWeight.bold, color: color),
             ),
@@ -294,7 +371,6 @@ class ZigZagPainter extends CustomPainter {
         Paint()
           ..color = Colors.grey.shade200
           ..style = PaintingStyle.fill;
-
     const zigzagHeight = 10.0;
     const zigzagWidth = 10.0;
 

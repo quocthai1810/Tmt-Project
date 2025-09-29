@@ -1,17 +1,18 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
-import 'package:tmt_project/src/minh_src/models/modelTMT.dart';
+import 'package:tmt_project/src/minh_src/models/modelGhe.dart';
 import 'package:tmt_project/src/minh_src/pages/change_pay_ticket/change_pay_ticket.dart';
 import 'package:tmt_project/src/minh_src/pages/takeCombo/takeComboProvider.dart';
-import 'package:tmt_project/src/minh_src/models/takeComboModel.dart'; // ✅ Model riêng cho Combo
+import 'package:tmt_project/src/minh_src/models/takeComboModel.dart';
 
 class TakeComboPages extends StatefulWidget {
   final String theaterName;
   final String receiveDate;
   final String movieTitle;
   final String showTime;
-  final List<String> selectedSeats;
+  final String poster; // ✅ thêm poster
+  final List<GheModel> selectedSeats;
   final int maHeThong;
 
   const TakeComboPages({
@@ -20,6 +21,7 @@ class TakeComboPages extends StatefulWidget {
     required this.receiveDate,
     required this.movieTitle,
     required this.showTime,
+    required this.poster, // ✅ required
     required this.selectedSeats,
     required this.maHeThong,
   });
@@ -30,7 +32,7 @@ class TakeComboPages extends StatefulWidget {
 
 class _TakeComboPagesState extends State<TakeComboPages> {
   final currencyFormat = NumberFormat('#,###', 'vi_VN');
-  List<ComboItem> selectedCombos = [];
+  List<ComboModel> selectedCombos = [];
 
   @override
   void initState() {
@@ -86,6 +88,7 @@ class _TakeComboPagesState extends State<TakeComboPages> {
                       theaterName: widget.theaterName,
                       receiveDate: widget.receiveDate,
                       showTime: widget.showTime,
+                      poster: widget.poster, // ✅ truyền poster
                       selectedSeats: widget.selectedSeats,
                       selectedCombos: const [],
                     ),
@@ -129,6 +132,7 @@ class _TakeComboPagesState extends State<TakeComboPages> {
                           theaterName: widget.theaterName,
                           receiveDate: widget.receiveDate,
                           showTime: widget.showTime,
+                          poster: widget.poster, // ✅ truyền poster
                           selectedSeats: widget.selectedSeats,
                           selectedCombos: selectedCombos,
                         ),
@@ -142,79 +146,74 @@ class _TakeComboPagesState extends State<TakeComboPages> {
       );
 
   Widget _buildComboTile(
-    ComboItem item,
+    ComboModel item,
     void Function(void Function()) setModalState,
-  ) => Container(
-    margin: const EdgeInsets.only(bottom: 12),
-    padding: const EdgeInsets.all(12),
-    decoration: BoxDecoration(
-      color: Theme.of(context).colorScheme.primaryContainer,
-      borderRadius: BorderRadius.circular(12),
-    ),
-    child: Row(
-      children: [
-        Expanded(
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
+  ) {
+    return Container(
+      margin: const EdgeInsets.only(bottom: 12),
+      padding: const EdgeInsets.all(12),
+      decoration: BoxDecoration(
+        color: Theme.of(context).colorScheme.primaryContainer,
+        borderRadius: BorderRadius.circular(12),
+      ),
+      child: Row(
+        children: [
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  item.tenCombo,
+                  style: TextStyle(
+                    color: Theme.of(context).colorScheme.primary,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+                Text(
+                  'x${item.quantity} - ${currencyFormat.format(item.gia * item.quantity)}đ',
+                  style: TextStyle(
+                    color: Theme.of(context).colorScheme.primary,
+                    fontSize: 14,
+                  ),
+                ),
+              ],
+            ),
+          ),
+          Row(
             children: [
-              Text(
-                item.name,
-                style: TextStyle(
+              IconButton(
+                icon: Icon(
+                  Icons.remove_circle,
                   color: Theme.of(context).colorScheme.primary,
-                  fontWeight: FontWeight.bold,
                 ),
+                onPressed: () {
+                  if (item.quantity > 1) {
+                    setModalState(() => item.quantity--);
+                  } else {
+                    _confirmDelete(item, setModalState);
+                  }
+                },
               ),
-              Text(
-                '${item.popcorn} + ${item.drink}',
-                style: TextStyle(
+              IconButton(
+                icon: Icon(
+                  Icons.add_circle,
                   color: Theme.of(context).colorScheme.primary,
-                  fontSize: 13,
                 ),
+                onPressed: () => setModalState(() => item.quantity++),
               ),
-              Text(
-                'x${item.quantity} - ${currencyFormat.format(item.price * item.quantity)}đ',
-                style: TextStyle(
-                  color: Theme.of(context).colorScheme.primary,
-                  fontSize: 14,
-                ),
+              IconButton(
+                icon: const Icon(Icons.delete, color: Colors.red),
+                onPressed: () => _confirmDelete(item, setModalState),
               ),
             ],
           ),
-        ),
-        Row(
-          children: [
-            IconButton(
-              icon: Icon(
-                Icons.remove_circle,
-                color: Theme.of(context).colorScheme.primary,
-              ),
-              onPressed: () {
-                if (item.quantity > 1) {
-                  setModalState(() => item.quantity--);
-                } else {
-                  _confirmDelete(item, setModalState);
-                }
-              },
-            ),
-            IconButton(
-              icon: Icon(
-                Icons.add_circle,
-                color: Theme.of(context).colorScheme.primary,
-              ),
-              onPressed: () => setModalState(() => item.quantity++),
-            ),
-            IconButton(
-              icon: const Icon(Icons.delete, color: Colors.red),
-              onPressed: () => _confirmDelete(item, setModalState),
-            ),
-          ],
-        ),
-      ],
-    ),
-  );
+        ],
+      ),
+    );
+  }
 
   void _confirmDelete(
-    ComboItem item,
+    ComboModel item,
     void Function(void Function()) setModalState,
   ) async {
     final confirm = await showDialog<bool>(
@@ -248,7 +247,7 @@ class _TakeComboPagesState extends State<TakeComboPages> {
     final comboProvider = context.watch<ComboProvider>();
     final totalPrice = selectedCombos.fold(
       0,
-      (sum, item) => sum + item.price * item.quantity,
+      (sum, item) => sum + item.gia * item.quantity,
     );
 
     return Scaffold(
@@ -415,13 +414,20 @@ class _TakeComboPagesState extends State<TakeComboPages> {
   Widget _buildComboCard(ComboModel combo) {
     return GestureDetector(
       onTap: () async {
-        final result = await showDialog<ComboItem>(
+        final result = await showDialog<ComboModel>(
           context: context,
-          builder: (_) => _buildComboDialog(combo.tenCombo, combo.gia),
+          builder: (_) => _buildComboDialog(combo),
         );
         if (result != null) {
           setState(() {
-            selectedCombos.add(result);
+            final index = selectedCombos.indexWhere(
+              (c) => c.maDoAn == result.maDoAn,
+            );
+            if (index >= 0) {
+              selectedCombos[index].quantity += result.quantity;
+            } else {
+              selectedCombos.add(result);
+            }
           });
         }
       },
@@ -471,85 +477,26 @@ class _TakeComboPagesState extends State<TakeComboPages> {
     );
   }
 
-  Widget _buildComboDialog(String comboName, int price) {
-    String selectedDrink = 'Pepsi';
-    String selectedPopcorn = 'Bắp ngọt';
+  Widget _buildComboDialog(ComboModel combo) {
     int quantity = 1;
 
     return AlertDialog(
-      backgroundColor: Theme.of(context).colorScheme.primaryContainer,
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
-      title: Text(
-        'Chọn $comboName',
-        style: TextStyle(color: Theme.of(context).colorScheme.primary),
-      ),
+      title: Text('Chọn ${combo.tenCombo}'),
       content: StatefulBuilder(
         builder: (context, setDialogState) {
-          return Column(
-            mainAxisSize: MainAxisSize.min,
+          return Row(
             children: [
-              DropdownButton<String>(
-                dropdownColor: Theme.of(context).colorScheme.primaryContainer,
-                value: selectedDrink,
-                isExpanded: true,
-                onChanged:
-                    (value) => setDialogState(() => selectedDrink = value!),
-                items:
-                    ['Pepsi', '7Up', 'Sting']
-                        .map((e) => DropdownMenuItem(value: e, child: Text(e)))
-                        .toList(),
-              ),
-              const SizedBox(height: 12),
-              DropdownButton<String>(
-                dropdownColor: Theme.of(context).colorScheme.primaryContainer,
-                value: selectedPopcorn,
-                isExpanded: true,
-                onChanged:
-                    (value) => setDialogState(() => selectedPopcorn = value!),
-                items:
-                    ['Bắp ngọt', 'Bắp phô mai']
-                        .map((e) => DropdownMenuItem(value: e, child: Text(e)))
-                        .toList(),
-              ),
-              const SizedBox(height: 12),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Text(
-                    'Số lượng',
-                    style: TextStyle(
-                      color: Theme.of(context).colorScheme.primary,
+              IconButton(
+                icon: const Icon(Icons.remove),
+                onPressed:
+                    () => setDialogState(
+                      () => quantity = (quantity > 1) ? quantity - 1 : 1,
                     ),
-                  ),
-                  Row(
-                    children: [
-                      IconButton(
-                        onPressed:
-                            () => setDialogState(
-                              () =>
-                                  quantity = (quantity > 1) ? quantity - 1 : 1,
-                            ),
-                        icon: Icon(
-                          Icons.remove,
-                          color: Theme.of(context).colorScheme.primary,
-                        ),
-                      ),
-                      Text(
-                        quantity.toString(),
-                        style: TextStyle(
-                          color: Theme.of(context).colorScheme.primary,
-                        ),
-                      ),
-                      IconButton(
-                        onPressed: () => setDialogState(() => quantity++),
-                        icon: Icon(
-                          Icons.add,
-                          color: Theme.of(context).colorScheme.primary,
-                        ),
-                      ),
-                    ],
-                  ),
-                ],
+              ),
+              Text(quantity.toString()),
+              IconButton(
+                icon: const Icon(Icons.add),
+                onPressed: () => setDialogState(() => quantity++),
               ),
             ],
           );
@@ -558,22 +505,13 @@ class _TakeComboPagesState extends State<TakeComboPages> {
       actions: [
         TextButton(
           onPressed: () => Navigator.pop(context),
-          child: const Text('Hủy'),
+          child: const Text("Huỷ"),
         ),
         ElevatedButton(
           onPressed: () {
-            Navigator.pop(
-              context,
-              ComboItem(
-                name: comboName,
-                drink: selectedDrink,
-                popcorn: selectedPopcorn,
-                quantity: quantity,
-                price: price,
-              ),
-            );
+            Navigator.pop(context, combo.copyWith(quantity: quantity));
           },
-          child: const Text('Xác nhận'),
+          child: const Text("Xác nhận"),
         ),
       ],
     );

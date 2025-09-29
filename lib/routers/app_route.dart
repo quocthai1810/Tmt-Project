@@ -168,6 +168,7 @@ final Map<String, WidgetBuilder> appRoutes = {
     final movieId = args is int ? args : -1;
     return TrailerPages(movieId: movieId);
   },
+
   AppRouteNames.aboutUsPage: (context) => const AboutUsPage(),
   AppRouteNames.createNewPasswordPage:
       (context) => const CreateNewPasswordPage(),

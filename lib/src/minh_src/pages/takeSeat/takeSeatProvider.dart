@@ -11,6 +11,7 @@ class GheProvider extends ChangeNotifier {
   Future<void> fetchGheTheoPhong({
     required int maPhong,
     required int maSuatChieu,
+    z,
   }) async {
     isLoading = true;
     errorMessage = null;

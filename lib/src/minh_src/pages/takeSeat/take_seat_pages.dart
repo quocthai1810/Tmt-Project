@@ -336,9 +336,6 @@ class _TakeSeatPagesState extends State<TakeSeatPages> {
                                     MaterialPageRoute(
                                       builder:
                                           (_) => TakeComboPages(
-                                            //lỗi
-                                            // maPhong: widget.maPhong,
-                                            // maSuatChieu: widget.maSuatChieu,
                                             maHeThong: widget.maHeThong,
                                             theaterName: widget.theaterName,
                                             receiveDate: widget.receiveDate,

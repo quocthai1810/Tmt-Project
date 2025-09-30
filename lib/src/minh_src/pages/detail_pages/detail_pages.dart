@@ -253,6 +253,9 @@ class _DetailPagesState extends State<DetailPages> {
                                           movie["ma_phim"], // 🔹 ID dùng cho các màn sau
                                       "movieTitle":
                                           movie["ten_phim"], // 🔹 Giữ tiêu đề cho AppBar
+                                      "posterUrl":
+                                          imageBaseUrl +
+                                          (movie["anh_poster"] ?? ''),
                                     },
                                   ),
                             ),

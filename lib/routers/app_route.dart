@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:tmt_project/src/minh_src/models/modelGhe.dart';
 import 'package:tmt_project/src/minh_src/models/takeComboModel.dart';
+import 'package:tmt_project/src/minh_src/pages/testComponent/testComponent.dart';
 import 'package:tmt_project/src/thai_src/pages/choose_theater.dart';
 import 'package:tmt_project/src/thai_src/pages/entry_point_page.dart';
 import 'package:tmt_project/src/thai_src/pages/filter_page/filter_page.dart';
@@ -65,7 +66,7 @@ class AppRouteNames {
   static const takeComboPages = '/takeComboPages';
   static const takeSeatPages = '/takeSeatPages';
   static const trailerPages = '/trailerPages';
-
+  static const testComponent = '/testComponent';
   static const aboutUsPage = '/aboutUs';
   static const createNewPasswordPage = '/createNewPassword';
   static const editProfilePage = '/editProfile';
@@ -98,6 +99,7 @@ final Map<String, WidgetBuilder> appRoutes = {
   AppRouteNames.chooseTheater: (context) => ChooseTheater(),
 
   // ======== Route của Minh ========
+  AppRouteNames.testComponent: (context) => const TicketTearVerticalDemo(),
   AppRouteNames.bookingTicketPages: (context) {
     final args =
         ModalRoute.of(context)!.settings.arguments as Map<String, dynamic>;

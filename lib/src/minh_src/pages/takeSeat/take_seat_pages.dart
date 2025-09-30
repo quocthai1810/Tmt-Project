@@ -16,7 +16,7 @@ class TakeSeatPages extends StatefulWidget {
   final String theaterName;
   final String receiveDate;
   final String showTime;
-  final String poster; // ✅ thêm poster
+  final String poster; // ✅ posterUrl từ BookingTicketPages
   final int maHeThong;
 
   const TakeSeatPages({
@@ -27,7 +27,7 @@ class TakeSeatPages extends StatefulWidget {
     required this.theaterName,
     required this.receiveDate,
     required this.showTime,
-    required this.poster, // ✅ required
+    required this.poster, // ✅ truyền xuống TakeComboPages
     required this.maHeThong,
   });
 
@@ -340,7 +340,7 @@ class _TakeSeatPagesState extends State<TakeSeatPages> {
                                             showTime: widget.showTime,
                                             poster:
                                                 widget
-                                                    .poster, // ✅ truyền poster
+                                                    .poster, // ✅ truyền poster tiếp
                                             selectedSeats: selectedSeats,
                                           ),
                                     ),

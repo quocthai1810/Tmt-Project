@@ -11,7 +11,7 @@ class TakeComboPages extends StatefulWidget {
   final String receiveDate;
   final String movieTitle;
   final String showTime;
-  final String poster; // ✅ thêm poster
+  final String poster; // ✅ poster từ TakeSeatPages
   final List<GheModel> selectedSeats;
   final int maHeThong;
 

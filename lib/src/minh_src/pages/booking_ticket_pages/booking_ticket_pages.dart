@@ -5,12 +5,12 @@ import 'package:tmt_project/core/widgets/tin/custom_loading.dart';
 
 import 'package:tmt_project/src/minh_src/pages/takeSeat/take_seat_pages.dart';
 import 'package:tmt_project/src/minh_src/pages/booking_ticket_pages/bookingProvider.dart';
-import 'package:tmt_project/src/minh_src/pages/takeSeat/take_seat_pages.dart';
 
 class BookingTicketPages extends StatefulWidget {
   final int movieId; // ma_phim
   final String movieTitle; // hiển thị AppBar
-  final String poster; // hiển thị poster
+  final String poster; // 🔹 posterUrl từ DetailPages
+
   const BookingTicketPages({
     super.key,
     required this.movieId,
@@ -52,8 +52,9 @@ class _BookingTicketPagesState extends State<BookingTicketPages> {
     final map = context.read<CumRapProvider>().cumRapMap;
     if (map == null || map.isEmpty) return null;
     final keys = map.keys.toList(growable: false);
-    if (_selectedCumRapIndex < 0 || _selectedCumRapIndex >= keys.length)
+    if (_selectedCumRapIndex < 0 || _selectedCumRapIndex >= keys.length) {
       return null;
+    }
     return keys[_selectedCumRapIndex];
   }
 
@@ -343,7 +344,9 @@ class _BookingTicketPagesState extends State<BookingTicketPages> {
                                   MaterialPageRoute(
                                     builder:
                                         (_) => TakeSeatPages(
-                                          poster: widget.poster,
+                                          poster:
+                                              widget
+                                                  .poster, // 🔹 truyền poster xuống
                                           maPhong: rap.maRap ?? 0,
                                           maSuatChieu: s.maSuatChieu ?? 0,
                                           theaterName: rap.tenRap ?? '',

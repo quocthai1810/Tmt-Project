@@ -25,22 +25,28 @@ dependencies:
   video_player: ^2.10.0
   youtube_player_flutter: ^9.1.2
   book_my_seat: ^1.0.1
- 
+
   google_fonts: ^6.2.1
   qr_flutter: ^4.1.0
   shared_preferences: ^2.3.2
+  google_sign_in: ^6.2.1
+  dio: ^5.7.0
+
 
 dev_dependencies:
-  
+  flutter_launcher_icons: ^0.13.1
 
-
+flutter_icons:
+  image_path: "assets/img/tmt_app_icon.png"
+  android: true
+  ios: false
   flutter_test:
     sdk: flutter
 
   flutter_lints: ^5.0.0
 
 flutter:
-  assets: 
+  assets:
     - assets/img/logo.png
     - assets/img/searchResult.png
     - assets/img/test.jpg

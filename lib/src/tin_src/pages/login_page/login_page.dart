@@ -44,7 +44,11 @@ class _LoginPageState extends State<LoginPage> {
           // khi login thành công thì điều hướng sang HomePage
           if (provider.isSuccess) {
             WidgetsBinding.instance.addPostFrameCallback((_) {
-              Navigator.pushReplacementNamed(context, AppRouteNames.entryPointPage);
+              Navigator.pushNamedAndRemoveUntil(
+                context,
+                AppRouteNames.entryPointPage,
+                (route) => false, // xoá toàn bộ route trước đó
+              );
               provider.isSuccess = false;
             });
           }
@@ -63,7 +67,7 @@ class _LoginPageState extends State<LoginPage> {
                           crossAxisAlignment: CrossAxisAlignment.center,
                           children: const [
                             Text(
-                              "Xin chào, Tiffany",
+                              "TMT Xin chào",
                               style: TextStyle(
                                 color: Colors.white,
                                 fontSize: 28,
@@ -91,7 +95,7 @@ class _LoginPageState extends State<LoginPage> {
                         decoration: InputDecoration(
                           labelText: "Email",
                           labelStyle: const TextStyle(color: Colors.white70),
-                          hintText: "Tiffanyjearsey@gmail.com",
+                          hintText: "TmtAppTeam@gmail.com",
                           hintStyle: const TextStyle(color: Colors.white38),
                           filled: true,
                           fillColor: const Color(0xFF2C2C3E),

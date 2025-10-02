@@ -54,7 +54,10 @@ class LoginSignInPage extends StatelessWidget {
                   width: 327,
                   text: "Đăng ký",
                   onPressed: () {
-                    Navigator.pushReplacementNamed(context, AppRouteNames.signupPage);
+                    Navigator.pushNamed(
+                      context,
+                      AppRouteNames.signupPage,
+                    );
                   },
                 ),
                 const SizedBox(height: 34),
@@ -62,7 +65,7 @@ class LoginSignInPage extends StatelessWidget {
                 // Văn bản đăng nhập
                 GestureDetector(
                   onTap: () {
-                    Navigator.pushReplacementNamed(context, AppRouteNames.loginPage);
+                    Navigator.pushNamed(context, AppRouteNames.loginPage);
                   },
                   child: Text.rich(
                     TextSpan(
@@ -111,17 +114,22 @@ class LoginSignInPage extends StatelessWidget {
                   children: [
                     GoogleButton(
                       onTap: () async {
-                        final idToken = await LoginGoogleProvider().signInWithGoogle();
+                        final idToken =
+                            await LoginGoogleProvider().signInWithGoogle();
 
                         if (idToken != null) {
                           print("ID Token: $idToken");
 
                           try {
-                            final response = await AuthService().loginWithGoogle(idToken);
+                            final response = await AuthService()
+                                .loginWithGoogle(idToken);
 
                             if (response.statusCode == 200) {
                               print("Login success: ${response.data}");
-                              Navigator.pushReplacementNamed(context, AppRouteNames.entryPointPage);
+                              Navigator.pushReplacementNamed(
+                                context,
+                                AppRouteNames.entryPointPage,
+                              );
                             } else {
                               print("Login failed: ${response.data}");
                             }
@@ -133,7 +141,6 @@ class LoginSignInPage extends StatelessWidget {
                         }
                       },
                     ),
-
                   ],
                 ),
               ],

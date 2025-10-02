@@ -57,7 +57,7 @@ class _UserPageState extends State<UserPage> {
             onPressed: () async {
               final prefs = await SharedPreferences.getInstance();
               await prefs.clear();
-              Navigator.pushReplacementNamed(context, "/login");
+              Navigator.pushReplacementNamed(context, "/loginSignin");
             },
           ),
         ],

@@ -76,7 +76,7 @@ class _SignUpPageState extends State<SignUpPage> {
                     "type": "register", // ✅ truyền type
                   },
                 );
-                provider.isSuccess = false;
+                provider.reset();
               });
             }
 

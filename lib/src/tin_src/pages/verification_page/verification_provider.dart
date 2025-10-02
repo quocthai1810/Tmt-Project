@@ -19,23 +19,34 @@ class VerificationProvider extends ChangeNotifier {
     await _sendOtp("${apiTMT}/XacThuc/GuiMaOTPQuenMatKhau", {"email": email});
   }
 
-  Future<void> verifyOtp(String email, String otp) async {
-    await _verifyOtp("${apiTMT}/XacThuc/XacThucMaOTPEmail", {
-      "email": email,
-      "otp": otp,
-    }, saveLogin: true);
+  Future<void> verifyOtp(String email, String otp, String type) async {
+    await _verifyOtp(
+      "${apiTMT}/XacThuc/XacThucMaOTPEmail",
+      {
+        "email": email,
+        "otp": otp,
+      },
+      email: email,
+      type: type,
+    );
   }
 
   Future<void> verifyOtpCreateNewPassword(
-    String email,
-    String otp,
-    String newPassword,
-  ) async {
-    await _verifyOtp("${apiTMT}/XacThuc/DatLaiMatKhau", {
-      "email": email,
-      "otp": otp,
-      "mat_khau_moi": newPassword,
-    }, saveLogin: false);
+      String email,
+      String otp,
+      String newPassword,
+      String type,
+      ) async {
+    await _verifyOtp(
+      "${apiTMT}/XacThuc/DatLaiMatKhau",
+      {
+        "email": email,
+        "otp": otp,
+        "mat_khau_moi": newPassword,
+      },
+      email: email,
+      type: type,
+    );
   }
 
   Future<void> _sendOtp(String urlApi, Map<String, dynamic> body) async {
@@ -67,10 +78,11 @@ class VerificationProvider extends ChangeNotifier {
   }
 
   Future<void> _verifyOtp(
-    String urlApi,
-    Map<String, dynamic> body, {
-    bool saveLogin = false,
-  }) async {
+      String urlApi,
+      Map<String, dynamic> body, {
+        required String email,
+        required String type,
+      }) async {
     isLoading = true;
     errorMessage = null;
     isVerified = false;
@@ -88,10 +100,16 @@ class VerificationProvider extends ChangeNotifier {
 
       if (response.statusCode == 200) {
         isVerified = true;
-        if (saveLogin) {
+
+        if (type == "register") {
+          // 👉 Đăng ký thành công → lưu token + email + isLogin
+          final token = data["data"]["accessToken"];
+          final prefs = await SharedPreferences.getInstance();
+          await prefs.setString("accessToken", token);
+          await prefs.setString("email", email);
           await _saveLoginState(true);
         } else {
-          // 👉 Nếu không phải register mà là create lại password thì xóa token & email
+          // 👉 Nếu là create_new_password thì clear token & email
           final prefs = await SharedPreferences.getInstance();
           await prefs.remove("accessToken");
           await prefs.remove("email");
@@ -99,11 +117,11 @@ class VerificationProvider extends ChangeNotifier {
         }
       } else {
         errorMessage = data["message"] ?? "Xác thực OTP thất bại";
-        if (saveLogin) await _saveLoginState(false);
+        await _saveLoginState(false);
       }
     } catch (e) {
       errorMessage = "Lỗi mạng: $e";
-      if (saveLogin) await _saveLoginState(false);
+      await _saveLoginState(false);
     }
 
     isLoading = false;

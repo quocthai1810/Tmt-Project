@@ -28,10 +28,14 @@ class LoginProvider extends ChangeNotifier {
 
       final data = jsonDecode(response.body);
 
-      if (response.statusCode == 200 && data["data"] != null) {
+      if (response.statusCode == 200) {
         final token = data["data"]["accessToken"];
         final prefs = await SharedPreferences.getInstance();
+
+        // Lưu token
         await prefs.setString("accessToken", token);
+        // Lưu email
+        await prefs.setString("email", email);
 
         isSuccess = true;
       } else {

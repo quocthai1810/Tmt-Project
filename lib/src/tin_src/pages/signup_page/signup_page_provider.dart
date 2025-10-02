@@ -1,23 +1,26 @@
 import 'dart:convert';
-
-import 'package:flutter/cupertino.dart';
+import 'package:flutter/foundation.dart';
 import 'package:http/http.dart' as http;
+import 'package:shared_preferences/shared_preferences.dart';
 
 import '../../../../core/constants/env.dart';
 
+enum SignUpStatus { idle, loading, success, error }
+
 class SignUpProvider extends ChangeNotifier {
-  bool isLoading = false;
+  SignUpStatus status = SignUpStatus.idle;
   String? errorMessage;
-  bool isSuccess = false;
+
+  bool get isLoading => status == SignUpStatus.loading;
+  bool get isSuccess => status == SignUpStatus.success;
 
   Future<void> signUp({
     required String email,
     required String password,
     required String fullName,
   }) async {
-    isLoading = true;
+    status = SignUpStatus.loading;
     errorMessage = null;
-    isSuccess = false;
     notifyListeners();
 
     try {
@@ -34,22 +37,52 @@ class SignUpProvider extends ChangeNotifier {
         body: body,
       );
 
-      final data = jsonDecode(response.body);
+      print('SignUp HTTP ${response.statusCode} - body: ${response.body}');
 
       if (response.statusCode == 200) {
-        if (data["success"] == true) {
-          isSuccess = true;
-        } else {
-          errorMessage = data["message"] ?? "Đăng ký thất bại";
-        }
+        // Đăng ký thành công → lưu email & isLogin
+        final prefs = await SharedPreferences.getInstance();
+        await prefs.setString("email", email);
+        await prefs.setBool("isLogin", true);
+
+        status = SignUpStatus.success;
+      } else if (response.statusCode == 409) {
+        // Email đã tồn tại
+        final data = response.body.isNotEmpty ? jsonDecode(response.body) : {};
+        status = SignUpStatus.error;
+        errorMessage = (data['message'] ?? 'Email đã tồn tại').toString();
       } else {
-        errorMessage = "Lỗi: ${response.statusCode}";
+        // Các lỗi khác
+        final data = response.body.isNotEmpty ? jsonDecode(response.body) : {};
+        status = SignUpStatus.error;
+        errorMessage =
+            (data['message'] ?? 'Lỗi: ${response.statusCode}').toString();
       }
     } catch (e) {
-      errorMessage = "Lỗi mạng hoặc server: $e";
+      status = SignUpStatus.error;
+      errorMessage = 'Lỗi mạng hoặc server: $e';
+      print('SignUp exception: $e');
     }
 
-    isLoading = false;
     notifyListeners();
+  }
+
+  /// Reset trạng thái về ban đầu (gọi sau khi đã điều hướng)
+  void reset() {
+    status = SignUpStatus.idle;
+    errorMessage = null;
+    notifyListeners();
+  }
+
+  /// Lấy email đã lưu
+  Future<String?> getSavedEmail() async {
+    final prefs = await SharedPreferences.getInstance();
+    return prefs.getString("email");
+  }
+
+  /// Kiểm tra trạng thái login
+  Future<bool> isLoggedIn() async {
+    final prefs = await SharedPreferences.getInstance();
+    return prefs.getBool("isLogin") ?? false;
   }
 }

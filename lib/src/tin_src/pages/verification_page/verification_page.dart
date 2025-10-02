@@ -10,7 +10,7 @@ import 'verification_provider.dart';
 class VerificationPage extends StatefulWidget {
   final String email;
   final String type; // "register" hoặc "create_new_password"
-  final String? newPassword; // ✅ thêm field mật khẩu mới
+  final String? newPassword;
 
   const VerificationPage({
     super.key,
@@ -42,7 +42,6 @@ class _VerificationPageState extends State<VerificationPage> {
         await provider.sendOtpEmail(widget.email);
       } else {
         await provider.sendOtpForgotPassword(widget.email);
-
       }
     });
   }
@@ -65,9 +64,10 @@ class _VerificationPageState extends State<VerificationPage> {
           widget.email,
           otp,
           widget.newPassword ?? "",
+          widget.type,
         );
       } else {
-        provider.verifyOtp(widget.email, otp);
+        provider.verifyOtp(widget.email, otp, widget.type);
       }
     } else {
       ScaffoldMessenger.of(context).showSnackBar(

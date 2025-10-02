@@ -25,7 +25,7 @@ dependencies:
   video_player: ^2.10.0
   youtube_player_flutter: ^9.1.2
   book_my_seat: ^1.0.1
- 
+  vibration: ^1.7.4
   google_fonts: ^6.2.1
   qr_flutter: ^4.1.0
 

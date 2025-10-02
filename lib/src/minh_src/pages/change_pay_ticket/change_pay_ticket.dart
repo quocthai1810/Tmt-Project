@@ -1,15 +1,17 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
-import 'package:tmt_project/src/minh_src/models/combo_item.dart';
+import 'package:tmt_project/src/minh_src/models/modelGhe.dart';
+import 'package:tmt_project/src/minh_src/models/takeComboModel.dart';
 import 'package:tmt_project/src/minh_src/pages/check_bill_pages/checkBill_pages.dart';
 
 class ChangePayTicket extends StatelessWidget {
   final String movieTitle;
   final String theaterName;
-  final String receiveDate;
-  final String showTime;
-  final List<String> selectedSeats;
-  final List<ComboItem> selectedCombos;
+  final String receiveDate; // Ngày chiếu
+  final String showTime; // Giờ chiếu
+  final String poster; // ✅ thêm poster
+  final List<GheModel> selectedSeats;
+  final List<ComboModel> selectedCombos;
 
   const ChangePayTicket({
     super.key,
@@ -17,50 +19,58 @@ class ChangePayTicket extends StatelessWidget {
     required this.theaterName,
     required this.receiveDate,
     required this.showTime,
+    required this.poster, // ✅ bắt buộc
     required this.selectedSeats,
     required this.selectedCombos,
   });
+
+  // 🔹 Hàm chuẩn hóa loại ghế để tránh lệch chữ hoa/thường
+  String _normalizeSeatType(String type) {
+    final t = type.toLowerCase();
+    if (t.contains("vip")) return "VIP";
+    if (t.contains("couple")) return "COUPLE";
+    return "NORMAL";
+  }
+
+  String _getSeatTypeLabel(String type) {
+    switch (_normalizeSeatType(type)) {
+      case "VIP":
+        return "Loại VIP";
+      case "COUPLE":
+        return "Loại Couple";
+      default:
+        return "Loại Thường";
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
     final currencyFormat = NumberFormat('#,###', 'vi_VN');
 
-    // Tách ghế theo loại
-    List<String> vipSeats = [];
-    List<String> coupleSeats = [];
-    List<String> normalSeats = [];
-
-    for (var seat in selectedSeats) {
-      if (_isVip(seat)) {
-        vipSeats.add(seat);
-      } else if (_isCouple(seat)) {
-        coupleSeats.add(seat);
-      } else {
-        normalSeats.add(seat);
-      }
-    }
-
-    // Đơn giá
-    const int vipPrice = 120000;
-    const int normalPrice = 80000;
-    const int couplePrice = 200000;
-
-    // Tính tiền ghế
-    int totalTicket =
-        vipSeats.length * vipPrice +
-        normalSeats.length * normalPrice +
-        coupleSeats.length * couplePrice;
-
-    // Tính tiền combo
-    int comboTotal = selectedCombos.fold(
-      0,
-      (sum, combo) => sum + (combo.price * combo.quantity),
-    );
-
     final colorPrimary = Theme.of(context).colorScheme.primary;
     final colorPrimaryContainer =
         Theme.of(context).colorScheme.primaryContainer;
     final colorInverse = Theme.of(context).colorScheme.inversePrimary;
+
+    // Tách ghế theo loại đã chuẩn hóa
+    final vipSeats =
+        selectedSeats
+            .where((g) => _normalizeSeatType(g.tenLoaiGhe) == 'VIP')
+            .toList();
+    final coupleSeats =
+        selectedSeats
+            .where((g) => _normalizeSeatType(g.tenLoaiGhe) == 'COUPLE')
+            .toList();
+    final normalSeats =
+        selectedSeats
+            .where((g) => _normalizeSeatType(g.tenLoaiGhe) == 'NORMAL')
+            .toList();
+
+    int totalTicket = selectedSeats.fold(0, (sum, g) => sum + g.giaTien);
+    double comboTotal = selectedCombos.fold(
+      0,
+      (sum, combo) => sum + (combo.gia * combo.quantity),
+    );
 
     return Scaffold(
       backgroundColor: colorPrimaryContainer,
@@ -87,7 +97,7 @@ class ChangePayTicket extends StatelessWidget {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Text(
-                "🎮 $movieTitle",
+                "🎬 $movieTitle",
                 style: TextStyle(
                   fontSize: 20,
                   fontWeight: FontWeight.bold,
@@ -98,37 +108,33 @@ class ChangePayTicket extends StatelessWidget {
               _infoRow(context, Icons.location_city, theaterName, colorPrimary),
               _infoRow(context, Icons.date_range, receiveDate, colorPrimary),
               _infoRow(context, Icons.access_time, showTime, colorPrimary),
-              const SizedBox(height: 16),
 
+              const SizedBox(height: 16),
               if (vipSeats.isNotEmpty)
                 _seatGroup(
-                  "Loại VIP",
+                  _getSeatTypeLabel("VIP"),
                   vipSeats,
-                  vipPrice,
                   currencyFormat,
                   colorPrimary,
                 ),
               if (normalSeats.isNotEmpty)
                 _seatGroup(
-                  "Loại Thường",
+                  _getSeatTypeLabel("NORMAL"),
                   normalSeats,
-                  normalPrice,
                   currencyFormat,
                   colorPrimary,
                 ),
               if (coupleSeats.isNotEmpty)
                 _seatGroup(
-                  "Loại Couple",
+                  _getSeatTypeLabel("COUPLE"),
                   coupleSeats,
-                  couplePrice,
                   currencyFormat,
                   colorPrimary,
                 ),
 
               const Divider(height: 28, color: Colors.white24),
-
               Text(
-                "Tổng tạm tính (${selectedSeats.length} ghế): ${currencyFormat.format(totalTicket)}đ",
+                "Tạm tính (${selectedSeats.length} ghế): ${currencyFormat.format(totalTicket)}đ",
                 style: TextStyle(
                   fontSize: 16,
                   color: colorPrimary,
@@ -155,12 +161,12 @@ class ChangePayTicket extends StatelessWidget {
                       children: [
                         Expanded(
                           child: Text(
-                            "${c.name} (${c.popcorn} + ${c.drink}) x${c.quantity}",
+                            "${c.tenCombo} (${c.moTa}) x${c.quantity}",
                             style: TextStyle(color: colorPrimary),
                           ),
                         ),
                         Text(
-                          "${currencyFormat.format(c.price * c.quantity)}đ",
+                          "${currencyFormat.format(c.gia * c.quantity)}đ",
                           style: TextStyle(
                             color: colorPrimary,
                             fontWeight: FontWeight.bold,
@@ -225,6 +231,7 @@ class ChangePayTicket extends StatelessWidget {
                               theaterName: theaterName,
                               receiveDate: receiveDate,
                               showTime: showTime,
+                              poster: poster, // ✅ truyền thêm
                               selectedSeats: selectedSeats,
                               selectedCombos: selectedCombos,
                             ),
@@ -244,13 +251,6 @@ class ChangePayTicket extends StatelessWidget {
     );
   }
 
-  bool _isVip(String seat) {
-    final vipRegex = RegExp(r'^[F-M](1[0-8]|[5-9])\$');
-    return vipRegex.hasMatch(seat.toUpperCase());
-  }
-
-  bool _isCouple(String seat) => seat.startsWith("O");
-
   Widget _infoRow(
     BuildContext context,
     IconData icon,
@@ -268,8 +268,7 @@ class ChangePayTicket extends StatelessWidget {
 
   Widget _seatGroup(
     String type,
-    List<String> seats,
-    int price,
+    List<GheModel> seats,
     NumberFormat format,
     Color color,
   ) {
@@ -280,12 +279,12 @@ class ChangePayTicket extends StatelessWidget {
         children: [
           Expanded(
             child: Text(
-              "$type\nGhế: ${seats.join(", ")}",
+              "$type\nGhế: ${seats.map((g) => g.viTriGhe).join(", ")}",
               style: TextStyle(color: color),
             ),
           ),
           Text(
-            "${format.format(price)}đ\n(${seats.length} ghế)",
+            "${format.format(seats.fold(0, (sum, g) => sum + g.giaTien))}đ\n(${seats.length} ghế)",
             textAlign: TextAlign.right,
             style: TextStyle(color: color, fontWeight: FontWeight.bold),
           ),

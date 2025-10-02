@@ -1,284 +1,288 @@
+import 'dart:math';
 import 'package:flutter/material.dart';
-import 'package:flutter_swiper_null_safety/flutter_swiper_null_safety.dart';
-import 'package:tmt_project/core/widgets/minh/customToast.dart';
+import 'package:intl/intl.dart';
+import 'package:tmt_project/src/minh_src/models/modelGhe.dart';
+import 'package:tmt_project/src/minh_src/models/takeComboModel.dart';
 
 class PurchasePreviewPages extends StatefulWidget {
-  const PurchasePreviewPages({super.key});
+  final String movieTitle;
+  final String poster;
+  final String theaterName;
+  final String receiveDate;
+  final String showTime;
+  final List<GheModel> selectedSeats;
+  final List<ComboModel> selectedCombos;
+
+  const PurchasePreviewPages({
+    super.key,
+    required this.movieTitle,
+    required this.poster,
+    required this.theaterName,
+    required this.receiveDate,
+    required this.showTime,
+    required this.selectedSeats,
+    required this.selectedCombos,
+  });
 
   @override
   State<PurchasePreviewPages> createState() => _PurchasePreviewPagesState();
 }
 
-class _PurchasePreviewPagesState extends State<PurchasePreviewPages> {
-  bool isConfirmed = false;
+class _PurchasePreviewPagesState extends State<PurchasePreviewPages>
+    with SingleTickerProviderStateMixin {
+  bool _isTorn = false;
+  late final AnimationController _animController;
+  late final Animation<double> _topShift;
+  late final Animation<double> _bottomShift;
+
+  final Color ticketBgColor = const Color(0xFF9E3D3D);
+
+  @override
+  void initState() {
+    super.initState();
+    _animController = AnimationController(
+      vsync: this,
+      duration: const Duration(milliseconds: 450),
+    );
+    _topShift = Tween<double>(
+      begin: 0,
+      end: -100,
+    ).animate(CurvedAnimation(parent: _animController, curve: Curves.easeOut));
+    _bottomShift = Tween<double>(
+      begin: 0,
+      end: 100,
+    ).animate(CurvedAnimation(parent: _animController, curve: Curves.easeOut));
+    _animController.addListener(() => setState(() {}));
+  }
+
+  @override
+  void dispose() {
+    _animController.dispose();
+    super.dispose();
+  }
+
+  void _completeTear() {
+    setState(() => _isTorn = true);
+    _animController.forward();
+  }
 
   @override
   Widget build(BuildContext context) {
-    final color = Theme.of(context).colorScheme;
+    final currencyFormat = NumberFormat('#,###', 'vi_VN');
+    final width = MediaQuery.of(context).size.width * 0.85;
+    const height = 880.0;
+    const tearY = height * 0.7;
+
+    final seatTotal = widget.selectedSeats.fold(0, (sum, g) => sum + g.giaTien);
+    final comboTotal = widget.selectedCombos.fold(
+      0,
+      (sum, c) => sum + (c.gia * c.quantity),
+    );
+    final totalAll = seatTotal + comboTotal;
 
     return Scaffold(
-      backgroundColor: color.inversePrimary,
-      appBar: AppBar(
-        backgroundColor: color.inversePrimary,
-        elevation: 0,
-        leading: IconButton(
-          icon: Icon(Icons.arrow_back, color: color.primary),
-          onPressed: () => Navigator.of(context).pop(),
-        ),
-        title: Text("Vé xem phim", style: TextStyle(color: color.primary)),
-        centerTitle: true,
-      ),
-      body: Center(
-        child: Container(
-          width: MediaQuery.of(context).size.width * 0.95,
-          margin: const EdgeInsets.all(16),
-          decoration: BoxDecoration(
-            color: color.primaryContainer,
-            borderRadius: BorderRadius.circular(16),
-          ),
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              ClipRRect(
-                borderRadius: const BorderRadius.vertical(
-                  top: Radius.circular(16),
+      backgroundColor: Colors.grey.shade100,
+      appBar: AppBar(title: const Text('Xác nhận vé & QR')),
+      body: Stack(
+        children: [
+          // ➕ QR code ở phía sau khi xé
+          if (_isTorn)
+            Positioned(
+              top: tearY - 90,
+              left: width / 2 - 100,
+              child: Container(
+                width: 250,
+                padding: const EdgeInsets.all(8),
+                decoration: BoxDecoration(
+                  color: Colors.white,
+                  borderRadius: BorderRadius.circular(12),
+                  boxShadow: [
+                    BoxShadow(
+                      color: Colors.black.withOpacity(0.2),
+                      blurRadius: 6,
+                      offset: const Offset(0, 3),
+                    ),
+                  ],
                 ),
-                child: Image.network(
-                  "https://picsum.photos/400/200",
-                  width: double.infinity,
-                  height: 180,
-                  fit: BoxFit.cover,
-                ),
-              ),
-              Padding(
-                padding: const EdgeInsets.all(16),
                 child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Text(
-                      "Phim: Người Phụ Nữ",
-                      style: TextStyle(
-                        fontSize: 18,
-                        fontWeight: FontWeight.bold,
-                        color: color.primary,
-                      ),
+                    Image.network(
+                      "https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=TMT_Cinema_Ticket",
+                      width: 200,
+                      height: 150,
                     ),
-                    const SizedBox(height: 12),
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        _infoColumn(
-                          "Ghế",
-                          "VIP, Thường, Couple",
-                          color.primary,
-                        ),
-                        _infoColumn("Hàng", "11, 12, 16", color.primary),
-                        _infoColumn("Ngày", "2 Thg 12", color.primary),
-                        _infoColumn("Giờ", "19:30", color.primary),
-                      ],
-                    ),
-                    const SizedBox(height: 16),
-                    Text("Địa chỉ rạp", style: TextStyle(color: color.primary)),
-                    const SizedBox(height: 4),
-                    Text(
-                      "CineMax, Hoàng Văn Thụ, Quận Gò Vấp",
+                    const SizedBox(height: 2),
+                    const Text(
+                      "Mã QR cho vé xem phim",
+                      textAlign: TextAlign.center,
                       style: TextStyle(
                         fontWeight: FontWeight.bold,
-                        color: color.primary,
-                      ),
-                    ),
-                    const SizedBox(height: 16),
-                    _tableHeader(color.primary),
-                    _ticketRow(color.primary),
-                    const SizedBox(height: 12),
-                    Divider(thickness: 1, color: color.outline),
-                    const SizedBox(height: 4),
-                    Text(
-                      "Phương thức thanh toán: Chuyển khoản",
-                      style: TextStyle(
-                        fontWeight: FontWeight.bold,
-                        color: color.primary,
+                        fontSize: 14,
+                        color: Colors.black,
                       ),
                     ),
                   ],
                 ),
               ),
-              CustomPaint(
-                size: const Size(double.infinity, 10),
-                painter: ZigZagPainter(),
-              ),
-              Transform.rotate(
-                angle: 3.1416,
-                child: CustomPaint(
-                  size: const Size(double.infinity, 10),
-                  painter: ZigZagPainter(),
-                ),
-              ),
-              SizedBox(
-                height: 150,
-                child: Swiper(
-                  itemCount: 3,
-                  loop: false,
-                  onIndexChanged: (index) async {
-                    if (index == 1 && !isConfirmed) {
-                      final result = await showDialog(
-                        context: context,
-                        builder:
-                            (context) => AlertDialog(
-                              title: const Text("Xác nhận"),
-                              content: const Text(
-                                "Bạn có chắc chắn đồng ý với thông tin đã chọn không?",
-                              ),
-                              actions: [
-                                TextButton(
-                                  onPressed:
-                                      () => Navigator.of(context).pop(false),
-                                  child: const Text("Không"),
+            ),
+
+          // 🧾 Vé chính (kéo để xé)
+          Center(
+            child: GestureDetector(
+              onHorizontalDragEnd: (_) => _completeTear(),
+              child: SizedBox(
+                width: width,
+                height: height,
+                child: Stack(
+                  children: [
+                    // 🔼 Nửa trên có scroll bên trong
+                    Positioned(
+                      top: _isTorn ? _topShift.value : 0,
+                      child: ClipPath(
+                        clipper: TicketTopClipper(
+                          tearY: tearY,
+                          jaggle: 10,
+                          gap: 20,
+                        ),
+                        child: Container(
+                          width: width,
+                          height: height,
+                          color: ticketBgColor,
+                          child: SingleChildScrollView(
+                            padding: const EdgeInsets.only(bottom: 80),
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                ClipRRect(
+                                  borderRadius: const BorderRadius.only(
+                                    topLeft: Radius.circular(10),
+                                    topRight: Radius.circular(10),
+                                  ),
+                                  child: Image.network(
+                                    widget.poster,
+                                    height: 200,
+                                    width: double.infinity,
+                                    fit: BoxFit.cover,
+                                  ),
                                 ),
-                                TextButton(
-                                  onPressed:
-                                      () => Navigator.of(context).pop(true),
-                                  child: const Text("Đồng ý"),
+                                const SizedBox(height: 16),
+                                Padding(
+                                  padding: const EdgeInsets.symmetric(
+                                    horizontal: 16,
+                                  ),
+                                  child: Column(
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
+                                    children: [
+                                      Text(
+                                        widget.movieTitle,
+                                        style: const TextStyle(
+                                          fontSize: 20,
+                                          fontWeight: FontWeight.bold,
+                                          color: Colors.white,
+                                        ),
+                                      ),
+                                      const SizedBox(height: 4),
+                                      Text(
+                                        "Rạp: ${widget.theaterName}",
+                                        style: const TextStyle(
+                                          color: Colors.white,
+                                        ),
+                                      ),
+                                      Text(
+                                        "Ngày: ${widget.receiveDate}",
+                                        style: const TextStyle(
+                                          color: Colors.white,
+                                        ),
+                                      ),
+                                      Text(
+                                        "Giờ: ${widget.showTime}",
+                                        style: const TextStyle(
+                                          color: Colors.white,
+                                        ),
+                                      ),
+                                      const SizedBox(height: 12),
+                                      Text(
+                                        "Ghế: ${widget.selectedSeats.map((e) => e.viTriGhe).join(', ')}",
+                                        style: const TextStyle(
+                                          color: Colors.white,
+                                        ),
+                                      ),
+                                      const SizedBox(height: 8),
+                                      ...widget.selectedSeats.map(
+                                        (s) => Text(
+                                          "• Vé ${s.tenLoaiGhe} - ${currencyFormat.format(s.giaTien)}đ",
+                                          style: const TextStyle(
+                                            color: Colors.white,
+                                          ),
+                                        ),
+                                      ),
+                                      ...widget.selectedCombos.map(
+                                        (c) => Text(
+                                          "• ${c.quantity}x ${c.tenCombo} - ${currencyFormat.format(c.gia * c.quantity)}đ",
+                                          style: const TextStyle(
+                                            color: Colors.white,
+                                          ),
+                                        ),
+                                      ),
+                                      const SizedBox(height: 10),
+                                      Text(
+                                        "Tổng cộng: ${currencyFormat.format(totalAll)}đ",
+                                        style: const TextStyle(
+                                          fontSize: 16,
+                                          fontWeight: FontWeight.bold,
+                                          color: Colors.white,
+                                        ),
+                                      ),
+                                    ],
+                                  ),
                                 ),
                               ],
                             ),
-                      );
-                      if (result == true) {
-                        setState(() => isConfirmed = true);
-                        CustomToast.show(
-                          context,
-                          message: "Đã xác nhận thành công!",
-                          type: ToastType.success,
-                        );
-                      }
-                    }
-                  },
-                  itemBuilder: (context, index) {
-                    if (!isConfirmed && index == 0) {
-                      return Center(
-                        child: Text(
-                          "Vuốt sang trái để chỉnh sửa\nVuốt sang phải để xác nhận",
-                          textAlign: TextAlign.center,
-                          style: TextStyle(color: color.primary),
-                        ),
-                      );
-                    } else if (!isConfirmed && index == 2) {
-                      return const Center(
-                        child: Text("Vui lòng xác nhận trước"),
-                      );
-                    } else if (isConfirmed && index == 0) {
-                      return const Center(
-                        child: Text("Trang xác nhận đã bị khoá"),
-                      );
-                    } else if (index == 1) {
-                      return const Center(
-                        child: Text(
-                          "Tôi đồng ý với thông tin đã chọn",
-                          style: TextStyle(color: Colors.deepPurple),
-                        ),
-                      );
-                    } else if (index == 2) {
-                      return Column(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          Image.network(
-                            "https://api.qrserver.com/v1/create-qr-code/?size=200x50&data=barcode",
-                            height: 60,
-                            fit: BoxFit.contain,
                           ),
-                          const SizedBox(height: 8),
-                          Text(
-                            "Mã vé: 25177255",
-                            style: TextStyle(color: color.primary),
-                          ),
-                        ],
-                      );
-                    }
-                    return const SizedBox.shrink();
-                  },
+                        ),
+                      ),
+                    ),
+
+                    // 🔽 Nửa dưới
+                    Positioned(
+                      top: _isTorn ? _bottomShift.value : 0,
+                      child: ClipPath(
+                        clipper: TicketBottomClipper(
+                          tearY: tearY,
+                          jaggle: 10,
+                          gap: 20,
+                        ),
+                        child: Container(
+                          width: width,
+                          height: height,
+                          color: ticketBgColor,
+                        ),
+                      ),
+                    ),
+
+                    // 👉 Hướng dẫn kéo
+                    if (!_isTorn)
+                      Positioned(
+                        top: tearY + 15,
+                        left: width / 2 - 40,
+                        child: Row(
+                          children: const [
+                            Icon(Icons.swipe, size: 20, color: Colors.white70),
+                            SizedBox(width: 4),
+                            Text(
+                              "Kéo để xé vé",
+                              style: TextStyle(
+                                color: Colors.white70,
+                                fontSize: 12,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                  ],
                 ),
               ),
-            ],
-          ),
-        ),
-      ),
-    );
-  }
-
-  Widget _infoColumn(String label, String value, Color color) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Text(label, style: TextStyle(color: color)),
-        const SizedBox(height: 4),
-        Text(
-          value,
-          style: TextStyle(fontWeight: FontWeight.bold, color: color),
-        ),
-      ],
-    );
-  }
-
-  Widget _tableHeader(Color color) {
-    return Container(
-      padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 8),
-      decoration: BoxDecoration(
-        border: Border.symmetric(
-          horizontal: BorderSide(color: Colors.grey.shade300),
-        ),
-      ),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        children: [
-          _tableCell("Tên vé", color),
-          _tableCell("Số lượng", color),
-          _tableCell("Tên combo", color),
-          _tableCell("Giá tiền", color),
-        ],
-      ),
-    );
-  }
-
-  Widget _tableCell(String text, Color color) {
-    return Expanded(
-      child: Text(
-        text,
-        style: TextStyle(color: color),
-        textAlign: TextAlign.center,
-      ),
-    );
-  }
-
-  Widget _ticketRow(Color color) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 8),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        children: [
-          Expanded(
-            child: Text(
-              "Vé xem phim, Vé Couple, Vé Combo",
-              style: TextStyle(fontWeight: FontWeight.bold, color: color),
-            ),
-          ),
-          Expanded(
-            child: Text(
-              "8 ghế",
-              textAlign: TextAlign.center,
-              style: TextStyle(fontWeight: FontWeight.bold, color: color),
-            ),
-          ),
-          Expanded(
-            child: Text(
-              "Bắp + Nước + Quà tặng",
-              style: TextStyle(fontWeight: FontWeight.bold, color: color),
-            ),
-          ),
-          Expanded(
-            child: Text(
-              "990.000₫",
-              textAlign: TextAlign.center,
-              style: TextStyle(fontWeight: FontWeight.bold, color: color),
             ),
           ),
         ],
@@ -287,29 +291,78 @@ class _PurchasePreviewPagesState extends State<PurchasePreviewPages> {
   }
 }
 
-class ZigZagPainter extends CustomPainter {
+// 🎟️ CLIPPER - Nửa trên
+class TicketTopClipper extends CustomClipper<Path> {
+  final double tearY;
+  final double jaggle;
+  final double gap;
+
+  TicketTopClipper({
+    required this.tearY,
+    required this.jaggle,
+    required this.gap,
+  });
+
   @override
-  void paint(Canvas canvas, Size size) {
-    final paint =
-        Paint()
-          ..color = Colors.grey.shade200
-          ..style = PaintingStyle.fill;
-
-    const zigzagHeight = 10.0;
-    const zigzagWidth = 10.0;
-
-    final path = Path()..moveTo(0, 0);
-    for (double x = 0; x < size.width; x += zigzagWidth) {
-      path.lineTo(x + zigzagWidth / 2, zigzagHeight);
-      path.lineTo(x + zigzagWidth, 0);
+  Path getClip(Size size) {
+    final path =
+        Path()
+          ..moveTo(0, 0)
+          ..lineTo(size.width, 0)
+          ..lineTo(size.width, tearY);
+    double x = size.width;
+    bool down = true;
+    while (x > 0) {
+      final dx = gap;
+      final nx = (x - dx).clamp(0.0, size.width);
+      final y = tearY + (down ? jaggle : -jaggle);
+      path.lineTo(nx, y);
+      x = nx;
+      down = !down;
     }
-    path.lineTo(size.width, size.height);
-    path.lineTo(0, size.height);
+    path.lineTo(0, tearY);
     path.close();
-
-    canvas.drawPath(path, paint);
+    return path;
   }
 
   @override
-  bool shouldRepaint(CustomPainter oldDelegate) => false;
+  bool shouldReclip(TicketTopClipper old) => old.tearY != tearY;
+}
+
+// 🎟️ CLIPPER - Nửa dưới
+class TicketBottomClipper extends CustomClipper<Path> {
+  final double tearY;
+  final double jaggle;
+  final double gap;
+
+  TicketBottomClipper({
+    required this.tearY,
+    required this.jaggle,
+    required this.gap,
+  });
+
+  @override
+  Path getClip(Size size) {
+    final path =
+        Path()
+          ..moveTo(0, size.height)
+          ..lineTo(size.width, size.height)
+          ..lineTo(size.width, tearY);
+    double x = size.width;
+    bool down = false;
+    while (x > 0) {
+      final dx = gap;
+      final nx = (x - dx).clamp(0.0, size.width);
+      final y = tearY + (down ? jaggle : -jaggle);
+      path.lineTo(nx, y);
+      x = nx;
+      down = !down;
+    }
+    path.lineTo(0, tearY);
+    path.close();
+    return path;
+  }
+
+  @override
+  bool shouldReclip(TicketBottomClipper old) => old.tearY != tearY;
 }

@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:tmt_project/src/minh_src/models/combo_item.dart';
+import 'package:tmt_project/src/minh_src/models/modelGhe.dart';
+import 'package:tmt_project/src/minh_src/models/takeComboModel.dart';
+import 'package:tmt_project/src/minh_src/pages/testComponent/testComponent.dart';
 import 'package:tmt_project/src/thai_src/pages/choose_theater.dart';
 import 'package:tmt_project/src/thai_src/pages/entry_point_page.dart';
 import 'package:tmt_project/src/thai_src/pages/filter_page/filter_page.dart';
@@ -17,7 +19,6 @@ import 'package:tmt_project/src/thai_src/pages/user_page.dart';
 //========= Route của Minh =========
 import 'package:tmt_project/src/minh_src/pages/booking_ticket_pages/booking_ticket_pages.dart';
 import 'package:tmt_project/src/minh_src/pages/change_pay_ticket/change_pay_ticket.dart';
-import 'package:tmt_project/src/minh_src/pages/chooseSeat/choose_seat_page.dart';
 import 'package:tmt_project/src/minh_src/pages/detail_pages/detail_pages.dart';
 import 'package:tmt_project/src/minh_src/pages/purchase_preview/purchase_preview_pages.dart';
 import 'package:tmt_project/src/minh_src/pages/takeCombo/take_combo_pages.dart';
@@ -36,6 +37,7 @@ import '../src/tin_src/pages/reset_password_page/reset_password_page.dart';
 import '../src/tin_src/pages/verification_page/verification_page.dart';
 import '../src/tin_src/splash_screen.dart';
 
+import 'package:tmt_project/src/minh_src/pages/check_bill_pages/checkBill_pages.dart';
 
 class AppRouteNames {
   static const splash = '/splash';
@@ -64,7 +66,7 @@ class AppRouteNames {
   static const takeComboPages = '/takeComboPages';
   static const takeSeatPages = '/takeSeatPages';
   static const trailerPages = '/trailerPages';
-
+  static const testComponent = '/testComponent';
   static const aboutUsPage = '/aboutUs';
   static const createNewPasswordPage = '/createNewPassword';
   static const editProfilePage = '/editProfile';
@@ -77,6 +79,7 @@ class AppRouteNames {
   static const signupPage = '/signup';
   static const verificationPage = '/verification';
 
+  static const checkBillPages = '/check-bill';
 }
 
 final Map<String, WidgetBuilder> appRoutes = {
@@ -96,10 +99,22 @@ final Map<String, WidgetBuilder> appRoutes = {
   AppRouteNames.chooseTheater: (context) => ChooseTheater(),
 
   // ======== Route của Minh ========
+  AppRouteNames.testComponent: (context) => const TicketTearVerticalDemo(),
   AppRouteNames.bookingTicketPages: (context) {
-    final args = ModalRoute.of(context)!.settings.arguments;
-    final movieTitle = args is String ? args : 'Unknown Movie';
-    return BookingTicketPages(movieTitle: movieTitle);
+    final args =
+        ModalRoute.of(context)!.settings.arguments as Map<String, dynamic>;
+
+    final dynamic rawId = args["movieId"];
+    final int movieId = rawId is int ? rawId : int.tryParse("$rawId") ?? 0;
+    final String movieTitle = (args["movieTitle"] ?? "").toString();
+    final String posterUrl = (args["posterUrl"] ?? "").toString();
+
+    return BookingTicketPages(
+      movieId: movieId,
+      movieTitle: movieTitle,
+      poster: posterUrl,
+      // poster dùng ở BookingTicketPages nếu anh muốn show
+    );
   },
   AppRouteNames.changePayTicket: (context) {
     final args =
@@ -112,25 +127,41 @@ final Map<String, WidgetBuilder> appRoutes = {
       showTime: args.showTime,
       selectedSeats: args.selectedSeats,
       selectedCombos: args.selectedCombos,
+      poster: args.posterUrl, // ✅ thêm poster
     );
   },
-  AppRouteNames.chooseSeatPage: (context) => const ChooseSeatPage(),
+
   AppRouteNames.detailPages: (context) {
     final args = ModalRoute.of(context)!.settings.arguments;
     final movieId = args is int ? args : -1;
     return DetailPages(movieId: movieId);
   },
-  AppRouteNames.purchasePreviewPages: (context) => const PurchasePreviewPages(),
+  AppRouteNames.purchasePreviewPages: (context) {
+    final args =
+        ModalRoute.of(context)!.settings.arguments as Map<String, dynamic>;
+
+    return PurchasePreviewPages(
+      movieTitle: args['movieTitle'],
+      theaterName: args['theaterName'],
+      receiveDate: args['receiveDate'],
+      showTime: args['showTime'],
+      selectedSeats: (args['selectedSeats'] as List).cast<GheModel>(),
+      selectedCombos: (args['selectedCombos'] as List).cast<ComboModel>(),
+      poster: args['posterUrl'] ?? '',
+    );
+  },
   AppRouteNames.takeComboPages: (context) {
     final args =
         ModalRoute.of(context)!.settings.arguments as Map<String, dynamic>;
+
     return TakeComboPages(
       theaterName: args['theaterName'] ?? '',
       receiveDate: args['receiveDate'] ?? '',
       movieTitle: args['movieTitle'] ?? 'Unknown Movie',
       showTime: args['showTime'] ?? 'Chưa chọn suất chiếu',
-      selectedSeats:
-          (args['selectedSeats'] as List<dynamic>?)?.cast<String>() ?? [],
+      selectedSeats: (args['selectedSeats'] as List).cast<GheModel>(),
+      maHeThong: args['maHeThong'] ?? 0,
+      poster: args['posterUrl'] ?? '', // ✅ thêm poster
     );
   },
 
@@ -138,23 +169,27 @@ final Map<String, WidgetBuilder> appRoutes = {
     final args =
         ModalRoute.of(context)!.settings.arguments as SeatPageArguments;
 
-    return SeatMapPage(
+    return TakeSeatPages(
       movieTitle: args.movieTitle,
       theaterName: args.theaterName,
       receiveDate: args.receiveDate,
       showTime: args.showTime,
+      maPhong: args.maPhong,
+      maSuatChieu: args.maSuatChieu,
+      maHeThong: args.maHeThong,
+      poster: args.posterUrl, // ✅ thêm poster
     );
   },
+
   AppRouteNames.trailerPages: (context) {
     final args = ModalRoute.of(context)!.settings.arguments;
     final movieId = args is int ? args : -1;
     return TrailerPages(movieId: movieId);
   },
 
- 
-  AppRouteNames.chooseSeat: (context) => const ChooseSeatPage(),
   AppRouteNames.aboutUsPage: (context) => const AboutUsPage(),
-  AppRouteNames.createNewPasswordPage: (context) => const CreateNewPasswordPage(),
+  AppRouteNames.createNewPasswordPage:
+      (context) => const CreateNewPasswordPage(),
   AppRouteNames.editProfilePage: (context) => const EditProfilePage(),
   AppRouteNames.loginPage: (context) => const LoginPage(),
   AppRouteNames.loginSignInPage: (context) => const LoginSignInPage(),
@@ -162,11 +197,22 @@ final Map<String, WidgetBuilder> appRoutes = {
   AppRouteNames.privacyPolicyPage: (context) => const PrivacyPolicyPage(),
   AppRouteNames.resetPasswordPage: (context) => const ResetPasswordPage(),
   AppRouteNames.signupPage: (context) => const SignUpPage(),
-  AppRouteNames.verificationPage: (context) {
-    final args = ModalRoute.of(context)!.settings.arguments as String;
-    return VerificationPage(email: args);
-  },
+  AppRouteNames.verificationPage: (context) => const VerificationPage(),
 
+  AppRouteNames.checkBillPages: (context) {
+    final args =
+        ModalRoute.of(context)!.settings.arguments as Map<String, dynamic>;
+
+    return CheckbillPages(
+      movieTitle: args['movieTitle'],
+      theaterName: args['theaterName'],
+      receiveDate: args['receiveDate'],
+      showTime: args['showTime'],
+      selectedSeats: (args['selectedSeats'] as List).cast<GheModel>(),
+      selectedCombos: (args['selectedCombos'] as List).cast<ComboModel>(),
+      poster: args['posterUrl'] ?? '', // ✅ thêm poster
+    );
+  },
 };
 
 class SeatPageArguments {
@@ -174,12 +220,20 @@ class SeatPageArguments {
   final String theaterName;
   final String receiveDate;
   final String showTime;
+  final int maPhong;
+  final int maSuatChieu;
+  final int maHeThong;
+  final String posterUrl; // ✅ thêm poster
 
   SeatPageArguments({
     required this.movieTitle,
     required this.theaterName,
     required this.receiveDate,
     required this.showTime,
+    required this.maPhong,
+    required this.maSuatChieu,
+    required this.maHeThong,
+    required this.posterUrl,
   });
 }
 
@@ -188,8 +242,9 @@ class ChangePayTicketArguments {
   final String theaterName;
   final String receiveDate;
   final String showTime;
-  final List<String> selectedSeats;
-  final List<ComboItem> selectedCombos;
+  final List<GheModel> selectedSeats;
+  final List<ComboModel> selectedCombos;
+  final String posterUrl; // ✅ thêm poster
 
   ChangePayTicketArguments({
     required this.movieTitle,
@@ -198,5 +253,6 @@ class ChangePayTicketArguments {
     required this.showTime,
     required this.selectedSeats,
     required this.selectedCombos,
+    required this.posterUrl,
   });
 }

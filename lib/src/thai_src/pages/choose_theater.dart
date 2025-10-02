@@ -209,6 +209,11 @@ class _ChooseTheaterState extends State<ChooseTheater> {
                                     final String showTimeValue =
                                         rawShowTime ?? "00:00";
 
+                                    final int maSuatChieu =
+                                        showTime["ma_suat_chieu"] ?? 0;
+                                    final int maPhong =
+                                        showTime["ma_phong"] ?? 0;
+
                                     if (rawShowTime == null) {
                                       debugPrint(
                                         "⚠️ Cảnh báo: suất chiếu không có giờ chiếu rõ ràng!",
@@ -223,9 +228,16 @@ class _ChooseTheaterState extends State<ChooseTheater> {
                                         theaterName: theaterName,
                                         receiveDate: receiveDate,
                                         showTime: showTimeValue,
+                                        maPhong: maPhong,
+                                        maSuatChieu: maSuatChieu,
+                                        posterUrl:
+                                            theaterShow["anh_poster"] ?? '',
+                                        maHeThong:
+                                            theaterShow["ma_he_thong"] ?? 0,
                                       ),
                                     );
                                   },
+
                                   title: theaterShow["ten_phim"],
                                   imageUrl: theaterShow["anh_poster"],
                                   genre: theaterShow["theloai"],

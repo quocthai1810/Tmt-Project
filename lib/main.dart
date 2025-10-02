@@ -1,72 +1,83 @@
 import 'package:flutter/material.dart';
-import 'package:tmt_project/core/widgets/thai/CustomButton.dart';
+import 'package:intl/date_symbol_data_local.dart';
+import 'package:provider/provider.dart';
+import 'package:tmt_project/routers/app_route.dart';
+import 'package:tmt_project/src/minh_src/pages/booking_ticket_pages/bookingProvider.dart';
+import 'package:tmt_project/src/minh_src/pages/detail_pages/detailProvider.dart';
+import 'package:tmt_project/src/minh_src/pages/takeSeat/takeSeatProvider.dart';
+import 'package:tmt_project/src/minh_src/pages/trailer_pages/trailerProviders.dart';
+import 'package:tmt_project/src/thai_src/pages/filter_page/filter_provider.dart';
+import 'package:tmt_project/src/thai_src/pages/home_page/home_page_provider.dart';
+import 'package:tmt_project/src/thai_src/pages/new_page/new_provider.dart';
+import 'package:tmt_project/src/thai_src/pages/search_page/search_provider.dart';
+import 'package:tmt_project/src/thai_src/pages/theater_page/theater_provider.dart';
+import 'package:tmt_project/src/minh_src/pages/takeCombo/takeComboProvider.dart';
+import 'package:tmt_project/src/tin_src/pages/create_new_password_page/create_new_password_page_provider.dart';
+import 'package:tmt_project/src/tin_src/pages/login_page/login_page_provider.dart';
+import 'package:tmt_project/src/tin_src/pages/signup_page/signup_page_provider.dart';
+import 'package:tmt_project/src/tin_src/pages/verification_page/verification_provider.dart';
 
-void main() {
-  runApp(const MyApp());
+///import
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  await initializeDateFormatting('vi'); // để DateFormat.E('vi') hoạt động
+  runApp(
+    MultiProvider(
+      providers: [
+        ChangeNotifierProvider<SignUpProvider>(create: (_) => SignUpProvider()),
+        ChangeNotifierProvider<VerificationProvider>(create: (_) => VerificationProvider()),
+        ChangeNotifierProvider<LoginProvider>(create: (_) => LoginProvider()),
+        ChangeNotifierProvider<CreateNewPasswordProvider>(create: (_) => CreateNewPasswordProvider()),
+        ChangeNotifierProvider<MovieProvider>(create: (_) => MovieProvider()),
+        ChangeNotifierProvider<NewsProvider>(create: (_) => NewsProvider()),
+        ChangeNotifierProvider<SearchProvider>(create: (_) => SearchProvider()),
+        ChangeNotifierProvider<FilterProvider>(create: (_) => FilterProvider()),
+        ChangeNotifierProvider<TheaterProvider>(
+          create: (_) => TheaterProvider(),
+        ),
+        ChangeNotifierProvider<Detailprovider>(create: (_) => Detailprovider()),
+        ChangeNotifierProvider<CommentProvider>(
+          create: (_) => CommentProvider(),
+        ),
+        ChangeNotifierProvider<TrailerProvider>(
+          create: (_) => TrailerProvider(),
+        ),
+        ChangeNotifierProvider<CumRapProvider>(create: (_) => CumRapProvider()),
+        ChangeNotifierProvider<LayRapPhimProvider>(
+          create: (_) => LayRapPhimProvider(),
+        ),
+        ChangeNotifierProvider<ShowtimeProvider>(
+          create: (_) => ShowtimeProvider(),
+        ),
+        ChangeNotifierProvider<SuatChieuProvider>(
+          create: (_) => SuatChieuProvider(),
+        ),
+        ChangeNotifierProvider<GheProvider>(create: (_) => GheProvider()),
+        ChangeNotifierProvider<ComboProvider>(create: (_) => ComboProvider()),
+      ],
+      child: const MyApp(),
+    ),
+  );
 }
 
-class MyApp extends StatelessWidget {
+class MyApp extends StatefulWidget {
   const MyApp({super.key});
 
   @override
+  State<MyApp> createState() => _MyAppState();
+}
+
+class _MyAppState extends State<MyApp> {
+  @override
   Widget build(BuildContext context) {
     return MaterialApp(
+      initialRoute: AppRouteNames.splash,
+      routes: appRoutes,
       title: 'Flutter Demo',
       theme: ThemeData(
         useMaterial3: true,
         //Đây là màu Chủ đề cho app ( màu Hồng cho đời đẹp :)) )
         colorScheme: ColorScheme.fromSeed(seedColor: Colors.pink),
-        appBarTheme: AppBarTheme(
-          backgroundColor: Color.fromARGB(255, 156, 82, 93),
-        ),
-      ),
-      home: Scaffold(
-        appBar: AppBar(title: Text("Hello anh em Funny Team "),),
-        body: Center(
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              CustomButton(
-                text: 'Đây',
-                borderRadius: BorderRadius.circular(12),
-                onPress: () {
-                  print('Button Rounded 12');
-                },
-              ),
-              SizedBox(height: 16),
-              CustomButton(
-                text: 'Là',
-                width: 80,
-                height: 60,
-                borderRadius: BorderRadius.circular(10),
-                onPress: () {
-                  print('Button Circle');
-                },
-              ),
-              SizedBox(height: 16),
-              CustomButton(
-                text: 'Custom',
-                borderRadius: BorderRadius.zero,
-                onPress: () {
-                  print('Button Sharp corners');
-                },
-              ),
-              SizedBox(height: 16),
-              CustomButton(
-                text: 'Button',
-                borderRadius: BorderRadius.horizontal(
-                  left: Radius.circular(30),
-                  right: Radius.circular(30),
-                ),
-                width: 200,
-                height: 50,
-                onPress: () {
-                  print('Button Stadium shape');
-                },
-              ),
-            ],
-          ),
-        ),
       ),
     );
   }

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 import '../../../../core/widgets/thai/custom_appBar.dart';
 import '../../../../core/widgets/tin/custom_button.dart';
@@ -13,44 +14,53 @@ class EditProfilePage extends StatefulWidget {
 class _EditProfilePageState extends State<EditProfilePage> {
   final _formKey = GlobalKey<FormState>();
 
-  final TextEditingController _nameController = TextEditingController(
-    text: "Tiffany",
-  );
-  final TextEditingController _emailController = TextEditingController(
-    text: "Tiffanyjearsey@gmail.com",
-  );
+  final TextEditingController _nameController = TextEditingController();
+  final TextEditingController _emailController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
-  final TextEditingController _phoneController = TextEditingController(
-    text: "+1 82120142305",
-  );
+  final TextEditingController _phoneController = TextEditingController();
 
   bool _isObscurePassword = true;
 
-  // Kiểm tra Họ và tên
+  @override
+  void initState() {
+    super.initState();
+    _loadUserInfo();
+  }
+
+  Future<void> _loadUserInfo() async {
+    final prefs = await SharedPreferences.getInstance();
+    final email = prefs.getString("email") ?? "";
+
+    String nameFromEmail(String e) {
+      final at = e.indexOf("@");
+      return at >= 0 ? e.substring(0, at) : e;
+    }
+
+    setState(() {
+      _emailController.text = email.isNotEmpty ? email : "Chưa có email";
+      _nameController.text = email.isNotEmpty ? nameFromEmail(email) : "Người dùng";
+      _phoneController.text = "+84"; // hoặc load từ prefs nếu có
+    });
+  }
+
+  // validate
   String? _validateName(String? value) {
     if (value == null || value.isEmpty) return "Tên không được để trống";
-    if (value == "Tiffany") {
-      // giả sử check từ DB => tên đã tồn tại
-      return "* Tên đã tồn tại";
-    }
     return null;
   }
 
-  // Kiểm tra Email
   String? _validateEmail(String? value) {
     if (value == null || value.isEmpty) return "Email không được để trống";
     if (!value.contains("@")) return "Email không hợp lệ";
     return null;
   }
 
-  // Kiểm tra Mật khẩu
   String? _validatePassword(String? value) {
     if (value == null || value.isEmpty) return "Mật khẩu không được để trống";
     if (value.length < 6) return "Mật khẩu phải >= 6 ký tự";
     return null;
   }
 
-  // Kiểm tra Số điện thoại
   String? _validatePhone(String? value) {
     if (value == null || value.isEmpty) return "Số điện thoại không được để trống";
     if (!RegExp(r'^\+?[0-9]{10,15}$').hasMatch(value)) {
@@ -63,7 +73,9 @@ class _EditProfilePageState extends State<EditProfilePage> {
     if (_formKey.currentState!.validate()) {
       ScaffoldMessenger.of(
         context,
-      ).showSnackBar(const SnackBar(content: Text("Cập nhật hồ sơ thành công ✅")));
+      ).showSnackBar(
+        const SnackBar(content: Text("Cập nhật hồ sơ thành công ✅")),
+      );
     }
   }
 
@@ -84,7 +96,7 @@ class _EditProfilePageState extends State<EditProfilePage> {
             children: [
               const SizedBox(height: 20),
 
-              // Ảnh đại diện + nút sửa
+              // Avatar + nút sửa
               Stack(
                 alignment: Alignment.bottomRight,
                 children: [
@@ -99,20 +111,18 @@ class _EditProfilePageState extends State<EditProfilePage> {
                       color: Colors.redAccent,
                       shape: BoxShape.circle,
                     ),
-                    child: Center(
-                      child: IconButton(
-                        onPressed: () {
-                          ScaffoldMessenger.of(context).showSnackBar(
-                            const SnackBar(
-                              content: Text("Đổi ảnh đại diện"),
-                            ),
-                          );
-                        },
-                        icon: const Icon(
-                          Icons.edit,
-                          size: 20,
-                          color: Colors.white,
-                        ),
+                    child: IconButton(
+                      onPressed: () {
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          const SnackBar(
+                            content: Text("Đổi ảnh đại diện"),
+                          ),
+                        );
+                      },
+                      icon: const Icon(
+                        Icons.edit,
+                        size: 20,
+                        color: Colors.white,
                       ),
                     ),
                   ),
@@ -152,10 +162,11 @@ class _EditProfilePageState extends State<EditProfilePage> {
               ),
               const SizedBox(height: 20),
 
-              // Email
+              // Email (readonly vì thường email cố định)
               TextFormField(
                 controller: _emailController,
                 validator: _validateEmail,
+                readOnly: true, // không cho sửa
                 style: const TextStyle(color: Colors.white),
                 decoration: InputDecoration(
                   labelText: "Email",

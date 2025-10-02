@@ -1,9 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:tmt_project/core/widgets/thai/toggle_Switch/custom_toggle_1.dart';
-import 'package:tmt_project/src/tin_src/pages/edit_profile_page/edit_profile_page.dart';
-import 'package:tmt_project/src/tin_src/pages/my_ticket_page/my_ticket_page.dart';
-import 'package:tmt_project/src/tin_src/pages/privacy_policy_page/privacy_policy_page.dart';
-import 'package:tmt_project/src/tin_src/pages/reset_password_page/reset_password_page.dart';
 
 import '../../../routers/app_route.dart';
 

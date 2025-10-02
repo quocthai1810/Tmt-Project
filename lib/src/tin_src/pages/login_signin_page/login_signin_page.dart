@@ -3,6 +3,8 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:tmt_project/core/widgets/tin/custom_button.dart';
 
 import '../../../../routers/app_route.dart';
+import 'auth_service.dart';
+import 'login_google_provider.dart';
 
 class LoginSignInPage extends StatelessWidget {
   const LoginSignInPage({super.key});
@@ -106,7 +108,33 @@ class LoginSignInPage extends StatelessWidget {
                 // Nút Google
                 Row(
                   mainAxisAlignment: MainAxisAlignment.center,
-                  children: [GoogleButton(onTap: () {})],
+                  children: [
+                    GoogleButton(
+                      onTap: () async {
+                        final idToken = await LoginGoogleProvider().signInWithGoogle();
+
+                        if (idToken != null) {
+                          print("ID Token: $idToken");
+
+                          try {
+                            final response = await AuthService().loginWithGoogle(idToken);
+
+                            if (response.statusCode == 200) {
+                              print("Login success: ${response.data}");
+                              Navigator.pushReplacementNamed(context, AppRouteNames.entryPointPage);
+                            } else {
+                              print("Login failed: ${response.data}");
+                            }
+                          } catch (e) {
+                            print("API error: $e");
+                          }
+                        } else {
+                          print("Google Sign-In failed or cancelled");
+                        }
+                      },
+                    ),
+
+                  ],
                 ),
               ],
             ),

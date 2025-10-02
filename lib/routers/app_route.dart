@@ -197,22 +197,21 @@ final Map<String, WidgetBuilder> appRoutes = {
   AppRouteNames.privacyPolicyPage: (context) => const PrivacyPolicyPage(),
   AppRouteNames.resetPasswordPage: (context) => const ResetPasswordPage(),
   AppRouteNames.signupPage: (context) => const SignUpPage(),
-  AppRouteNames.verificationPage: (context) => const VerificationPage(),
-
-  AppRouteNames.checkBillPages: (context) {
+  AppRouteNames.verificationPage: (context) {
     final args =
-        ModalRoute.of(context)!.settings.arguments as Map<String, dynamic>;
+    ModalRoute.of(context)!.settings.arguments as Map<String, dynamic>;
 
-    return CheckbillPages(
-      movieTitle: args['movieTitle'],
-      theaterName: args['theaterName'],
-      receiveDate: args['receiveDate'],
-      showTime: args['showTime'],
-      selectedSeats: (args['selectedSeats'] as List).cast<GheModel>(),
-      selectedCombos: (args['selectedCombos'] as List).cast<ComboModel>(),
-      poster: args['posterUrl'] ?? '', // ✅ thêm poster
+    final String email = args['email'] ?? '';
+    final String type = args['type'] ?? 'register'; // mặc định "register"
+    final String newPassword = args['newPassword'] ?? '';
+
+    return VerificationPage(
+      email: email,
+      type: type,
+      newPassword: newPassword,
     );
   },
+
 };
 
 class SeatPageArguments {

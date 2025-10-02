@@ -12,6 +12,10 @@ import 'package:tmt_project/src/thai_src/pages/new_page/new_provider.dart';
 import 'package:tmt_project/src/thai_src/pages/search_page/search_provider.dart';
 import 'package:tmt_project/src/thai_src/pages/theater_page/theater_provider.dart';
 import 'package:tmt_project/src/minh_src/pages/takeCombo/takeComboProvider.dart';
+import 'package:tmt_project/src/tin_src/pages/create_new_password_page/create_new_password_page_provider.dart';
+import 'package:tmt_project/src/tin_src/pages/login_page/login_page_provider.dart';
+import 'package:tmt_project/src/tin_src/pages/signup_page/signup_page_provider.dart';
+import 'package:tmt_project/src/tin_src/pages/verification_page/verification_provider.dart';
 
 ///import
 void main() async {
@@ -20,6 +24,10 @@ void main() async {
   runApp(
     MultiProvider(
       providers: [
+        ChangeNotifierProvider<SignUpProvider>(create: (_) => SignUpProvider()),
+        ChangeNotifierProvider<VerificationProvider>(create: (_) => VerificationProvider()),
+        ChangeNotifierProvider<LoginProvider>(create: (_) => LoginProvider()),
+        ChangeNotifierProvider<CreateNewPasswordProvider>(create: (_) => CreateNewPasswordProvider()),
         ChangeNotifierProvider<MovieProvider>(create: (_) => MovieProvider()),
         ChangeNotifierProvider<NewsProvider>(create: (_) => NewsProvider()),
         ChangeNotifierProvider<SearchProvider>(create: (_) => SearchProvider()),
